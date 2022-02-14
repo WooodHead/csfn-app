@@ -27,6 +27,7 @@
                        :text="$t('continue-with', {'param': 'Google'})"
                        class="google-button text-left" color="white"
                        @click="googleLogin"></button-item>
+          <div class="mb-10"/>
           <!--
           <button-item :iconSrc="require('@/assets/img/icons/facebook-icon.svg')"
                        :text="$t('continue-with', {'param': 'Facebook'})"
