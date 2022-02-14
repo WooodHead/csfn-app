@@ -2,7 +2,7 @@
   <div class="avatar-wrapper">
     <div class="avatar shadow ion-activatable" :class="invalid ? 'avatar-error': ''">
       <img :src="src">
-      <ion-ripple-effect></ion-ripple-effect>
+      <!--<ion-ripple-effect></ion-ripple-effect>-->
     </div>
   </div>
 </template>
