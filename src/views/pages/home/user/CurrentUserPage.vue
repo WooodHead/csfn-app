@@ -19,7 +19,7 @@
 
         <div class="inline-block mt-6">
           <button class="flex ion-activatable ripple-parent bg-light p-2 pr-4 rounded-full"
-               @click="$router.push('/levels')">
+                  @click="$router.push('/levels')">
             <div class="w-12 mr-2 float-left">
               <img :src="userLevel.icon"/>
             </div>
@@ -62,7 +62,7 @@
           </ion-card>
           <ion-card v-else>
             <div class="p-4">
-              <p class="font-bold text-lg text-gray-800">{{$t('user-no-cleanups')}}</p>
+              <p class="font-bold text-lg text-gray-800">{{ $t('user-no-cleanups') }}</p>
               <p class="text-base mb-4">{{ $t('no-cleanups') }}</p>
               <ion-button shape="round" size="block" @click="$router.push('/edit-cleanup')">
                 {{ $t('publish-cleanup') }}
@@ -176,12 +176,19 @@ export default class CurrentUserPage extends Vue {
 </script>
 <style lang="scss">
 .user-content > div:first-child {
-  margin-top: calc(14px + var(--ion-safe-area-top));
+  margin-top: calc(var(--ion-safe-area-top) + 3px);
+}
+
+.notch {
+  .user-content > div:first-child {
+    margin-top: calc(var(--ion-safe-area-top) - 5px) !important;
+  }
 }
 
 .ios {
   .user-content > div:first-child {
-    margin-top: var(--ion-safe-area-top);
+    margin-top: calc(var(--ion-safe-area-top) + 23px);
   }
 }
+
 </style>

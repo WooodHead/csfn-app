@@ -62,7 +62,7 @@ export default class TransparentHeader extends Vue {
 }
 
 .transparent-header.no-content ion-toolbar {
-  height: 30px !important;
+  height: var(--ion-safe-area-top) !important;
 }
 
 .scrolled .transparent-header ion-toolbar {

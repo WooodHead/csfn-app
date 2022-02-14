@@ -1,9 +1,11 @@
 <template>
-    <ion-app>
-        <transition mode="in-out" name="fade">
-            <router-view></router-view>
-        </transition>
-    </ion-app>
+  <ion-app>
+    <div :class="{'notch': hasNotch}">
+      <transition mode="in-out" name="fade">
+        <router-view></router-view>
+      </transition>
+    </div>
+  </ion-app>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -12,11 +14,20 @@ import CurrentUserPage from '@/views/pages/home/user/CurrentUserPage.vue'
 import EventsPage from '@/views/pages/home/events/EventsPage.vue'
 import AlertsPage from '@/views/pages/home/alerts/AlertsPage.vue'
 import CommunityPage from '@/views/pages/home/community/CommunityPage.vue'
+import { hasNotch } from '@/tools/Utils'
 
 @Component({
-    components: {CurrentUserPage, EventsPage, AlertsPage, CommunityPage}
+  components: { CurrentUserPage, EventsPage, AlertsPage, CommunityPage }
 })
 export default class Main extends Vue {
+
+  hasNotch = false
+
+  mounted() {
+    setTimeout(() => {
+      this.hasNotch = hasNotch()
+    }, 3000)
+  }
 
 }
 </script>

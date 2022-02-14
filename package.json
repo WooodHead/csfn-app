@@ -1,6 +1,6 @@
 {
   "name": "csfn-app",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "private": true,
   "postinstall": "jetifier",
   "scripts": {
@@ -9,7 +9,6 @@
     "ionic:build": "vue-cli-service build && ionic deploy manifest && npx cap sync android",
     "build": "vue-cli-service build && ionic deploy manifest",
     "open:android": "npx cap open android",
-    "open:ios": "npx cap open ios",
     "lint": "vue-cli-service lint",
     "postinstall": "node postinstall.js",
     "run:android": "vue-cli-service build && npx cap sync android && npx cap open android",

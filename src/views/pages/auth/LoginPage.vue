@@ -22,7 +22,7 @@
                       @focus="resetError('password') || focus()"></input-item>
           <button-item :center="true" :disabled="loading" :text="$t('login')" color="primary"
                        @click="credentialsLogin"></button-item>
-          <hr class="z-10">
+          <hr class="z-10 mt-8 mb-4 w-1/2">
           <button-item :iconSrc="require('@/assets/img/icons/google-icon.svg')"
                        :text="$t('continue-with', {'param': 'Google'})"
                        class="google-button text-left" color="white"

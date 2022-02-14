@@ -23,3 +23,25 @@ export function calculateDistance(frm: Coords,
 export function remToPixel(rem) {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
+
+export function hasNotch() {
+  let proceed = false
+  const div = document.createElement('div')
+  if (CSS.supports('padding-bottom: env(safe-area-inset-bottom)')) {
+    div.style.paddingBottom = 'env(safe-area-inset-bottom)'
+    proceed = true
+  } else if (CSS.supports('padding-bottom: constant(safe-area-inset-bottom)')) {
+    div.style.paddingBottom = 'constant(safe-area-inset-bottom)'
+    proceed = true
+  }
+  if (proceed) {
+    document.body.appendChild(div)
+    const calculatedPadding = parseInt(window.getComputedStyle(div).paddingBottom)
+    
+    document.body.removeChild(div)
+    if (calculatedPadding > 0) {
+      return true
+    }
+  }
+  return false
+}

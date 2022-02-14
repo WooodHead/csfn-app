@@ -1,8 +1,6 @@
 <template>
   <ion-page class="ion-page home-page">
-
-
-    <ion-fab class="ios:mb-11 mb-13" horizontal="end" mode="ios" vertical="bottom">
+    <ion-fab class="add-fab" horizontal="end" mode="ios" vertical="bottom">
       <ion-fab-button color="white" @click="$router.push('/edit-cleanup')">
         <ion-icon color="primary" name="add-outline" size="large"
                   style="stroke: var(--ion-color-primary); stroke-width: 50px"/>
@@ -193,5 +191,9 @@ ion-tab-button {
 .tab-selected ion-icon {
   margin-top: -2px;
   transition: all 0.25s;
+}
+
+.add-fab {
+  margin-bottom: calc(50px + var(--ion-safe-area-bottom));
 }
 </style>
