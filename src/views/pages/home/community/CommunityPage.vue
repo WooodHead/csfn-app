@@ -6,8 +6,8 @@
           <transition name="fade">
             <toggle-switch :value="measure" class="mr-2" left-value="volume" right-value="weight"
                            @change="measureChanged">
-              <ion-icon slot="left" :src="require('@/assets/img/icons/liters.svg')" class="text-xl"/>
-              <ion-icon slot="right" :src="require('@/assets/img/icons/kilos.svg')" class="text-xl"/>
+              <ion-icon slot="left" :src="require('@/assets/img/icons/liters.svg')" class="text-2xl ios:text-5xl"/>
+              <ion-icon slot="right" :src="require('@/assets/img/icons/kilos.svg')" class="text-2xl ios:text-5xl"/>
             </toggle-switch>
           </transition>
         </template>
@@ -22,7 +22,7 @@
             <div class="flex justify-between items-center">
               <div class="flex flex-col justify-center items-center ml-4">
                 <div
-                  class="flex flex-col items-center justify-center relative w-14  h-14 rounded-full ion-activatable overflow-hidden shadow-md"
+                  class="flex flex-col items-center justify-center w-14  h-14 rounded-full ion-activatable shadow-md ripple-parent"
                   @click="$router.push('/global-impact')">
                   <img class="w-12 sm:w-14 absolute opacity-75" src="@/assets/img/world.svg">
                   <span class="text-3xl sm:text-4xl font-medium text-white absolute roboto">
@@ -30,7 +30,7 @@
                                 </span>
                   <ion-ripple-effect/>
                 </div>
-                <span class="text-white economica">Countries</span>
+                <span class="text-white economica">{{$t('countries')}}</span>
               </div>
 
               <div v-if="totalStats" class="text-right">
@@ -85,7 +85,7 @@
             <div class="mt-4 px-4 lg:px-24">
               <ion-label class="ml-2 font-bold text-xl" color="primary">{{ $t('top-users') }}</ion-label>
             </div>
-            <ion-list v-if="topUsers[area].length" class="lg:px-24 mb-20" lines="full">
+            <ion-list v-if="topUsers[area].length" class="lg:px-24 mb-20 ios:mb-32" lines="full">
               <ion-item v-for="(user, i) in topUsers[area]" :key="user.id"
                         :class="i === 0 ? 'user-gold' : i === 1 ? 'user-silver' : i === 2 ? 'user-bronze' : ''"
                         button

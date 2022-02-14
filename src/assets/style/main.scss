@@ -76,6 +76,7 @@ body {
   cursor: pointer;
   overflow: hidden;
   position: relative;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
 .expand {
@@ -294,3 +295,10 @@ ion-chip.chip-outline.ion-color {
   justify-content: flex-end;
 }
 
+.pb-safe {
+  padding-bottom: var(--ion-safe-area-bottom);
+}
+
+ion-app.ios ion-button ion-icon {
+  font-size: larger !important;
+}

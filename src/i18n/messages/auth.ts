@@ -19,10 +19,11 @@ export default {
     'register': 'Registrarse',
     'create-account': 'Crear cuenta',
     'forgotten-password': 'Olvidé mi contraseña',
+    'recover-password': 'Recuperar tu contraseña',
     'recover-password-success': 'Comprueba tu email y sigue las instrucciones para restablecer tu contraseña',
     'recover-password-text': 'Introduzca su email',
     'recover-password-done': 'Compruebe su email para restaurar la contraseña',
-    'recover-password': 'Recuperar tu contraseña',
-    'password-reset': 'Recuperar tu contraseña'
+    'password-reset': 'Recuperar tu contraseña',
+    'continue-with': 'Continuar con {param}'
   }
 }

@@ -2,9 +2,9 @@
   <div class="picture-modal bg-black w-full h-full relative flex flex-col justify-center">
     <ion-header mode="ios">
       <ion-toolbar color="black" mode="ios">
-        <ion-buttons>
+        <ion-buttons slot="start">
           <ion-button color="white" fill="clear" shape="round" @click="close">
-            <ion-icon slot="icon-only" name="close"></ion-icon>
+            <ion-icon slot="icon-only" name="close-sharp"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -12,8 +12,7 @@
 
     <ion-content class="flex items-center" color="black">
       <ion-slides v-if="pictures && pictures.length > 1" ref="slider" :options="{initialSlide: selected}"
-                  class="h-full w-full bg-black"
-                  pager="true">
+                  class="h-full w-full bg-black" pager="true">
         <ion-slide v-for="(picture, i) of pictures" :key="i" class="bg-black">
           <img :src="pictureUrl(picture)" alt="Cleanup picture" class="picture">
         </ion-slide>

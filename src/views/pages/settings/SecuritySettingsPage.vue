@@ -4,7 +4,7 @@
       <ion-toolbar mode="ios">
         <ion-buttons slot="start">
           <ion-button fill="clear" shape="round" @click="$router.back()">
-            <ion-icon name="arrow-back"></ion-icon>
+            <ion-icon name="arrow-back" color="dark"></ion-icon>
           </ion-button>
         </ion-buttons>
         <ion-title>
@@ -15,7 +15,7 @@
         </ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="flex flex-col justify-between">
+    <ion-content class="flex flex-col justify-between pb-safe">
       <ion-list class="list-large-items">
         <ion-item button @click="changeEmail">
           <ion-icon slot="start" :src="require('ionicons5/dist/svg/mail-outline.svg')"

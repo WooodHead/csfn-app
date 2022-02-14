@@ -11,7 +11,7 @@ export default {
     'racoon': 'Racoon',
     'racoon-subtitle': 'Keep exploring',
     'racoon-description': 'Raccoons often live on tree holes. Their most important sense is the sense of touch. The have hyper sensitive front paws of 5 digits with no webbing between them, which is pretty unusual for a carnivoran. In the wild, raccoons often dabble for underwater food near the shore-line. They often pick up food with their front paws to examine it and rub the item to remove unwanted parts.',
-    'meerkat': 'Merkaat',
+    'meerkat': 'Meerkat',
     'meerkat-subtitle': 'Unity makes strength',
     'meerkat-description': 'The meerkat is a eusocial mammal animal, forming packs of two to 30 individuals in form of multiple family units of pairs. Members of a pack take turns at looking after pups and keeping an eye for predators. It is really particular the way they “stand up” when they are vigilant and they always try to protect their territory as a group.',
     'beaver': 'Beaver',
@@ -21,5 +21,26 @@ export default {
     'explorer-subtitle': 'The adventure begins',
     'explorer-description': 'Your cleanup journey is about to start, feel the power of making a change and explore the CSFN levels of endangered animals. Upload your 1st cleanup, reach the goal and discover one animal at a time. Together we can make a better World for us all.'
   },
-  es: {}
+  es: {
+    'level-cleanups': 'Cleanup | Cleanups',
+    'levels': 'Niveles',
+    'goat': 'Cabra',
+    'goat-subtitle': 'La cabra tira al monte',
+    'goat-description': 'Las cabras son curiosas por naturaleza. También son ágiles y bien conocidas por su habilidad para escalar y mantener el equilibrio en montańas empinadas. Esto las convierte en los únicos rumiantes capaces de trepar por los árboles. Pero no seas como una cabra, si te inicias en las limpiezas, hazlo con precaución, usa guantes y evita poner en riesgo tu salud :)',
+    'sloth': 'Oso perezoso',
+    'sloth-subtitle': 'Despacio pero seguro',
+    'sloth-description': 'Los osos perezosos viven naturalmente en selvas húmedas. Caminan lentamente y aunque parecen torpes, son excelentes escaladores. Tambíen tienen un rango vocal que reproduce más de 25 sonidos. También son buenos nadadores y cuando entran al agua suelen hacerlo para jugar. Hacen sus camas de día con ramas de árboles y descansan en cuevas durante las temporadas de lluvia.',
+    'racoon': 'Mapache',
+    'racoon-subtitle': 'Sigue explorando',
+    'racoon-description': 'Los mapaches viven en los huecos de los árboles. Su sentido más desarrollado es el del tacto. Tienen unas patas delanteras hipersensibles de 5 dedos, lo cual es bastante inusual para un animal carnívoro. Suelen buscar alimento cerca de los ríos pero comen prácticamente de todo; desde ranas hasta frutos. A menudo recogen la comida con sus patas delanteras para examinarla y lavarla antes de comer.',
+    'meerkat': 'Suricata',
+    'meerkat-subtitle': 'La unión hace la fuerza',
+    'meerkat-description': 'El suricato es un mamífero escavador procedente del desierto de Kalahari (África). Forma manadas de 2 a 30 individuos y vive en múltiples unidades familiares de pareja. Los miembros de una manada se turnan entre ellos para cuidar a sus cachorros y vigilar a los depredadores. Su forma de ponerse de pie al estar vigilantes es muy particular y siempre tratan de proteger su territorio en grupo.',
+    'beaver': 'Castor',
+    'beaver-subtitle': 'Go with the flow',
+    'beaver-description': 'Los castores son grandes roedores semiacuáticos capaces de construir grandes presas y refugios utilizando ramas de árboles, vegetación, rocas y lodo. Es impresionante cómo pueden masticar árboles para obtener material. Con sus construcciones en los ríos, crean humedales y los convierten en zonas habitables para muchas otras especies. Son considerados una especie clave para el Planeta.',
+    'explorer': 'Explorador',
+    'explorer-subtitle': 'Comienza la aventura',
+    'explorer-description': 'Tu viaje con la basuraleza está a punto de comenzar, siente el poder de tomar acción y cambiar tu entorno. Aquí podras explorar los diferentes niveles descubriendo nuevos animales en peligro de extinción. Sube tu primera limpieza, alcanza tu meta y pasa de nivel. Juntos haremos un mundo mejor, para tí, para tus vecinos, para todos.'
+  }
 }

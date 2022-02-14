@@ -6,7 +6,8 @@ export default {
     'total-volume': 'Liters collected',
     'last-months': 'Last months',
     'top-users': 'Top users',
-    'world-map': 'Global impact'
+    'world-map': 'Global impact',
+    'countries': 'Countries'
   },
   es: {
     'community': 'Comunidad',
@@ -15,6 +16,7 @@ export default {
     'total-weight': 'Litros recogidos',
     'last-months': 'Últimos meses',
     'top-users': 'Top usuarios',
-    'world-map': 'Impacto global'
+    'world-map': 'Impacto global',
+    'countries': 'Países'
   }
 }

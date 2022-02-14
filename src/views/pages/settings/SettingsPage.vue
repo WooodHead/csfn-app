@@ -4,7 +4,7 @@
       <ion-toolbar mode="ios">
         <ion-buttons slot="start">
           <ion-button fill="clear" shape="round" @click="$router.back()">
-            <ion-icon name="arrow-back"></ion-icon>
+            <ion-icon name="arrow-back" color="dark"></ion-icon>
           </ion-button>
         </ion-buttons>
         <ion-title>{{ $t('settings') }}</ion-title>

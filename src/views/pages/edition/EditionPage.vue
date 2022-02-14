@@ -76,7 +76,7 @@
                       icon="calendar"
                       @focus="resetError('date') || $refs.date.open()">
             <ion-label class="fix-label" position="floating">{{ $t('date') }}</ion-label>
-            <ion-datetime ref="date" v-model="activity.date"
+            <ion-datetime ref="date" v-model="activity.date" :max="today"
                           :readonly="true" :value="activity.date" display-format="DD/MM/YYYY"
                           picker-format="DD MMMM YYYY"
                           @ionChange="change('date', new Date($event.target.value))"></ion-datetime>
@@ -118,7 +118,7 @@
       </form>
     </ion-content>
     <div class="shadow-sm fixed bottom-0 w-full border-t">
-      <ion-toolbar class="px-2">
+      <ion-toolbar class="px-2 pb-safe ios:pt-2">
         <ion-button class="sm:w-2/3 lg:w-1/2 m-auto" color="primary" fill="solid" shape="round" size="block"
                     @click="activity.id ? update() : publish()">
           {{ $t(activity && activity.id ? 'save' : 'publish') }}
@@ -200,6 +200,10 @@ export default class EditionPage extends Vue {
 
   get address() {
     return locationModule.getAddress
+  }
+
+  get today() {
+    return new Date().toISOString().split('T')[0]
   }
 
   get nextYear() {
@@ -342,7 +346,7 @@ export default class EditionPage extends Vue {
         placesProvider.getAddress(data.selectedCoords)
           .then((address) => {
             this.$set(this.activity, 'location', new Location(address, data.selectedCoords))
-            this.$set(this.activity, 'radius', data.radius)
+            //this.$set(this.activity, 'radius', data.radius)
           })
       }
     })

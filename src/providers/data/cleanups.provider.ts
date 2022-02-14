@@ -10,7 +10,7 @@ export class CleanupsProvider extends DataProvider {
   }
 
   publish(cleanup: Cleanup): Promise<Cleanup> {
-    return this.http.post('/', cleanup)
+    return this.http.post('/', { ...cleanup, date: cleanup.date.toISOString() })
       .then(({ data }) => data)
       .catch(() => Promise.reject(new UnknownError('publish-the-cleanup')))
   }

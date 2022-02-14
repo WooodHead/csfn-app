@@ -50,19 +50,22 @@
 
                 <span class="mt-2 font-bold text-2xl">{{ $t(level.name) }}</span>
                 <div class="flex mt-1 ">
-                  <ion-chip class="border text-xs" outline :color="cleanupsDone ? 'secondary' : 'dark'" v-if="level.threshold.cleanups">
+                  <ion-chip class="border text-xs" outline :color="cleanupsDone ? 'secondary' : 'dark'"
+                            v-if="level.threshold.cleanups">
                     <ion-icon
                       :src="require(`ionicons5/dist/svg/${cleanupsDone ? 'checkmark-outline': 'trash-outline'}.svg`)"
                       class="ml-0 mr-2 text-sm hidden sm:block"/>
                     {{ level.threshold.cleanups }} {{ $tc('level-cleanups', level.threshold.cleanups) }}
                   </ion-chip>
-                  <ion-chip class="border text-xs" outline :color="litersDone ? 'secondary' : 'dark'" v-if="level.threshold.liters">
+                  <ion-chip class="border text-xs" outline :color="litersDone ? 'secondary' : 'dark'"
+                            v-if="level.threshold.liters">
                     <ion-icon
                       :src="require(litersDone ? 'ionicons5/dist/svg/checkmark-outline.svg': '@/assets/img/icons/bag-outline.svg')"
                       class="ml-0 mr-2 text-sm hidden sm:block"/>
                     {{ level.threshold.liters }} {{ $t('liters') }}
                   </ion-chip>
-                  <ion-chip class="border text-xs" outline :color="kilosDone ? 'secondary' : 'dark'" v-if="level.threshold.kilos">
+                  <ion-chip class="border text-xs" outline :color="kilosDone ? 'secondary' : 'dark'"
+                            v-if="level.threshold.kilos">
                     <ion-icon
                       :src="require(kilosDone ? 'ionicons5/dist/svg/checkmark-outline.svg': '@/assets/img/icons/scale-outline.svg')"
                       class="ml-0 mr-2 text-sm hidden sm:block"/>
@@ -95,14 +98,14 @@ import User from '@/types/User'
 })
 export default class LevelsPage extends Vue {
 
-  index = 0
+  index = -1
 
   get levels() {
     return levels
   }
 
   get level() {
-    return this.levels[this.index]
+    return this.index != -1 ? this.levels[this.index] : null
   }
 
   get previousLevel() {
@@ -118,7 +121,8 @@ export default class LevelsPage extends Vue {
   }
 
   get levelPercent(): number {
-    if (this.level.index > this.userLevel.index) {
+    console.log(this.level, this.userLevel)
+    if (!this.level || this.level.index > this.userLevel.index) {
       return 0
     } else if (this.level.index < this.userLevel.index) {
       return 100
@@ -132,15 +136,15 @@ export default class LevelsPage extends Vue {
   }
 
   get cleanupsDone(): boolean {
-    return this.user.totalCleanups >= this.level.threshold.cleanups
+    return this.level && this.user.totalCleanups >= this.level.threshold.cleanups
   }
 
   get litersDone() {
-    return this.user.totalVolume >= this.level.threshold.liters
+    return this.level && this.user.totalVolume >= this.level.threshold.liters
   }
 
   get kilosDone() {
-    return this.user.totalWeight >= this.level.threshold.kilos
+    return this.level && this.user.totalWeight >= this.level.threshold.kilos
   }
 
   mounted() {

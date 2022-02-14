@@ -18,7 +18,7 @@
         </div>
 
         <div class="inline-block mt-6">
-          <div class="flex ion-activatable relative text-left bg-light p-2 pr-4 rounded-full overflow-hidden"
+          <button class="flex ion-activatable ripple-parent bg-light p-2 pr-4 rounded-full"
                @click="$router.push('/levels')">
             <div class="w-12 mr-2 float-left">
               <img :src="userLevel.icon"/>
@@ -28,7 +28,7 @@
               <p class="text-xs opacity-75 font-medium">{{ $t(userLevel.name + '-subtitle') }}</p>
             </div>
             <ion-ripple-effect/>
-          </div>
+          </button>
         </div>
 
         <div class="lg:px-24">
@@ -62,7 +62,7 @@
           </ion-card>
           <ion-card v-else>
             <div class="p-4">
-              <p class="font-bold text-lg text-gray-800">You have no cleanups</p>
+              <p class="font-bold text-lg text-gray-800">{{$t('user-no-cleanups')}}</p>
               <p class="text-base mb-4">{{ $t('no-cleanups') }}</p>
               <ion-button shape="round" size="block" @click="$router.push('/edit-cleanup')">
                 {{ $t('publish-cleanup') }}
@@ -70,7 +70,7 @@
             </div>
           </ion-card>
 
-          <ion-list class="mt-5 pt-0 mb-20 list-large-items" lines="inset">
+          <ion-list class="mt-5 pt-0 mb-20 ios:mb-32 list-large-items" lines="inset">
             <ion-item button detail="true" @click="$router.push('/current-user-cleanups')">
               <ion-icon slot="start" :src="require('ionicons5/dist/svg/trash-outline.svg')"/>
               <ion-label class="my-4">{{ $t('cleanups') }}</ion-label>
@@ -84,8 +84,7 @@
               <ion-label class="my-4">{{ $t('events') }}</ion-label>
             </ion-item>
             <ion-item button detail="true" @click="$router.push('/settings')">
-              <ion-icon slot="start" :src="require('ionicons5/dist/svg/settings-outline.svg')"
-                        color="dark"></ion-icon>
+              <ion-icon slot="start" :src="require('ionicons5/dist/svg/settings-outline.svg')"></ion-icon>
               <ion-label class="my-4">{{ $t('settings') }}</ion-label>
             </ion-item>
           </ion-list>
@@ -175,8 +174,14 @@ export default class CurrentUserPage extends Vue {
   }
 }
 </script>
-<style>
+<style lang="scss">
 .user-content > div:first-child {
   margin-top: calc(14px + var(--ion-safe-area-top));
+}
+
+.ios {
+  .user-content > div:first-child {
+    margin-top: var(--ion-safe-area-top);
+  }
 }
 </style>

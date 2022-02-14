@@ -6,7 +6,7 @@ import { store } from '@/store'
 import { router } from '@/router'
 import { i18n } from '@/i18n'
 import { registerWebPlugin } from '@capacitor/core'
-import { FacebookLogin } from '@capacitor-community/facebook-login'
+//import { FacebookLogin } from '@capacitor-community/facebook-login'
 import '@codetrix-studio/capacitor-google-auth'
 import '@capacitor-community/firebase-analytics'
 import { defineCustomElements } from '@ionic/pwa-elements/loader'
@@ -18,7 +18,7 @@ import language from '@/tools/language'
 Vue.config.productionTip = false
 Vue.config.ignoredElements = [/^ion-/]
 
-registerWebPlugin(FacebookLogin)
+//registerWebPlugin(FacebookLogin)
 
 Vue.use(Ionic)
 

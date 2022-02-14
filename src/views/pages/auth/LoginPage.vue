@@ -27,10 +27,12 @@
                        :text="$t('continue-with', {'param': 'Google'})"
                        class="google-button text-left" color="white"
                        @click="googleLogin"></button-item>
+          <!--
           <button-item :iconSrc="require('@/assets/img/icons/facebook-icon.svg')"
                        :text="$t('continue-with', {'param': 'Facebook'})"
                        color="facebook"
                        @click="facebookLogin"></button-item>
+           -->
         </form>
         <ion-footer>
           <ion-toolbar class="flex justify-between transparent-footer z-10">
@@ -67,7 +69,7 @@ import { nativeProvider } from '@/providers/native/native.provider'
 import User from '@/types/User'
 import { Plugins } from '@capacitor/core'
 import { appModule } from '@/store/appModule'
-import { FacebookLoginResponse } from '@capacitor-community/facebook-login'
+//import { FacebookLoginResponse } from '@capacitor-community/facebook-login'
 import { locationModule } from '@/store/locationModule'
 import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics'
 
@@ -118,6 +120,7 @@ export default class LoginPage extends Vue {
       })
   }
 
+  /*
   facebookLogin() {
     FacebookLogin.login({ permissions: ['email'] })
       .then((result: FacebookLoginResponse) =>
@@ -140,7 +143,7 @@ export default class LoginPage extends Vue {
         }
       })
   }
-
+   */
   googleLogin() {
     GoogleAuth.signIn()
       .then((result) =>
