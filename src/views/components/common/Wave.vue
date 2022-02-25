@@ -1,5 +1,5 @@
 <template>
-  <div class="wave mb-10 sm:mb-4 md:mb-0 lg:-mb-10">
+  <div class="wave mb-10 sm:mb-4 md:-mb-4">
     <img :src="require('@/assets/img/wave-0' + num + '.svg')" style="width: 100%">
   </div>
 </template>

@@ -32,7 +32,7 @@
                     class="w-full h-full" @ionSlideWillChange="slided">
           <ion-slide v-for="(level, i) of levels" :key="level.name" class="overflow-hidden"
                      :class="{gray: level.index > userLevel.index }">
-            <div class="absolute top-0">
+            <div class="absolute top-0 w-full">
               <img :class="level.backgroundClass"
                    :src="level.background"
                    class="w-full object-cover"
