@@ -14,7 +14,7 @@
           <avatar :src="(user && user.picture && user.picture.publicUrl) || '/img/user-placeholder.png'"
                   class="w-32 lg:w-40"></avatar>
           <ion-skeleton-text v-if="!user" class="w-32"></ion-skeleton-text>
-          <ion-label v-else class="font-bold text-xl -ml-1">{{ user.username }}</ion-label>
+          <ion-label v-else class="font-bold text-xl -ml-1 pt-2">{{ user.username }}</ion-label>
         </div>
 
         <div class="inline-block mt-6">

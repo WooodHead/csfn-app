@@ -39,6 +39,7 @@
   </ion-page>
 </template>
 <script lang="ts">
+import {Keyboard, KeyboardInfo} from '@capacitor/keyboard'
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
 import ButtonItem from '@/views/components/common/ButtonItem.vue'
@@ -60,9 +61,6 @@ import Cropper from '@/tools/Cropper'
 import Validator from '@/tools/Validator'
 import { CREATE } from '@/types/ValidationGroups'
 import { appModule } from '@/store/appModule'
-import { KeyboardInfo, Plugins } from '@capacitor/core'
-
-const { Keyboard } = Plugins
 
 @Component({
   name: 'register',

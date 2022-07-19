@@ -4,11 +4,11 @@
   </div>
 </template>
 <script lang=ts>
+import {Style} from '@capacitor/status-bar'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { nativeProvider } from '@/providers/native/native.provider'
-import { StatusBarStyle } from '@capacitor/core'
 
 @Component({
   name: 'page-transparent-header'
@@ -25,22 +25,22 @@ export default class PageTransparentHeader extends Vue {
     this.isScrolled = event.detail.scrollTop > 0
     if (this.isScrolled !== wasScrolled && this.transparent) {
       if (this.transparent && this.isScrolled) {
-        nativeProvider.setStatusBarStyle(StatusBarStyle.Light)
+        nativeProvider.setStatusBarStyle(Style.Light)
       } else {
-        nativeProvider.setStatusBarStyle(StatusBarStyle.Dark)
+        nativeProvider.setStatusBarStyle(Style.Dark)
       }
     }
   }
 
   mounted() {
     if (this.transparent) {
-      nativeProvider.setStatusBarStyle(StatusBarStyle.Dark)
+      nativeProvider.setStatusBarStyle(Style.Dark)
     }
   }
 
   beforeDestroy() {
     if (this.transparent) {
-      nativeProvider.setStatusBarStyle(StatusBarStyle.Light)
+      nativeProvider.setStatusBarStyle(Style.Light)
     }
   }
 }

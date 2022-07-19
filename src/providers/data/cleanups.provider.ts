@@ -18,11 +18,13 @@ export class CleanupsProvider extends DataProvider {
   update(id: number,
          cleanup: Cleanup): Promise<void> {
     return this.http.patch('/' + id, cleanup)
+      .then(() => undefined)
       .catch(() => Promise.reject(new UnknownError('update-the-cleanup')))
   }
 
   remove(id: number): Promise<void> {
     return this.http.delete('/' + id)
+      .then(() => undefined)
       .catch(() => Promise.reject(new UnknownError('remove-the-cleanup')))
   }
 

@@ -34,11 +34,11 @@
   </div>
 </template>
 <script lang="ts">
+import {Style} from '@capacitor/status-bar'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop, Ref } from 'vue-property-decorator'
 import { nativeProvider } from '@/providers/native/native.provider'
-import { StatusBarStyle } from '@capacitor/core'
 
 @Component({
   name: 'image-preview'
@@ -56,7 +56,7 @@ export default class PicturesModal extends Vue {
   @Ref('slider')
   public readonly slider: any
 
-  prevBarStyle: StatusBarStyle
+  prevBarStyle: Style
 
   pictureUrl(picture: any) {
     return picture instanceof Blob ? URL.createObjectURL(picture) : picture.publicUrl || picture
@@ -64,7 +64,7 @@ export default class PicturesModal extends Vue {
 
   mounted() {
     this.prevBarStyle = nativeProvider.getStatusBarStyle()
-    nativeProvider.setStatusBarStyle(StatusBarStyle.Dark)
+    nativeProvider.setStatusBarStyle(Style.Dark)
     if (this.pictures.length > 1) {
       setTimeout(() => {
         this.slider.update()

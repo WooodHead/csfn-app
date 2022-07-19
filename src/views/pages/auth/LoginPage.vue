@@ -8,7 +8,7 @@
           <img alt="icon" class="z-10 hidden sm:block" src="@/assets/img/icon.png" width="35%">
           <img alt="title" class="z-10 hidden sm:block" src="@/assets/img/text_white.png" width="95%">
           <div></div>
-
+          
           <input-item v-model="userLogin.email" :errors="fieldErrors.email" :placeholder="$t('email')"
                       :rounded="true"
                       icon="mail"
@@ -27,6 +27,12 @@
                        :text="$t('continue-with', {'param': 'Google'})"
                        class="google-button text-left" color="white"
                        @click="googleLogin"></button-item>
+          
+          <button-item :iconSrc="require('@/assets/img/icons/apple-icon.svg')"
+                       :text="$t('continue-with', {'param': 'Apple'})"
+                       class="text-left" color="black" v-if="isIOS"
+                       @click="appleLogin"></button-item>
+          
           <div class="mb-10"/>
           <!--
           <button-item :iconSrc="require('@/assets/img/icons/facebook-icon.svg')"
@@ -56,49 +62,57 @@
   </ion-page>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import InputItem from '@/views/components/common/InputItem.vue'
-import ButtonItem from '@/views/components/common/ButtonItem.vue'
-import ForestBg from '@/views/components/common/ForestBg.vue'
-import { authModule } from '@/store/authModule'
-import UnknownError from '@/types/errors/UnknownError'
+import {nativeProvider} from '@/providers/native/native.provider'
+import {appModule} from '@/store/appModule'
+import {authModule} from '@/store/authModule'
+//import { FacebookLoginResponse } from '@capacitor-community/facebook-login'
+import {locationModule} from '@/store/locationModule'
 import ErrorMessage from '@/tools/ErrorMessage'
 import ToastPresenter from '@/tools/ToastPresenter'
 import FormError from '@/types/errors/FormError'
-import { nativeProvider } from '@/providers/native/native.provider'
+import UnknownError from '@/types/errors/UnknownError'
 import User from '@/types/User'
-import { Plugins } from '@capacitor/core'
-import { appModule } from '@/store/appModule'
-//import { FacebookLoginResponse } from '@capacitor-community/facebook-login'
-import { locationModule } from '@/store/locationModule'
-import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics'
-
-const { FacebookLogin, GoogleAuth } = Plugins
+import ButtonItem from '@/views/components/common/ButtonItem.vue'
+import ForestBg from '@/views/components/common/ForestBg.vue'
+import InputItem from '@/views/components/common/InputItem.vue'
+import {SignInWithApple} from '@capacitor-community/apple-sign-in'
+import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
+import {Device} from '@capacitor/device'
+import {GoogleAuth} from '@codetrix-studio/capacitor-google-auth'
+import Vue from 'vue'
+import Component from 'vue-class-component'
 
 @Component({
   name: 'login',
-  components: { ForestBg, ButtonItem, InputItem }
+  components: {ForestBg, ButtonItem, InputItem}
 })
 export default class LoginPage extends Vue {
-
+  
   loaded = false
   userLogin = new User()
   fieldErrors = {}
   typing = false
   loading = false
-
+  isIOS = false
+  
   get userCountry() {
     return locationModule.getAddress.countryCode
   }
-
+  
+  created() {
+    Device.getInfo()
+      .then((info) => {
+        this.isIOS = info.platform === 'ios'
+      })
+  }
+  
   mounted(): void {
     if (!this.loaded) {
       nativeProvider.hideSplashScreen()
       this.loaded = true
     }
   }
-
+  
   credentialsLogin() {
     this.loading = true
     appModule.showLoader(this.$ionic)
@@ -120,7 +134,7 @@ export default class LoginPage extends Vue {
         this.loading = false
       })
   }
-
+  
   /*
   facebookLogin() {
     FacebookLogin.login({ permissions: ['email'] })
@@ -153,29 +167,58 @@ export default class LoginPage extends Vue {
       .then((user) => {
         appModule.hideLoader()
         if ((user as any).isNew) {
-          FirebaseAnalytics.logEvent({ name: 'sign_up', params: { method: 'google' } })
+          FirebaseAnalytics.logEvent({name: 'sign_up', params: {method: 'google'}})
           this.$router.push('/welcome')
         } else {
-          FirebaseAnalytics.logEvent({ name: 'login', params: { method: 'google' } })
+          FirebaseAnalytics.logEvent({name: 'login', params: {method: 'google'}})
           this.$router.push('/home')
         }
       })
       .catch((err) => {
         if (!err || (err.message && !err.message.includes('user canceled'))) {
           appModule.hideLoader()
-          ToastPresenter.present(this.$ionic, this.$t('errors.unknown-error', { param: this.$t('login-with', { param: 'Google' }).toString().toLowerCase() }))
+          ToastPresenter.present(this.$ionic, this.$t('errors.unknown-error', {param: this.$t('login-with', {param: 'Google'}).toString().toLowerCase()}))
         }
       })
   }
-
+  
+  appleLogin() {
+    SignInWithApple.authorize({
+      clientId: 'com.cleansomething.app',
+      scopes: 'email',
+      redirectURI: ''
+    }).then((res) => {
+      if (res?.response?.identityToken) {
+        return appModule.showLoader(this.$ionic)
+          .then(() => authModule.doAppleLogin(res.response.identityToken))
+      } else {
+        return Promise.reject(null)
+      }
+    }).then((user) => {
+      appModule.hideLoader()
+      if ((user as any).isNew) {
+        FirebaseAnalytics.logEvent({name: 'sign_up', params: {method: 'apple'}})
+        this.$router.push('/welcome')
+      } else {
+        FirebaseAnalytics.logEvent({name: 'login', params: {method: 'apple'}})
+        this.$router.push('/home')
+      }
+    }).catch((err) => {
+      if (!err.message.endsWith('1001.)')) {
+        appModule.hideLoader()
+        ToastPresenter.present(this.$ionic, this.$t('errors.unknown-error', {param: this.$t('login-with', {param: 'Apple'}).toString().toLowerCase()}))
+      }
+    })
+  }
+  
   resetError(field) {
     this.$set(this.fieldErrors, field, undefined)
   }
-
+  
   focus() {
     this.typing = true
   }
-
+  
   blur() {
     this.typing = false
   }

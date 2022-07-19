@@ -1,4 +1,3 @@
-import {UserLevel} from '@/types/UserLevel'
 <template>
   <ion-page class="ion-page">
     <transparent-header :scrolled="scrolled">

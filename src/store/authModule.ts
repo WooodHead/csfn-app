@@ -1,16 +1,16 @@
-import User from '@/types/User'
-import { Action, Module, Mutation, VuexModule } from 'vuex-class-modules'
-import { store } from '@/store/index'
-import { userModule } from '@/store/userModule'
+import {authProvider} from '@/providers/data/auth.provider'
+import {imagesProvider} from '@/providers/data/images.provider'
+import {passwordResetProvider} from '@/providers/data/password-reset.provider'
+import {userProvider} from '@/providers/data/user.provider'
+import {nativeProvider} from '@/providers/native/native.provider'
+import {store} from '@/store/index'
+import {locationModule} from '@/store/locationModule'
+import {userModule} from '@/store/userModule'
 import Validator from '@/tools/Validator'
-import { authProvider } from '@/providers/data/auth.provider'
-import { userProvider } from '@/providers/data/user.provider'
-import { imagesProvider } from '@/providers/data/images.provider'
-import { LOGIN, RESET_PASSWORD, UPDATE_EMAIL, UPDATE_PASSWORD } from '@/types/ValidationGroups'
-import { passwordResetProvider } from '@/providers/data/password-reset.provider'
-import { nativeProvider } from '@/providers/native/native.provider'
-import { locationModule } from '@/store/locationModule'
-import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics'
+import User from '@/types/User'
+import {LOGIN, RESET_PASSWORD, UPDATE_EMAIL, UPDATE_PASSWORD} from '@/types/ValidationGroups'
+import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
+import {Action, Module, Mutation, VuexModule} from 'vuex-class-modules'
 
 const SESSION = 'CSFN_SESSION'
 
@@ -20,7 +20,7 @@ class AuthModule extends VuexModule {
   logged = false
 
   constructor() {
-    super({ store, name: 'auth' })
+    super({store, name: 'auth'})
   }
 
   get isLogged() {
@@ -52,19 +52,19 @@ class AuthModule extends VuexModule {
     return locationModule.getLocationByIp()
       .then((location) => authProvider.doRegister(location.address.countryCode, user))
       .then((registered) => imagesProvider.uploadImages([user.picture as File], 'register')
-        .then((images) => userProvider.updateUser(registered.id, { picture: { id: images[0].id } })))
+        .then((images) => userProvider.updateUser(registered.id, {picture: {id: images[0].id}})))
       .then((logged) => {
-        FirebaseAnalytics.logEvent({ name: 'sign_up', params: { method: 'credentials' } })
+        FirebaseAnalytics.logEvent({name: 'sign_up', params: {method: 'credentials'}})
         return this.loggedIn(logged)
       })
   }
 
   @Action
   doCredentialsLogin(userLogin: User): Promise<User> {
-    return Validator.validate(userLogin, { groups: [LOGIN] })
+    return Validator.validate(userLogin, {groups: [LOGIN]})
       .then(() => authProvider.doLogin(userLogin))
       .then((user) => {
-        FirebaseAnalytics.logEvent({ name: 'login', params: { method: 'credentials' } })
+        FirebaseAnalytics.logEvent({name: 'login', params: {method: 'credentials'}})
         return this.loggedIn(user)
       })
   }
@@ -83,39 +83,45 @@ class AuthModule extends VuexModule {
       .then((user) => this.loggedIn(user))
   }
 
+  @Action
+  doAppleLogin(token: string): Promise<User> {
+    return locationModule.getLocationByIp()
+      .then((location) => authProvider.doAppleLogin(location.address.countryCode, token))
+      .then((user) => this.loggedIn(user))
+  }
 
   @Action
   changeEmail(change: User) {
-    return Validator.validate(change, { groups: [UPDATE_EMAIL] })
+    return Validator.validate(change, {groups: [UPDATE_EMAIL]})
       .then(() => authProvider.changeEmail({
         currentEmail: userModule.getCurrentUser.email,
         currentPassword: change.password,
         newEmail: change.email
       }))
       .then(user => {
-        FirebaseAnalytics.logEvent({ name: 'update_email', params: {} })
+        FirebaseAnalytics.logEvent({name: 'update_email', params: {}})
         userModule.setCurrentUser(user)
       })
   }
 
   @Action
-  changePassword({ currentPassword, newPassword }: { currentPassword: string, newPassword: string }) {
-    return Validator.validate({ password: newPassword } as User, { groups: [UPDATE_PASSWORD] })
+  changePassword({currentPassword, newPassword}: { currentPassword: string, newPassword: string }) {
+    return Validator.validate({password: newPassword} as User, {groups: [UPDATE_PASSWORD]})
       .then(() => authProvider.changePassword({
         currentEmail: userModule.getCurrentUser.email,
         currentPassword, newPassword
       }))
       .then(user => {
-        FirebaseAnalytics.logEvent({ name: 'update_password', params: {} })
+        FirebaseAnalytics.logEvent({name: 'update_password', params: {}})
         userModule.setCurrentUser(user)
       })
   }
 
   @Action
   doPasswordReset(reset: User): Promise<void> {
-    return Validator.validate(reset, { groups: [RESET_PASSWORD] })
+    return Validator.validate(reset, {groups: [RESET_PASSWORD]})
       .then(() => {
-        FirebaseAnalytics.logEvent({ name: 'reset_password', params: {} })
+        FirebaseAnalytics.logEvent({name: 'reset_password', params: {}})
         return passwordResetProvider.request(reset.email)
       })
   }
@@ -124,7 +130,7 @@ class AuthModule extends VuexModule {
   doLogout(): Promise<void> {
     return authProvider.doLogout()
       .then(() => {
-        FirebaseAnalytics.logEvent({ name: 'logout', params: {} })
+        FirebaseAnalytics.logEvent({name: 'logout', params: {}})
         this.loggedOut()
       })
   }
@@ -146,9 +152,9 @@ class AuthModule extends VuexModule {
 
   @Action
   deleteAccount(password: string) {
-    return authProvider.deleteAccount({ email: userModule.getCurrentUser.email, password })
+    return authProvider.deleteAccount({email: userModule.getCurrentUser.email, password})
       .then(() => {
-        FirebaseAnalytics.logEvent({ name: 'delete_account', params: {} })
+        FirebaseAnalytics.logEvent({name: 'delete_account', params: {}})
         this.loggedOut()
       })
   }

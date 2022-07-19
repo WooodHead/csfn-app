@@ -15,7 +15,8 @@ export default {
       'invalid-email': 'Please enter a valid email',
       'min-length-4': 'Must be at least 4 characters',
       'password-confirmation-error': 'The passwords doesn\'t match',
-      'unknown-error': 'It was impossible to {param}, please try again later'
+      'unknown-error': 'It was impossible to {param}, please try again later',
+      'no-photos-permission': 'Please allow the app to access your photos when asked'
     }
   },
   es: {
@@ -36,6 +37,7 @@ export default {
       'min-length-4': 'Debe tener al menos 4 caracteres',
       'password-confirmation-error': 'Las contraseñas no coinciden',
       'unknown-error': 'No ha sido posible {param}, por favor inténtalo de nuevo más tarde',
+      'no-photos-permission': 'Por favor permite a la app acceder a tus fotos cuando se pida'
     }
   }
 }

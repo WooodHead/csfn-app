@@ -1,7 +1,6 @@
 import '@capacitor-community/http'
+import {Http} from '@capacitor-community/http'
 import axios from 'axios'
-
-import { Plugins } from '@capacitor/core'
 
 import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics'
 
@@ -56,8 +55,6 @@ export default class HttpTool {
   }
 
   private request({ path, method, data, headers }: { path: string, method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', data?: any, headers?: Record<string, string> }) {
-    const { Http } = Plugins
-
     return Http.request({
       method,
       url: process.env.VUE_APP_BACK_URL + this.baseUrl + path,

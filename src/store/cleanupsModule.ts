@@ -1,3 +1,4 @@
+import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
 import { Action, Module, Mutation, VuexModule } from 'vuex-class-modules'
 import Cleanup from '@/types/Cleanup'
 import { cleanupsProvider } from '@/providers/data/cleanups.provider'
@@ -5,10 +6,7 @@ import { store } from '@/store/index'
 import Vue from 'vue'
 import { locationModule } from '@/store/locationModule'
 import { imagesProvider } from '@/providers/data/images.provider'
-import { Plugins } from '@capacitor/core'
 import { calculateDistance } from '@/tools/Utils'
-
-const { FirebaseAnalytics } = Plugins
 
 @Module
 class CleanupsModule extends VuexModule {

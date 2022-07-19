@@ -1,12 +1,12 @@
-import {Plugins, StatusBarStyle} from '@capacitor/core';
-
-const {App, SplashScreen, StatusBar, Device} = Plugins;
+import {Device} from '@capacitor/device'
+import {SplashScreen} from '@capacitor/splash-screen'
+import {StatusBar, Style} from '@capacitor/status-bar'
 
 class NativeProvider {
 
     mobile: boolean
     ios: boolean
-    statusBarStyle: StatusBarStyle
+    statusBarStyle: Style
     hidden = false
 
     isMobile(): Promise<boolean> {
@@ -30,9 +30,8 @@ class NativeProvider {
             this.isMobile()
                 .then((isMobile) => {
                     if (isMobile) {
-                        window.screen.orientation.lock('portrait');
-                        StatusBar.setStyle({style: StatusBarStyle.Light})
-                        StatusBar.setOverlaysWebView({overlay: true})
+                        StatusBar.setStyle({style: Style.Light})
+                        StatusBar.setOverlaysWebView({overlay: true}).catch(() => undefined)
                         SplashScreen.hide()
                         this.hidden = true
                     }
@@ -40,7 +39,7 @@ class NativeProvider {
         }
     }
 
-    setStatusBarStyle(style: StatusBarStyle) {
+    setStatusBarStyle(style: Style) {
         this.statusBarStyle = style
         StatusBar.setStyle({style})
     }

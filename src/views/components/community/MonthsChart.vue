@@ -24,7 +24,7 @@
 import Component from 'vue-class-component'
 import Vue from 'vue'
 import { Prop, Ref, Watch } from 'vue-property-decorator'
-import MonthStats from '@/types/MonthStats'
+import type MonthStats from '@/types/MonthStats'
 import moment from 'moment'
 import MonthBar from '@/views/components/common/MonthBar.vue'
 import { Measure } from '@/types/Measure'

@@ -41,14 +41,11 @@
   </ion-page>
 </template>
 <script lang=ts>
+import {App} from '@capacitor/app'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { authModule } from '@/store/authModule'
 import { appModule } from '@/store/appModule'
-import { Plugins } from '@capacitor/core'
-import { Deploy } from 'cordova-plugin-ionic'
-
-const { Device } = Plugins
 
 @Component({
   name: 'SettingsPage'
@@ -61,10 +58,10 @@ export default class SettingsPage extends Vue {
   }
 
   openInfo() {
-    Promise.all([Device.getInfo(), Deploy.getCurrentVersion()])
-      .then(([info, deployVersion]) => this.$ionic.alertController.create({
+    App.getInfo()
+      .then((info) => this.$ionic.alertController.create({
         message: '<div class="text-center text-xl economica text-black mt-4">Clean Something For Nothing</div>' +
-          '<div class="text-base text-black text-center my-3">v' + info.appVersion + (deployVersion ? ' <span class="text-xs">(' + deployVersion.buildId + ')</span>' : '') + '</div>' +
+          '<div class="text-base text-black text-center my-3">v' + info.version + '</div>' +
           '<span class="text-xs">Idea by César González</span><br>' +
           '<span class="text-xs">Developed by Lester Pérez</span>',
         cssClass: 'alert-no-header'

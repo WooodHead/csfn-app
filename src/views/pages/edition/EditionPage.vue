@@ -154,9 +154,7 @@ import { userModule } from '@/store/userModule'
 import { resizePicture } from '@/tools/ImageProcessor'
 import { Prop } from 'vue-property-decorator'
 import Image from '@/types/Image'
-import { KeyboardInfo, Plugins } from '@capacitor/core'
-
-const { Keyboard } = Plugins
+import {Keyboard, KeyboardInfo} from '@capacitor/keyboard'
 
 @Component({
   name: 'edition-page',
