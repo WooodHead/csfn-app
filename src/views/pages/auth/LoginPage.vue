@@ -105,7 +105,7 @@ export default class LoginPage extends Vue {
         this.isIOS = isIOS
       })
   }
-  
+  º
   mounted(): void {
     if (!this.loaded) {
       nativeProvider.hideSplashScreen()

@@ -97,7 +97,7 @@
                                 {{ i + 1 }}
                                 </span>
                 <ion-avatar slot="start">
-                  <img v-if="user.picture" :src="user.picture.publicUrl">
+                  <img :src="(user.picture && user.picture.publicUrl) || '/img/user-placeholder.png'">
                 </ion-avatar>
                 <ion-label class="font-bold my-6 lg:my-4">{{ user.username }}</ion-label>
                 <p class="pr-2">{{ user['total' + capitalize(measure)] | localeString }} {{ units }}</p>

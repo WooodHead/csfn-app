@@ -55,7 +55,7 @@
                 <ion-chip class="-ml-1 mt-4" color="dark">
                   <!--@click="$router.push('/user/' + activity.user.username)"-->
                   <ion-avatar>
-                    <img :src="activity.user.picture.publicUrl">
+                    <img :src="activity.user.picture && activity.user.picture.publicUrl || '/img/user-placeholder.png'">
                   </ion-avatar>
                   <ion-label class="mr-2 font-bold">{{ activity.user.username }}</ion-label>
                 </ion-chip>
