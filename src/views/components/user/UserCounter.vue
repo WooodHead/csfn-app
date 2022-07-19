@@ -2,9 +2,9 @@
   <div class="flex flex-col items-center justify-center w-32 h-32">
     <div :id="`progress-${label}`" class="w-24 h-24 absolute"></div>
     <ion-icon :src="iconSrc" class="text-sm"/>
-    <div class="text-3xl -mt-1">
-      <span>{{ integer }}</span>
-      <span class="text-xs" v-if="decimal">{{ decimal }}</span>
+    <div :class="{'text-3xl -mt-1': integer < 10000, 'text-2xl -mt-1': integer > 10000 && integer < 100000, 'text-xl mb-1': integer > 100000}">
+      <span>{{ integer}}</span>
+      <span class="text-xs" v-if="decimal">{{ decimal}}</span>
     </div>
     <span class="text-xs economica -mt-2">{{ label }}</span>
   </div>

@@ -26,6 +26,7 @@ export default class NumberDisplay extends Vue {
 
   get digits() {
     return Number(this.number).toLocaleString(language(), this.decimals ? {
+      useGrouping: true,
       minimumFractionDigits: 2
     } : undefined).split('')
   }

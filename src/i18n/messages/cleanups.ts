@@ -12,7 +12,7 @@ export default {
     'cleanups': 'Cleanups',
     'cleanups-and-alerts': 'Cleanups and alerts',
     'cleanup-in': 'Cleanup in',
-    'write-description': 'Write a descrpition',
+    'write-description': 'Write a description',
     'title': 'Title',
     'description': 'Description',
     'liters': 'Liters',

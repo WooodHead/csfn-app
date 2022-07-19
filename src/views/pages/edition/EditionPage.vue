@@ -356,7 +356,7 @@ export default class EditionPage extends Vue {
       cssClass: 'liters',
       columns: [{
         name: 'bags',
-        options: range(1, 31).map(i => ({ value: i, text: `${i} ${this.$tc('bags', i)}` }))
+        options: range(1, 101).map(i => ({ value: i, text: `${i} ${this.$tc('bags', i)}` }))
       }, {
         name: 'of',
         options: [{ text: this.$t('of').toString() }]

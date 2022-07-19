@@ -26,7 +26,7 @@ Vue.filter('capitalize', function (value) {
 })
 
 Vue.filter('localeString', function (value) {
-  return Number(value).toLocaleString(language())
+  return Intl.NumberFormat(language(), {useGrouping: true}).format(value)
 })
 
 new Vue({ store, router, i18n, render: h => h(Main) })
