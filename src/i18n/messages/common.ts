@@ -17,8 +17,13 @@ export default {
     'remove': 'Remove',
     'removed': 'removed',
     'remove-header': 'Remove {0}',
-    'remove-message': '{0} is going to be removed. This action cannot be undone. ¿Are you sure to want to continue?',
+    'remove-message': '{0} is going to be removed. This action cannot be undone. Are you sure to want to continue?',
     'coming-soon': 'Coming soon!',
+    'photo-denied-access': 'The app doesn\'t have permissions to access your photos, do you want to open the settings to grant permissions?',
+    'photo-limited-access': 'The app only have access to some of your photos',
+    'photo-select-more': 'Select more',
+    'photo-keep': 'Keep selected photos',
+    'photo-select-all': 'Allow all'
   },
   es: {
     'cancel': 'Cancelar',
@@ -39,6 +44,11 @@ export default {
     'removed': 'eliminado',
     'remove-header': 'Eliminar {0}',
     'remove-message': 'Se va a elminar {0}. Esta acción no podrá ser deshecha. ¿Seguro que desea continuar?',
-    'coming-soon': 'Próximamente!'
+    'coming-soon': 'Próximamente!',
+    'photo-denied-access': 'La aplicación no tiene permiso para acceder a tus fotos, ¿quieres abrir los ajustes para asignar los permisos?',
+    'photo-limited-access': 'La aplicación solo tiene permiso para acceder algunas de tus fotos',
+    'photo-select-more': 'Seleccionar más fotos',
+    'photo-keep': 'Mantener las fotos seleccionadas',
+    'photo-select-all': 'Permitir todas'
   }
 }

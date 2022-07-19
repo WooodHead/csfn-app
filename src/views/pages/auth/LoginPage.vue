@@ -100,9 +100,9 @@ export default class LoginPage extends Vue {
   }
   
   created() {
-    Device.getInfo()
-      .then((info) => {
-        this.isIOS = info.platform === 'ios'
+    nativeProvider.isIOS()
+      .then((isIOS) => {
+        this.isIOS = isIOS
       })
   }
   

@@ -17,75 +17,89 @@
   </div>
 </template>
 <script lang="ts">
+import PhotoPermissions from '@/plugins/PhotoPermissions'
+import {nativeProvider} from '@/providers/native/native.provider'
+import {ImagePicker} from '@ionic-native/image-picker'
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Emit, Prop } from 'vue-property-decorator'
-import { nativeProvider } from '@/providers/native/native.provider'
-import { ImagePicker } from '@ionic-native/image-picker'
+import {Emit, Prop} from 'vue-property-decorator'
 
 @Component({
   name: 'upload-button'
 })
 export default class UploadButton extends Vue {
-
+  
   isMobile = false
-
+  
   @Prop(Boolean)
   rounded: boolean
-
+  
   loading = false
-
+  
   @Prop()
   file: any
-
-  @Prop({ default: 1 })
+  
+  @Prop({default: 1})
   max: number
-
+  
   @Prop(String)
   url: string
-
+  
   get fileUrl() {
     return URL.createObjectURL(this.file)
   }
-
+  
   mounted() {
     nativeProvider.isMobile()
       .then((isMobile) => this.isMobile = isMobile)
   }
-
+  
   getPicture() {
     if (this.file) {
       return
     }
     this.loading = true
-    ImagePicker.getPictures({
-      maximumImagesCount: this.max,
-      width: 1024,
-      quality: 90,
-      outputType: 1
-    })
-      .then((images: string[]) => Promise.all(images.map((image) =>
-        fetch('data:image/jpeg;base64,' + image).then((res) => res.blob())))
-      ).then((blobs: Blob[]) => {
-      this.loading = false
-      this.filesSelected(blobs)
-    })
+    
+    nativeProvider.isIOS()
+      .then()
+    PhotoPermissions.check({
+        acceptText: this.$t('accept').toString(),
+        cancelText: this.$t('cancel').toString(),
+        deniedText: this.$t('photo-denied-access').toString(),
+        limitedText: this.$t('photo-limited-access').toString(),
+        selectMoreText: this.$t('photo-select-more').toString(),
+        keepText: this.$t('photo-keep').toString(),
+        selectAllText: this.$t('photo-select-all').toString()
+      })
+      .then(({next}) => next && ImagePicker.getPictures({
+          maximumImagesCount: this.max,
+          width: 1024,
+          quality: 90,
+          outputType: 1
+        }).then((images: string[]) => Promise.all(images.map((image) =>
+          fetch('data:image/jpeg;base64,' + image).then((res) => res.blob())))
+        ).then((blobs: Blob[]) => {
+          this.filesSelected(blobs)
+        })
+      )
       .catch((err) => {
         console.log(err)
+      })
+      .finally(() => {
         this.loading = false
       })
   }
-
+  
   @Emit('select')
   filesSelected(files: Blob[]) {
     return files
   }
-
+  
   @Emit('click')
   click() {
     return
   }
-
+  
 }
 </script>
 <style>
