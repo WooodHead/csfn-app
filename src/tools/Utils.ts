@@ -1,7 +1,9 @@
 import Address from '@/types/Address'
-import CoordsBound from '@/types/CoordsBound'
 import Coords from '@/types/Coords'
+import CoordsBound from '@/types/CoordsBound'
 import distance from '@turf/distance'
+import GeocoderAddressComponent = google.maps.GeocoderAddressComponent
+import GeocoderResult = google.maps.GeocoderResult
 
 export function addressToString(address: Address) {
   return [address.city, address.state, address.country].filter(s => !!s).join(', ')
@@ -37,11 +39,36 @@ export function hasNotch() {
   if (proceed) {
     document.body.appendChild(div)
     const calculatedPadding = parseInt(window.getComputedStyle(div).paddingBottom)
-    
+
     document.body.removeChild(div)
     if (calculatedPadding > 0) {
       return true
     }
   }
   return false
+}
+
+export function geocoderToAddress(result: GeocoderResult): Address {
+  const city = findAddressComponentByType(result.address_components, 'locality')
+    || findAddressComponentByType(result.address_components, 'administrative_area_level_2')
+  const state = findAddressComponentByType(result.address_components, 'administrative_area_level_1')
+    || findAddressComponentByType(result.address_components, 'administrative_area_level_2')
+    || findAddressComponentByType(result.address_components, 'administrative_area_level_3')
+    || findAddressComponentByType(result.address_components, 'administrative_area_level_4')
+    || findAddressComponentByType(result.address_components, 'administrative_area_level_5')
+    || findAddressComponentByType(result.address_components, 'administrative_area_level_6')
+    || findAddressComponentByType(result.address_components, 'administrative_area_level_7')
+
+  const country = findAddressComponentByType(result.address_components, 'country')
+
+  return {
+    city: city.long_name,
+    state: state.long_name,
+    country: country.long_name,
+    countryCode: country.short_name
+  }
+}
+
+export function findAddressComponentByType(addressComponents: GeocoderAddressComponent[], type: string) {
+  return addressComponents.filter(({types}) => types.includes(type))[0]
 }

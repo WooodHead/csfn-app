@@ -1,8 +1,7 @@
+import {locationProvider} from '@/providers/location/location.provider'
 import Coords from '@/types/Coords'
-import { locationProvider } from '@/providers/location/location.provider'
-import { isEqual } from 'lodash'
-
-declare const google: any
+import {isEqual} from 'lodash'
+import LatLngBounds = google.maps.LatLngBounds
 
 export default class Map {
 
@@ -10,21 +9,27 @@ export default class Map {
 
   map: google.maps.Map
   zoom: number
+  bounds: LatLngBounds
   pin: string
   origin: Coords
   selected: Coords
   markers: any[] = []
   isInput: boolean
   circle: any
+  onTouch: Function
 
-  constructor({ element, origin, isInput, zoom, pin, onTouch, onReady }: { element: string, origin: Coords, isInput: boolean, zoom?: number, pin?: string, onTouch?: Function, onReady?: Function }) {
-    this.origin = origin
+  constructor({element, origin, isInput, zoom, pin, onTouch, onReady, bounds}:
+                { element: string, origin: Coords, isInput: boolean, zoom?: number, pin?: string, onTouch?: Function, onReady?: Function, bounds?: LatLngBounds }) {
+    if (!bounds) {
+      this.origin = origin
+    }
     this.selected = origin
     this.isInput = isInput
     this.zoom = zoom
     this.pin = pin
+    this.onTouch = onTouch
     this.map = new google.maps.Map(document.getElementById(element), {
-      center: origin,
+      center: !bounds ? origin : undefined,
       zoom: zoom || Map.zoom,
       disableDefaultUI: true,
       clickableIcons: false,
@@ -32,14 +37,17 @@ export default class Map {
         {
           featureType: 'poi',
           elementType: 'labels.icon',
-          stylers: [{ visibility: 'off' }],
+          stylers: [{visibility: 'off'}]
         }, {
           featureType: 'road',
           elementType: 'labels.icon',
-          stylers: [{ visibility: 'off' }],
+          stylers: [{visibility: 'off'}]
         }
       ]
     })
+    if (bounds) {
+      this.map.fitBounds(bounds, 0)
+    }
 
     const centerControlDiv = document.createElement('div')
     new Map.CenterControl(centerControlDiv, this.map, this.origin, this.myLocationClicked.bind(this))
@@ -51,9 +59,9 @@ export default class Map {
     }
 
     if (onTouch) {
-      this.map.addListener('dragend', onTouch)
-      this.map.addListener('zoom_changed', onTouch)
-      this.map.addListener('tilt_changed', onTouch)
+      this.map.addListener('dragend', this.touched.bind(this))
+      this.map.addListener('zoom_changed', this.touched.bind(this))
+      this.map.addListener('tilt_changed', this.touched.bind(this))
     }
 
     if (isInput) {
@@ -106,7 +114,7 @@ export default class Map {
     const marker = new google.maps.Marker({
       position,
       icon: pin,
-      map: this.map,
+      map: this.map
     })
 
     if (onClick) {
@@ -170,7 +178,7 @@ export default class Map {
     this.moveCamera(origin)
   }
 
-  private mapClicked({ latLng }) {
+  private mapClicked({latLng}) {
     this.positionSelected(new Coords(latLng.lat(), latLng.lng()))
   }
 
@@ -186,4 +194,11 @@ export default class Map {
     }
   }
 
+  private touched(event) {
+    if (this.onTouch) {
+      this.onTouch(event)
+    }
+    this.zoom = this.map.getZoom()
+    this.bounds = this.map.getBounds()
+  }
 }

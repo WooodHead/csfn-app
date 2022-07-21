@@ -61,8 +61,7 @@ export default class UploadButton extends Vue {
     this.loading = true
     
     nativeProvider.isIOS()
-      .then()
-    PhotoPermissions.check({
+      .then(isIOS => isIOS ? PhotoPermissions.check({
         acceptText: this.$t('accept').toString(),
         cancelText: this.$t('cancel').toString(),
         deniedText: this.$t('photo-denied-access').toString(),
@@ -70,7 +69,7 @@ export default class UploadButton extends Vue {
         selectMoreText: this.$t('photo-select-more').toString(),
         keepText: this.$t('photo-keep').toString(),
         selectAllText: this.$t('photo-select-all').toString()
-      })
+      }) : Promise.resolve({next: true}))
       .then(({next}) => next && ImagePicker.getPictures({
           maximumImagesCount: this.max,
           width: 1024,

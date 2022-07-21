@@ -22,7 +22,7 @@
             <div class="flex justify-between items-center">
               <div class="flex flex-col justify-center items-center ml-4">
                 <div
-                  class="flex flex-col items-center justify-center w-14  h-14 rounded-full ion-activatable shadow-md ripple-parent"
+                  class="flex flex-col items-center justify-center w-14  h-14 rounded-full ion-activatable shadow-lg ripple-parent"
                   @click="$router.push('/global-impact')">
                   <img class="w-12 sm:w-14 absolute opacity-75" src="@/assets/img/world.svg">
                   <span class="text-3xl sm:text-4xl font-medium text-white absolute roboto">

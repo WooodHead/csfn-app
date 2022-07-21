@@ -21,9 +21,8 @@
                         @selected="selectedSearch">
         </selection-list>
       </ion-card>
-
+      
       <div id="map_canvas" class="h-full w-full z-30"></div>
-
       <transition name="fade-up">
         <div v-if="selectedCleanup"
              class="absolute bottom-0 w-full flex justify-center md:justify-start lg:w-2/3 xl:w-1/2 lg:p-4"
@@ -37,50 +36,54 @@
   </ion-page>
 </template>
 <script lang=ts>
+import {placesProvider} from '@/providers/places/places.provider'
+import {cleanupsModule} from '@/store/cleanupsModule'
+import {locationModule} from '@/store/locationModule'
+import ErrorMessage from '@/tools/ErrorMessage'
+import Map from '@/tools/Map'
+import ToastPresenter from '@/tools/ToastPresenter'
+import {addressToString} from '@/tools/Utils'
+import Cleanup from '@/types/Cleanup'
+import Location from '@/types/Location'
+import InputItem from '@/views/components/common/InputItem.vue'
+import SelectionList from '@/views/components/common/SelectionList.vue'
+import MapCleanupCard from '@/views/components/home/CleanupCard.vue'
+import {debounce} from 'lodash'
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Watch } from 'vue-property-decorator'
-import Map from '@/tools/Map'
-import { placesProvider } from '@/providers/places/places.provider'
-import ToastPresenter from '@/tools/ToastPresenter'
-import ErrorMessage from '@/tools/ErrorMessage'
-import Location from '@/types/Location'
-import { locationModule } from '@/store/locationModule'
-import SelectionList from '@/views/components/common/SelectionList.vue'
-import InputItem from '@/views/components/common/InputItem.vue'
-import { addressToString } from '@/tools/Utils'
-import { cleanupsModule } from '@/store/cleanupsModule'
-import Cleanup from '@/types/Cleanup'
-import { debounce } from 'lodash'
-import MapCleanupCard from '@/views/components/home/CleanupCard.vue'
+import {Watch} from 'vue-property-decorator'
 
 @Component({
   name: 'map-modal',
-  components: { SelectionList, TextItem: InputItem, MapCleanupCard }
+  components: {SelectionList, TextItem: InputItem, MapCleanupCard}
 })
 export default class MapModal extends Vue {
-
+  
   loading = false
   searchText = ''
   searchResults: Location[] = []
   selectedResult: Location
   selectedCleanup = 0
   map: Map
-
+  
   get cleanups() {
     return cleanupsModule.getMarkers
   }
-
+  
   mounted() {
     const selected = cleanupsModule.getCleanup
     setTimeout(() => {
+      console.log(cleanupsModule.getOpenedMap)
       this.map = new Map({
         pin: 'img/pin_cleanup.png',
         element: 'map_canvas',
-        origin: locationModule.getCoords,
+        origin: selected?.location.coords || locationModule.getCoords,
+        bounds: cleanupsModule.getOpenedMap?.bounds,
+        zoom: cleanupsModule.getOpenedMap?.zoom,
         isInput: false,
         onTouch: () => this.touched()
       })
+      cleanupsModule.setOpenedMap(null)
       this.fetch()
       if (selected) {
         setTimeout(() => {
@@ -89,7 +92,7 @@ export default class MapModal extends Vue {
       }
     })
   }
-
+  
   touched() {
     (this.$refs['text-input'] as HTMLInputElement).blur()
     this.searchResults = []
@@ -99,12 +102,12 @@ export default class MapModal extends Vue {
       this.fetch()
     }, 100)()
   }
-
+  
   fetch() {
     this.loading = true
     cleanupsModule.fetchMarkers(this.map.getBounds())
   }
-
+  
   @Watch('cleanups')
   cleanupsChanged(cleanups: { [id: string]: Cleanup }) {
     this.loading = false
@@ -114,17 +117,18 @@ export default class MapModal extends Vue {
         () => this.selectCleanup(cleanup))
     }
   }
-
+  
   selectCleanup(cleanup: Cleanup) {
     //this.map.moveCamera({ lat: cleanup.location.coords.lat - 0.01, lng: cleanup.location.coords.lng })
     cleanupsModule.fetchCleanup(cleanup.id)
     this.selectedCleanup = cleanup.id
   }
-
+  
   openSelectedCleanup() {
+    cleanupsModule.setOpenedMap(this.map)
     this.$router.push('/cleanup/' + this.selectedCleanup)
   }
-
+  
   search() {
     this.loading = true
     placesProvider.searchPlace(this.searchText, locationModule.getAddress.countryCode)
@@ -137,22 +141,22 @@ export default class MapModal extends Vue {
         ToastPresenter.present(this.$ionic, ErrorMessage.getMessage(error))
       })
   }
-
+  
   clear() {
     setTimeout(() => {
       this.searchResults = []
     }, 300)
   }
-
+  
   selectedSearch(selected: Location) {
     this.searchText = ''
     this.selectedResult = selected
     this.map.moveCamera(selected.coords, 10)
   }
-
+  
   addressToString(address) {
     return addressToString(address)
   }
-
+  
 }
 </script>

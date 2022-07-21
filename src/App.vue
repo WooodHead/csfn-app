@@ -5,6 +5,7 @@
         <router-view></router-view>
       </transition>
     </div>
+    <div id="empty"/>
   </ion-app>
 </template>
 <script lang="ts">

@@ -1,21 +1,23 @@
-import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
-import { Action, Module, Mutation, VuexModule } from 'vuex-class-modules'
+import {cleanupsProvider} from '@/providers/data/cleanups.provider'
+import {imagesProvider} from '@/providers/data/images.provider'
+import {store} from '@/store/index'
+import {locationModule} from '@/store/locationModule'
+import Map from '@/tools/Map'
+import {calculateDistance} from '@/tools/Utils'
 import Cleanup from '@/types/Cleanup'
-import { cleanupsProvider } from '@/providers/data/cleanups.provider'
-import { store } from '@/store/index'
+import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
 import Vue from 'vue'
-import { locationModule } from '@/store/locationModule'
-import { imagesProvider } from '@/providers/data/images.provider'
-import { calculateDistance } from '@/tools/Utils'
+import {Action, Module, Mutation, VuexModule} from 'vuex-class-modules'
 
 @Module
 class CleanupsModule extends VuexModule {
 
-  markers: Cleanup[] = []
-  cleanup: Cleanup = null
+  private markers: Cleanup[] = []
+  private cleanup: Cleanup = null
+  private openedMap: Map = null
 
   constructor() {
-    super({ store, name: 'cleanups' })
+    super({store, name: 'cleanups'})
   }
 
   get getMarkers() {
@@ -24,6 +26,10 @@ class CleanupsModule extends VuexModule {
 
   get getCleanup() {
     return this.cleanup
+  }
+
+  get getOpenedMap() {
+    return this.openedMap
   }
 
   @Mutation
@@ -36,10 +42,15 @@ class CleanupsModule extends VuexModule {
     Vue.set(this, 'cleanup', cleanup)
   }
 
+  @Mutation
+  setOpenedMap(map: Map) {
+    this.openedMap = map
+  }
+
   @Action
   publish(cleanup: Cleanup) {
     return imagesProvider.uploadImages(cleanup.pictures as File[], 'publish-cleanup')
-      .then((images) => cleanupsProvider.publish({ ...cleanup, weight: Number(cleanup.weight), pictures: images }))
+      .then((images) => cleanupsProvider.publish({...cleanup, weight: Number(cleanup.weight), pictures: images}))
       .then((published) => {
         FirebaseAnalytics.logEvent({
           name: 'publish_content',
@@ -53,7 +64,7 @@ class CleanupsModule extends VuexModule {
   }
 
   @Action
-  update({ cleanup, removedPictures }: { cleanup: Cleanup, removedPictures: number[] }) {
+  update({cleanup, removedPictures}: { cleanup: Cleanup, removedPictures: number[] }) {
     const picturesToUpload = cleanup.pictures.filter(p => p instanceof Blob) as File[]
     return Promise.all(removedPictures.map((id) => imagesProvider.removeImage(id)))
       .then(() => picturesToUpload.length

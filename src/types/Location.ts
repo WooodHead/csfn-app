@@ -13,7 +13,7 @@ export default class Location {
     this.coords = coords
   }
 
-  public equals(other: Location): boolean {
+  public equals?(other: Location): boolean {
     return this.toString() == other.toString()
   }
 }
