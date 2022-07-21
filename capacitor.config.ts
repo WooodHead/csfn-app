@@ -12,12 +12,6 @@ export default {
     allowNavigation: [
       'app.cleansomethingfornothing.com'
     ],
-
-
-    url: 'http://192.168.1.110:8888',
-    cleartext: true
-
-
   },
   plugins: {
     SplashScreen: {
