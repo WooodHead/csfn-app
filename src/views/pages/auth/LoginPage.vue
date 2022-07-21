@@ -77,7 +77,6 @@ import ForestBg from '@/views/components/common/ForestBg.vue'
 import InputItem from '@/views/components/common/InputItem.vue'
 import {SignInWithApple} from '@capacitor-community/apple-sign-in'
 import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
-import {Device} from '@capacitor/device'
 import {GoogleAuth} from '@codetrix-studio/capacitor-google-auth'
 import Vue from 'vue'
 import Component from 'vue-class-component'
@@ -105,7 +104,9 @@ export default class LoginPage extends Vue {
         this.isIOS = isIOS
       })
   }
+  
   º
+  
   mounted(): void {
     if (!this.loaded) {
       nativeProvider.hideSplashScreen()
@@ -185,12 +186,15 @@ export default class LoginPage extends Vue {
   appleLogin() {
     SignInWithApple.authorize({
       clientId: 'com.cleansomething.app',
-      scopes: 'email',
+      scopes: 'email name',
       redirectURI: ''
     }).then((res) => {
       if (res?.response?.identityToken) {
         return appModule.showLoader(this.$ionic)
-          .then(() => authModule.doAppleLogin(res.response.identityToken))
+          .then(() => authModule.doAppleLogin({
+            token: res.response.identityToken,
+            name: ((res.response.givenName || '') + ' ' + (res.response.familyName || '')).trim()
+          }))
       } else {
         return Promise.reject(null)
       }
@@ -204,7 +208,7 @@ export default class LoginPage extends Vue {
         this.$router.push('/home')
       }
     }).catch((err) => {
-      if (!err.message.endsWith('1001.)')) {
+      if (!err.message.endsWith('1000.)')) {
         appModule.hideLoader()
         ToastPresenter.present(this.$ionic, this.$t('errors.unknown-error', {param: this.$t('login-with', {param: 'Apple'}).toString().toLowerCase()}))
       }

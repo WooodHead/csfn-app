@@ -14,7 +14,7 @@ export default class User {
   @IsAlphanumeric(undefined, { groups: [UPDATE], message: 'alphanumeric-error' })
   username?: string
 
-  @IsEmail({}, { groups: [CREATE, LOGIN, UPDATE_EMAIL, RESET_PASSWORD], message: 'invalid-email' })
+  @IsEmail({}, { groups: [CREATE, LOGIN, UPDATE_EMAIL], message: 'invalid-email' })
   @IsNotEmpty({ groups: [CREATE, UPDATE_EMAIL, RESET_PASSWORD], message: 'required-error' })
   email?: string
 

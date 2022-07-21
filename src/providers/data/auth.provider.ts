@@ -37,8 +37,8 @@ export class AuthProvider extends DataProvider {
             .catch(handleBackError('login'))
     }
 
-    doAppleLogin(country: string, token: string): Promise<User> {
-        return this.http.post('/login_apple', {token}, {headers: {country}})
+    doAppleLogin(country: string, token: string, name: string): Promise<User> {
+        return this.http.post('/login_apple', {token, name}, {headers: {country}})
           .then(({data}) => data)
           .catch(handleBackError('login'))
     }

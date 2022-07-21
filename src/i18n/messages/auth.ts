@@ -8,8 +8,9 @@ export default {
     'forgotten-password': 'I forgot my password',
     'recover-password': 'Recover your password',
     'recover-password-success': 'Check your email and follow the instructions to reset your password',
-    'recover-password-text': 'Enter your email',
+    'recover-password-text': 'Enter your email or username',
     'recover-password-done': 'Check your email to recover your password',
+    'recover-password-placeholder': 'Email or username',
     'continue-with': 'Continue with {param}'
   },
   es: {
@@ -21,9 +22,9 @@ export default {
     'forgotten-password': 'Olvidé mi contraseña',
     'recover-password': 'Recuperar tu contraseña',
     'recover-password-success': 'Comprueba tu email y sigue las instrucciones para restablecer tu contraseña',
-    'recover-password-text': 'Introduzca su email',
+    'recover-password-text': 'Introduzca su email o usuario',
     'recover-password-done': 'Compruebe su email para restaurar la contraseña',
-    'password-reset': 'Recuperar tu contraseña',
+    'recover-password-placeholder': 'Email o usuario',
     'continue-with': 'Continuar con {param}'
   }
 }

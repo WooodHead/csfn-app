@@ -115,7 +115,7 @@ public class PhotoPermissionsPlugin: CAPPlugin, PHPhotoLibraryChangeObserver {
     }
     
     func resolveDelayed() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // Change `2.0` to the desired number of seconds.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // Change `2.0` to the desired number of seconds.
             self.resolve();
         }
     }

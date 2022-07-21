@@ -84,9 +84,9 @@ class AuthModule extends VuexModule {
   }
 
   @Action
-  doAppleLogin(token: string): Promise<User> {
+  doAppleLogin({token, name}: { token: string, name: string }): Promise<User> {
     return locationModule.getLocationByIp()
-      .then((location) => authProvider.doAppleLogin(location.address.countryCode, token))
+      .then((location) => authProvider.doAppleLogin(location.address.countryCode, token, name))
       .then((user) => this.loggedIn(user))
   }
 
