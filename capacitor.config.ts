@@ -22,7 +22,6 @@ export default {
   plugins: {
     SplashScreen: {
       launchShowDuration: 10000,
-      splashFullScreen: true,
       splashImmersive: false
     },
     GoogleAuth: {
