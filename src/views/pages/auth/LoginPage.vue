@@ -208,7 +208,7 @@ export default class LoginPage extends Vue {
         this.$router.push('/home')
       }
     }).catch((err) => {
-      if (!err.message.endsWith('1000.)')) {
+      if (!/100[01]\.\)$/.test(err?.message)) {
         appModule.hideLoader()
         ToastPresenter.present(this.$ionic, this.$t('errors.unknown-error', {param: this.$t('login-with', {param: 'Apple'}).toString().toLowerCase()}))
       }
