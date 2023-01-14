@@ -1,43 +1,81 @@
 import User from '@/types/User'
 import DataProvider from '@/providers/data/data.provider'
 import {handleBackError} from '@/tools/handleBackError'
-import Cleanup from "@/types/Cleanup";
+import Cleanup from '@/types/Cleanup'
+import UserGroup from '@/types/GroupMember'
+import {PaginatedResult} from '@/types/PaginatedResult'
+import {GroupStatus} from '@/types/GroupStatus'
 
 export class UserProvider extends DataProvider {
 
-    constructor() {
-        super('/user')
-    }
+  constructor() {
+    super('/user')
+  }
 
-    updateUser(id: number, update: User): Promise<User> {
-        return this.http.patch('/' + id, update)
-            .then(({data}) => data)
-            .catch(handleBackError('update-profile'))
-    }
+  findAll({groupIds, notId, search, limit}: { groupIds?: number[], notId?: number, search?: string, limit: number }):
+    Promise<PaginatedResult<User>> {
+    return this.http.get('/', {
+      'filter.groups.group.id': groupIds ? `$in:${groupIds.join(',')}` : undefined,
+      'filter.id': notId ? `$not:${notId}` : undefined,
+      'search': search || undefined,
+      'limit': limit
+    })
+      .then(({data}) => data)
+  }
 
-    fetchUser(): Promise<User> {
-        return null
-    }
+  updateUser(id: number, update: User): Promise<User> {
+    return this.http.patch('/' + id, update)
+      .then(({data}) => data)
+      .catch(handleBackError('update-profile'))
+  }
 
-    fetchUserCleanups(): Promise<Cleanup[]> {
-        return Promise.resolve(undefined)
-    }
+  fetchUserGroups(id: number, page: number, limit: number = 10, onlyAdmin?: boolean): Promise<PaginatedResult<UserGroup>> {
+    return this.http.get(`/${id}/groups`, {page, limit, 'filter.isAdmin': onlyAdmin ? '$eq:true' : undefined})
+      .then(({data}) => data)
+      .catch(handleBackError('fetch-groups'))
+  }
 
-    fetchUserEvents(): Promise<Cleanup[]> {
-        return Promise.resolve(undefined)
-    }
+  fetchUserGroupStatus(userId: number, groupId: number): Promise<{ status: GroupStatus }> {
+    return this.http.get(`/${userId}/groups/${groupId}`)
+      .then(({data}) => data)
+      .catch(handleBackError('fetch-group-status'))
+  }
 
-    fetchUserAlerts(): Promise<Cleanup[]> {
-        return Promise.resolve(undefined)
-    }
+  fetchGroupsHasRequests(userId: number): Promise<{ value: number }> {
+    return this.http.get(`/${userId}/groups-has-requests`)
+      .then(({data}) => data)
+      .catch(handleBackError('fetch-groups'))
+  }
 
-    changeUserPassword(): Promise<void> {
-        return Promise.resolve(undefined)
-    }
+  leaveGroup(userId: number, groupId: number) {
+    return this.http.delete(`/${userId}/groups/${groupId}`)
+      .then(() => undefined)
+      .catch(handleBackError('leave-group'))
+  }
 
-    removeUser(): Promise<void> {
-        return Promise.resolve(undefined)
-    }
+  fetchUser(): Promise<User> {
+    return null
+  }
+
+  fetchUserCleanups(): Promise<Cleanup[]> {
+    return Promise.resolve(undefined)
+  }
+
+  fetchUserEvents(): Promise<Cleanup[]> {
+    return Promise.resolve(undefined)
+  }
+
+  fetchUserAlerts(): Promise<Cleanup[]> {
+    return Promise.resolve(undefined)
+  }
+
+  changeUserPassword(): Promise<void> {
+    return Promise.resolve(undefined)
+  }
+
+  removeUser(): Promise<void> {
+    return Promise.resolve(undefined)
+  }
 
 }
 

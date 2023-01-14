@@ -4,7 +4,7 @@ export default {
     'security': 'Security',
     'change-email': 'Change email',
     'change-password': 'Change password',
-    'delete-account': 'Delete account',
+    'delete-account': 'Deactivate account',
     'current-email': 'Current email',
     'new-email': 'New email',
     'current-password': 'Current password',
@@ -19,10 +19,15 @@ export default {
     'update-profile-success': 'Profile updated',
     'same-email-error': 'Enter a different email',
     'same-password-error': 'Enter a different password',
-    'delete': 'Delete',
-    'delete-account-message': 'You are about to delete your account, you will lose all your achievements and you will not be able to recover them.',
-    'delete-account-confirmation': 'Are you sure you want to delete your account?',
-    'delete-account-success': 'Your account was deleted',
+    'deactivate': 'Deactivate',
+    'deactivate-account-message': 'You are about to deactivate your account:<br>' +
+      '- You can activate again by logging in.<br>' +
+      '- People can\'t see your profile or search for you.<br> ' +
+      '- The cleanups you have done will remain visible but not their picture, description or your name.<br>' +
+      '- If you are the only admin of some group you have to assign another admin before deactivating the account.<br><br>' +
+      'If you want to fully remove your account you can contact us using the methods listed in the Support page in Settings.',
+    'deactivate-account-confirmation': 'Are you sure you want to deactivate your account?',
+    'deactivate-account-success': 'Your account was deactivated',
     'privacy-policy': 'Privacy Policy'
   },
   es: {
@@ -30,7 +35,7 @@ export default {
     'security': 'Seguridad',
     'change-email': 'Cambiar email',
     'change-password': 'Cambiar contraseña',
-    'delete-account': 'Eliminar cuenta',
+    'delete-account': 'Desactivar cuenta',
     'current-email': 'Email actual',
     'new-email': 'Nuevo email',
     'current-password': 'Contraseña actual',
@@ -45,10 +50,15 @@ export default {
     'change-password-success': 'Contraseña actualizada',
     'same-email-error': 'Introduce un email diferente',
     'same-password-error': 'Introduce una contraseña diferente',
-    'delete': 'Eliminar',
-    'delete-account-message': 'Estás a punto de borrar tu cuenta, perderás todos tus logros y no podrás recuperarlos.',
-    'delete-account-confirmation': 'Seguro que deseas borrar tu cuenta',
-    'delete-account-success': 'Tu cuenta ha sido eliminada',
+    'deactivate': 'Desactivar',
+    'deactivate-account-message': 'Estás a punto de desactivar tu cuenta:<br><br>' +
+      '- Puedes volver a activarla iniciando sesión.<br>' +
+      '- No aparecerás en las búsquedas y tu perfil no será visible.<br>' +
+      '- Los cleanups que has hecho seguirán siendo visibles pero no lo serán las fotos, la descripción ni tu nombre.<br>' +
+      '- Si tienes algún grupo y eres el único administrador tienes que asignar un nuevo administrador antes de desactivarla.<br><br>' +
+      'Si deseas eliminar tu cuenta por completo ponte en contacto con nosotros con los medios que puedes encontrar en la página de Soporte en Ajustes.',
+    'deactivate-account-confirmation': '¿Seguro que deseas desactivar tu cuenta?',
+    'deactivate-account-success': 'Tu cuenta ha sido desactivada',
     'privacy-policy': 'Política de privacidad'
   }
 }

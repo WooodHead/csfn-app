@@ -17,12 +17,11 @@
         <input-item :label="t.password" :placeholder="t.currentPasswordMessage" v-model="password"
                     :errors="error ? [error]: undefined" @focus="error = ''"
                     type="password"/>
-        <div class="p-4">
-          {{ t.deleteMessage }}
+        <div class="p-4 text-sm" v-html="t.deactivateMessage">
         </div>
         <div class="flex justify-center mt-4">
           <ion-button mode="ios" shape="round" class="w-1/2" :disabled="loading" type="submit">
-            {{ t.delete }}
+            {{ t.deactivate }}
           </ion-button>
         </div>
       </form>
@@ -63,7 +62,7 @@ export default class DeleteAccountModal extends Vue {
     }
 
     this.ionic.alertController.create({
-      message: this.t.deleteConfirmation,
+      message: this.t.deactivateConfirmation,
       buttons: [{
         text: this.t.cancel,
         role: 'cancel'
@@ -86,6 +85,7 @@ export default class DeleteAccountModal extends Vue {
         this.dismiss(true)
       })
       .catch(error => {
+        console.log(error)
         appModule.hideLoader()
         if (error instanceof FormError) {
           error.fieldErrors.forEach((fieldError) => {

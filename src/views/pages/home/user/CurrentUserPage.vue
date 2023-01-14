@@ -53,7 +53,7 @@
                           :value="user.totalWeight.toString()"/>
           </div>
 
-          <ion-card v-if="user.totalCleanups">
+          <ion-card v-if="user.totalCleanups" mode="ios">
             <div style="height: 250px">
               <user-stats
                 :key="userStats.reduce((a, b) => a + b.date, '') + userStats.reduce((a, b) => a + b.volume, 0)"

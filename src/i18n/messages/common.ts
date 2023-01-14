@@ -1,6 +1,7 @@
 export default {
   en: {
     'cancel': 'Cancel',
+    'yes': 'Yes',
     'accept': 'Accept',
     'confirm': 'Confirm',
     'apply': 'Apply',
@@ -23,10 +24,18 @@ export default {
     'photo-limited-access': 'The app only have access to some of your photos',
     'photo-select-more': 'Select more',
     'photo-keep': 'Keep selected photos',
-    'photo-select-all': 'Allow all'
+    'photo-select-all': 'Allow all',
+    'suggestions': 'Suggestions',
+    'search-a-user': 'Search some users to tag them',
+    'no-results': 'No results found',
+    'confirmation-message': 'Are you sure you want to {0}?',
+    'selected': 'Selected',
+    'results': 'Results',
+    'anonymous': 'Anonymous'
   },
   es: {
     'cancel': 'Cancelar',
+    'yes': 'Sí',
     'accept': 'Aceptar',
     'confirm': 'Confirmar',
     'apply': 'Aplicar',
@@ -49,6 +58,13 @@ export default {
     'photo-limited-access': 'La aplicación solo tiene permiso para acceder algunas de tus fotos',
     'photo-select-more': 'Seleccionar más fotos',
     'photo-keep': 'Mantener las fotos seleccionadas',
-    'photo-select-all': 'Permitir todas'
+    'photo-select-all': 'Permitir todas',
+    'suggestions': 'Sugerencias',
+    'search-a-user': 'Busca algún usuario para etiquetarlo',
+    'no-results': 'No se encontraron resultados',
+    'confirmation-message': '¿Seguro que quieres {0}?',
+    'selected': 'Seleccionado',
+    'results': 'Resultados',
+    'anonymous': 'Anónimo'
   }
 }

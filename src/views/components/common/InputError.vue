@@ -7,12 +7,12 @@
 <script lang="ts">
 import Component from 'vue-class-component'
 import Vue from 'vue'
-import { Prop } from 'vue-property-decorator'
+import {Prop} from 'vue-property-decorator'
 
 @Component({
   name: 'input-error'
 })
-export default class TextItem extends Vue {
+export default class InputError extends Vue {
   @Prop(String)
   error: string
 }

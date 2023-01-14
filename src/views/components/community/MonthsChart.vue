@@ -119,26 +119,4 @@ export default class MonthsChart extends Vue {
   opacity: 0.85;
 }
 
-.tooltip {
-  background-color: var(--ion-color-dark);
-  border-radius: 5px;
-  color: white;
-  font-weight: bold;
-  outline: none;
-  padding: 0 4px;
-  position: absolute;
-  white-space: nowrap;
-}
-
-.tooltip::after {
-  border-color: var(--ion-color-dark) transparent transparent transparent;
-  border-style: solid;
-  border-width: 5px;
-  content: " ";
-  left: 50%;
-  margin-left: -5px;
-  position: absolute;
-  top: 100%; /* At the bottom of the tooltip */
-}
-
 </style>

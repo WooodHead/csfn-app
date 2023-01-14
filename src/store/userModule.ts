@@ -1,31 +1,43 @@
 import User from '@/types/User'
-import { Action, Module, Mutation, VuexModule } from 'vuex-class-modules'
-import { store } from '@/store/index'
-import { userProvider } from '@/providers/data/user.provider'
-import { authProvider } from '@/providers/data/auth.provider'
-import { imagesProvider } from '@/providers/data/images.provider'
+import {Action, Module, Mutation, VuexModule} from 'vuex-class-modules'
+import {store} from '@/store/index'
+import {userProvider} from '@/providers/data/user.provider'
+import {authProvider} from '@/providers/data/auth.provider'
+import {imagesProvider} from '@/providers/data/images.provider'
 import Cleanup from '@/types/Cleanup'
-import { cleanupsProvider } from '@/providers/data/cleanups.provider'
+import {cleanupsProvider} from '@/providers/data/cleanups.provider'
 import levels from '@/assets/levels'
-import { UserLevel } from '@/types/UserLevel'
+import {UserLevel} from '@/types/UserLevel'
 import UserProfileStats from '@/types/UserProfileStats'
-import { statsProvider } from '@/providers/data/stats.provider'
+import {statsProvider} from '@/providers/data/stats.provider'
 import moment from 'moment'
 import Vue from 'vue'
-import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics'
+import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
+import UserGroup from '@/types/GroupMember'
+import Group from '@/types/Group'
+import {groupsProvider} from '@/providers/data/groups.provider'
+import {locationModule} from '@/store/locationModule'
+import {PaginatedResult} from '@/types/PaginatedResult'
+import {groupsModule} from '@/store/groupsModule'
+import {GroupStatus} from '@/types/GroupStatus'
 
 @Module
 class UserModule extends VuexModule {
 
-  currentUser: User = null
-  viewingUser: User = null
-  loadingUserActivities = false
-  currentUserCleanups: Cleanup[] = []
-  loadingUserStats = false
-  currentUserStats: UserProfileStats[] = []
+  private currentUser: User = null
+  private viewingUser: User = null
+  private loadingUserActivities = false
+  private currentUserCleanups: Cleanup[] = []
+  private loadingUserStats = false
+  private currentUserStats: UserProfileStats[] = []
+  private currentUserGroups: UserGroup[] = []
+  private currentUserHasMoreGroups = true
+  private groupSuggestions: Group[] = []
+  private groupsHasRequests: number = null
+  private groupRequests: Record<number, boolean> = null
 
   constructor() {
-    super({ store, name: 'user' })
+    super({store, name: 'user'})
   }
 
   get getCurrentUser(): User {
@@ -65,6 +77,22 @@ class UserModule extends VuexModule {
       : 'day'
   }
 
+  get getCurrentUserGroups() {
+    return this.currentUserGroups
+  }
+
+  get getCurrentUserHasMoreGroups() {
+    return this.currentUserHasMoreGroups
+  }
+
+  get currentUserGroupSuggestions() {
+    return this.groupSuggestions
+  }
+
+  get getGroupsHasRequests() {
+    return this.groupsHasRequests
+  }
+
   @Mutation
   setCurrentUser(user: User) {
     Vue.set(this, 'currentUser', user)
@@ -93,6 +121,33 @@ class UserModule extends VuexModule {
   @Mutation
   setCurrentUserStats(stats: UserProfileStats[]) {
     Vue.set(this, 'currentUserStats', stats)
+  }
+
+  @Mutation
+  resetCurrentGroups() {
+    this.currentUserGroups = null
+  }
+
+  @Mutation
+  setCurrentUserGroups({groups, reset}: { groups: PaginatedResult<UserGroup>, reset: boolean }) {
+    if (this.currentUserGroups?.length && !reset) {
+      this.currentUserGroups.push(...groups.data)
+    } else {
+      this.currentUserGroups = groups.data
+    }
+    if (groups.meta?.totalItems === this.currentUserGroups.length) {
+      this.currentUserHasMoreGroups = false
+    }
+  }
+
+  @Mutation
+  setGroupSuggestions(groups: PaginatedResult<Group>) {
+    this.groupSuggestions = groups.data
+  }
+
+  @Mutation
+  setGroupHasRequests(value: number) {
+    this.groupsHasRequests = value
   }
 
   @Action
@@ -147,19 +202,58 @@ class UserModule extends VuexModule {
   }
 
   @Action
+  fetchCurrentUserGroups({page, reset}: { page: number, reset: boolean }) {
+    return userProvider.fetchUserGroups(this.currentUser.id, page)
+      .then(groups => {
+        this.setCurrentUserGroups({groups, reset})
+        groups.data
+          .filter(({status}) => status === GroupStatus.ADMIN)
+          .forEach(({group: {id}}) => groupsModule.fetchGroupHasRequests(id))
+      })
+  }
+
+  fetchCurrentUserGroupSuggestions() {
+    groupsProvider.fetchGroups(locationModule.userCoords, 1, 5, {excludeUser: this.currentUser.id})
+      .then((groups) => this.setGroupSuggestions(groups))
+  }
+
+  @Action
+  fetchUserGroupsHasRequests() {
+    return userProvider.fetchGroupsHasRequests(this.currentUser.id)
+      .then(({value}) => this.setGroupHasRequests(value))
+  }
+
+  @Action
   updateUserPicture(picture) {
     return imagesProvider.uploadImages([picture as File], 'update-profile')
-      .then((images) => this.updateUser({ picture: { id: images[0].id } }))
+      .then((images) => this.updateUser({picture: {id: images[0].id}}))
   }
 
   @Action
   updateUser(user: User) {
     return userProvider.updateUser(this.currentUser.id, user)
       .then((user) => {
-        FirebaseAnalytics.logEvent({ name: 'update_profile', params: { fields: Object.keys(user) } })
+        FirebaseAnalytics.logEvent({name: 'update_profile', params: {fields: Object.keys(user)}})
         this.setCurrentUser(user)
       })
   }
+
+  @Action
+  fetchGroupStatus(groupId: number) {
+    return userProvider.fetchUserGroupStatus(this.currentUser.id, groupId)
+      .then(({status}) => {
+        if (status === GroupStatus.ADMIN) {
+          groupsModule.fetchGroupHasRequests(groupId)
+        }
+        return {status}
+      })
+  }
+
+  @Action
+  leaveGroup(groupId: number) {
+    return userProvider.leaveGroup(this.currentUser.id, groupId)
+  }
+
 }
 
 export const userModule = new UserModule()

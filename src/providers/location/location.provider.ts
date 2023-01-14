@@ -11,7 +11,7 @@ export default class LocationProvider {
 
   getCurrentCoords(): Promise<Coords> {
     return Geolocation.getCurrentPosition()
-      .then(({coords}) => new Coords(coords.latitude, coords.longitude))
+      .then(({coords}) => coords ? new Coords(coords.latitude, coords.longitude) : Promise.reject())
       .catch(() => this.getLocationByIp()
         .then((location: Location) => location.coords))
       .catch(() => Promise.reject(new LocationError()))

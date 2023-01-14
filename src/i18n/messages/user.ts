@@ -11,7 +11,8 @@ export default {
     'sprout': 'Sprout',
     'bush': 'Bush',
     'tree': 'Tree',
-    'users': 'User | Users'
+    'users': 'User | Users',
+    'users-p': 'User | Users'
   },
   es: {
     'continue-with': 'Continuar con {param}',
@@ -26,6 +27,7 @@ export default {
     'sprout': 'Brote',
     'bush': 'Arbusto',
     'tree': 'Árbol',
-    'users': 'Usuario | Usuarios'
+    'users': 'Usuario | Usuarios',
+    'users-p': 'Usuario | Usuarios'
   }
 }

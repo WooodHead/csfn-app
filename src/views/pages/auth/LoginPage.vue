@@ -123,6 +123,7 @@ export default class LoginPage extends Vue {
         this.$router.push('/home')
       })
       .catch(error => {
+        console.log(error)
         appModule.hideLoader()
         if (error instanceof FormError) {
           error.fieldErrors.forEach((fieldError) => {

@@ -1,0 +1,6 @@
+export enum GroupStatus {
+  ADMIN = 'ADMIN',
+  MEMBER = 'MEMBER',
+  FOLLOWING = 'FOLLOWING',
+  PENDING_MEMBER = 'PENDING_MEMBER'
+}

@@ -1,8 +1,8 @@
 import '@capacitor-community/http'
 import {Http} from '@capacitor-community/http'
 import axios from 'axios'
-
-import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics'
+import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
+import {Directory} from '@capacitor/filesystem'
 
 export default class HttpTool {
 
@@ -20,7 +20,7 @@ export default class HttpTool {
       method: 'POST',
       data,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': data && 'application/json',
         'Authorization': options && options.auth && 'Basic ' + btoa(options.auth.username + ':' + options.auth.password),
         ...(options && options.headers ? options.headers : {})
       }
@@ -41,25 +41,51 @@ export default class HttpTool {
     return axios.delete(process.env.VUE_APP_BACK_URL + this.baseUrl + path)
   }
 
-  public get(path: string) {
-    return this.request({ path, method: 'GET' })
+  public get(path: string, params?: Record<string, any>) {
+    return this.request({path, method: 'GET', params})
   }
 
   public patch(path: string,
                data) {
-    return this.request({ path, method: 'PATCH', data, headers: { 'Content-Type': 'application/json' } })
+    return this.request({path, method: 'PATCH', data, headers: {'Content-Type': 'application/json'}})
   }
 
-  public delete(path: string) {
-    return this.request({ path, method: 'DELETE' })
+  public put(path: string,
+             data: any) {
+    return this.request({path, method: 'PUT', data, headers: {'Content-Type': 'application/json'}})
   }
 
-  private request({ path, method, data, headers }: { path: string, method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', data?: any, headers?: Record<string, string> }) {
+  public delete(path: string, options?: { auth?: { username: string, password: string }, headers?: Record<string, string> }) {
+    return this.request({
+      path, method: 'DELETE', headers: {
+        'Authorization': options && options.auth && 'Basic ' + btoa(options.auth.username + ':' + options.auth.password),
+        ...(options && options.headers ? options.headers : {})
+      }
+    })
+  }
+
+  downloadFile(path: string, fileName: string, params?: Record<string, string>) {
+    return Http.downloadFile({
+      url: process.env.VUE_APP_BACK_URL + this.baseUrl + path,
+      params,
+      filePath: fileName,
+      fileDirectory: 'DOWNLOADS' as Directory
+    })
+  }
+
+  private request({
+                    path,
+                    method,
+                    data,
+                    headers,
+                    params
+                  }: { path: string, method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', data?: any, headers?: Record<string, any>, params?: Record<string, string> }) {
     return Http.request({
       method,
       url: process.env.VUE_APP_BACK_URL + this.baseUrl + path,
       headers,
       data,
+      params: params && Object.fromEntries(Object.entries(params).filter(([key, value]) => value != null)),
       webFetchExtra: {
         credentials: 'include'
       }
@@ -70,7 +96,7 @@ export default class HttpTool {
         if (response.status != 401) {
           FirebaseAnalytics.logEvent({
             name: 'server_error',
-            params: { status: response.status, body: JSON.stringify(response.data) }
+            params: {status: response.status, body: JSON.stringify(response.data)}
           })
         }
         return Promise.reject(response)

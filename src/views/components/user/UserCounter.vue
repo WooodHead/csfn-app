@@ -1,12 +1,20 @@
 <template>
-  <div class="flex flex-col items-center justify-center w-32 h-32">
-    <div :id="`progress-${label}`" class="w-24 h-24 absolute"></div>
-    <ion-icon :src="iconSrc" class="text-sm"/>
-    <div :class="{'text-3xl -mt-1': integer < 10000, 'text-2xl -mt-1': integer > 10000 && integer < 100000, 'text-xl mb-1': integer > 100000}">
-      <span>{{ integer}}</span>
-      <span class="text-xs" v-if="decimal">{{ decimal}}</span>
+  <div class="flex flex-col items-center justify-center w-32 h-32 relative">
+    <transition name="fade">
+      <div v-if="focused" class="tooltip text-sm absolute z-10 -mt-32">
+        <span>{{ Number(value) | localeString }} {{ label }}</span>
+      </div>
+    </transition>
+    <div ref="progress" class="w-24 h-24 absolute rounded-full ion-activatable ripple-parent"
+         tabindex="1" @focus="focused = true" @blur="focused = false">
+      <ion-ripple-effect/>
     </div>
-    <span class="text-xs economica -mt-2">{{ label }}</span>
+    <ion-icon :src="iconSrc" class="text-base -mt-1"/>
+    <div class="text-2xl">
+      <span>{{ integer }}</span>
+      <span class="text-xs" v-if="decimal">{{ decimal }}</span>
+    </div>
+    <span class="text-xs economica -mt-1">{{ label }}</span>
   </div>
 </template>
 <script lang=ts>
@@ -14,8 +22,10 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import ProgressBar from 'progressbar.js'
 import Shape from 'progressbar.js/shape'
-import { Prop, Watch } from 'vue-property-decorator'
+import {Prop, Watch} from 'vue-property-decorator'
 import language from '@/tools/language'
+import millify from 'millify'
+import {localeString} from '@/tools/Utils'
 
 @Component({
   name: 'user-counter'
@@ -28,44 +38,55 @@ export default class UserCounter extends Vue {
   @Prop(String)
   label: string
 
-  @Prop({ type: String })
+  @Prop({type: String})
   value: string
 
-  @Prop({ type: String })
+  @Prop({type: String})
   progressValue: number
 
   @Prop(Number)
   max: number
+
+  @Prop(Boolean)
+  noAnimate: boolean
+
+  focused = false
 
   get localizedSeparator() {
     return (1.1).toLocaleString(language())[1]
   }
 
   get integer() {
-    return this.value.split('.')[0]
+    const integer = Number(this.value.split('.')[0])
+    return integer < 1000 ? integer : millify(integer, {decimalSeparator: this.localizedSeparator})
   }
 
   get decimal() {
-    return this.value.includes('.') ? this.localizedSeparator + this.value.split('.')[1] : ''
+    return this.value.includes('.') && this.value.split('.')[1] !== '00' && !isNaN(+this.integer)
+        ? this.localizedSeparator + this.value.split('.')[1] : ''
   }
 
   progressBar: Shape = null
 
   mounted() {
-    this.progressBar = new ProgressBar.Circle('#progress-' + this.label, {
+    this.progressBar = new ProgressBar.Circle(this.$refs['progress'] as HTMLElement, {
       strokeWidth: 4,
       easing: 'easeInOut',
       duration: 1000,
       trailColor: '#eee',
-      from: { color: '#9ed362' },
-      to: { color: '#148f31' },
+      from: {color: '#9ed362'},
+      to: {color: '#148f31'},
       step: function (state,
                       circle,
                       attachment) {
         circle.path.setAttribute('stroke', state.color)
       },
     })
-    this.progressBar.animate(Math.min(Number(this.progressValue) / this.max, 1))
+    if (!this.noAnimate) {
+      this.progressBar.animate(Math.min(Number(this.progressValue) / this.max, 1))
+    } else {
+      this.progressBar.set(Math.min(Number(this.progressValue) / this.max, 1))
+    }
   }
 
   @Watch('progressValue')

@@ -1,5 +1,5 @@
 <template>
-  <ion-card :style="`height: ${height-20}px`" button @click="$emit('click')">
+  <ion-card :style="`height: ${height-20}px`" button @click="$emit('click')" mode="ios">
     <img :src="src"
          :style="`height: ${height-20}px`"/>
   </ion-card>

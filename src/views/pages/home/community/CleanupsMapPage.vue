@@ -14,7 +14,7 @@
       <ion-progress-bar v-if="loading" color="primary" type="indeterminate"></ion-progress-bar>
     </ion-header>
     <ion-content>
-      <ion-card class="top-0 w-full absolute z-40 m-0">
+      <ion-card class="top-0 w-full absolute z-40 m-0 rounded-none">
         <selection-list :element-value="location => addressToString(location.address)" :elements="searchResults"
                         element-key="id"
                         icon="location-sharp"
@@ -28,7 +28,7 @@
              class="absolute bottom-0 w-full flex justify-center md:justify-start lg:w-2/3 xl:w-1/2 lg:p-4"
              style="z-index: 1000">
           <div class="w-full z-50 ">
-            <map-cleanup-card @click="openSelectedCleanup"></map-cleanup-card>
+            <cleanup-card :cleanup="cleanup" @click="openSelectedCleanup"></cleanup-card>
           </div>
         </div>
       </transition>
@@ -47,7 +47,7 @@ import Cleanup from '@/types/Cleanup'
 import Location from '@/types/Location'
 import InputItem from '@/views/components/common/InputItem.vue'
 import SelectionList from '@/views/components/common/SelectionList.vue'
-import MapCleanupCard from '@/views/components/home/CleanupCard.vue'
+import CleanupCard from '@/views/components/common/CleanupCard.vue'
 import {debounce} from 'lodash'
 import Vue from 'vue'
 import Component from 'vue-class-component'
@@ -55,7 +55,7 @@ import {Watch} from 'vue-property-decorator'
 
 @Component({
   name: 'map-modal',
-  components: {SelectionList, TextItem: InputItem, MapCleanupCard}
+  components: {SelectionList, TextItem: InputItem, CleanupCard}
 })
 export default class MapModal extends Vue {
   
@@ -69,11 +69,14 @@ export default class MapModal extends Vue {
   get cleanups() {
     return cleanupsModule.getMarkers
   }
-  
+
+  get cleanup() {
+    return cleanupsModule.getCleanup
+  }
+
   mounted() {
     const selected = cleanupsModule.getCleanup
     setTimeout(() => {
-      console.log(cleanupsModule.getOpenedMap)
       this.map = new Map({
         pin: 'img/pin_cleanup.png',
         element: 'map_canvas',

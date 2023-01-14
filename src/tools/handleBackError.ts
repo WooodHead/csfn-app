@@ -1,12 +1,15 @@
 import FormError from '@/types/errors/FormError'
 import FieldError from '@/types/errors/FieldError'
 import UnknownError from '@/types/errors/UnknownError'
-import { HttpResponse } from '@capacitor-community/http'
+import {HttpResponse} from '@capacitor-community/http'
 
 export const handleBackError = (action: string) => (error: Partial<HttpResponse>) => {
   try {
     if (error.status === 400 && error.data.message) {
-      return Promise.reject(new FormError(error.data.message.map(({ property, constraints }) => new FieldError(property, Object.keys(constraints)[0]))))
+      return Promise.reject(new FormError(error.data.message.map(({
+                                                                    property,
+                                                                    constraints
+                                                                  }) => new FieldError(property, Object.keys(constraints)[0]))))
     }
     if (error.status === 404 && error.data.message) {
       return Promise.reject(new FormError([new FieldError(error.data.message, 'not-found')]))
@@ -21,5 +24,5 @@ export const handleBackError = (action: string) => (error: Partial<HttpResponse>
   } catch (e) {
     //
   }
-  return Promise.reject(new UnknownError(action))
+  return Promise.reject(new UnknownError(action, error.data?.message))
 }

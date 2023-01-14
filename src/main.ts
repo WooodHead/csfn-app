@@ -1,21 +1,21 @@
-import 'reflect-metadata' // Siempre en la primera línea
+import 'reflect-metadata'
 import Vue from 'vue'
 import Main from './App.vue'
 import Ionic from '@ionic/vue'
-import { store } from '@/store'
-import { router } from '@/router'
-import { i18n } from '@/i18n'
+import {store} from '@/store'
+import {router} from '@/router'
+import {i18n} from '@/i18n'
 //import { FacebookLogin } from '@capacitor-community/facebook-login'
 import '@codetrix-studio/capacitor-google-auth'
 import '@capacitor-community/firebase-analytics'
-import { defineCustomElements } from '@ionic/pwa-elements/loader'
+import {defineCustomElements} from '@ionic/pwa-elements/loader'
 import './icons'
 import './assets/style/tailwind.css'
 import * as _ from 'lodash'
-import language from '@/tools/language'
+import {localeString} from '@/tools/Utils'
 
 Vue.config.productionTip = false
-Vue.config.ignoredElements = [/^ion-/]
+Vue.config.ignoredElements = [/^ion-/];
 
 //registerWebPlugin(FacebookLogin)
 
@@ -25,11 +25,9 @@ Vue.filter('capitalize', function (value) {
   return _.capitalize(value)
 })
 
-Vue.filter('localeString', function (value) {
-  return Intl.NumberFormat(language(), {useGrouping: true}).format(value)
-})
+Vue.filter('localeString', localeString)
 
-new Vue({ store, router, i18n, render: h => h(Main) })
+new Vue({store, router, i18n, render: h => h(Main)})
   .$mount('#app')
 
 defineCustomElements(window)

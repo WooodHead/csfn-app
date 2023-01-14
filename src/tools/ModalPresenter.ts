@@ -1,3 +1,6 @@
+import Vue from 'vue'
+import {i18n} from '@/i18n'
+
 export default class ModalPresenter {
   public static present(ionic,
                         component,
@@ -11,8 +14,16 @@ export default class ModalPresenter {
         cssClass,
         component,
         componentProps: {
-          propsData: props
-        }
+          propsData: props,
+          localVue: Vue,
+          $i18n: i18n,
+          provide: {
+            $i18n() {
+              return i18n
+            }
+          }
+        },
+
       })
       .then(modal => modal.present().then(() => modal.onWillDismiss()))
   }

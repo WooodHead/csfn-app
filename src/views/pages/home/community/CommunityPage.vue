@@ -15,22 +15,22 @@
 
       <ion-content ref="community-content" :scroll-events="true" class="fullscreen text-left" color="white"
                    @ionScroll="scrolled">
-        <home-header :num="2">
+        <home-header :num="3">
           <!-- Total number -->
           <div class="h-toolbar-top sm:ios:mb-2"></div>
           <div class="flex flex-col justify-center h-full">
             <div class="flex justify-between items-center">
               <div class="flex flex-col justify-center items-center ml-4">
                 <div
-                  class="flex flex-col items-center justify-center w-14  h-14 rounded-full ion-activatable shadow-lg ripple-parent"
-                  @click="$router.push('/global-impact')">
+                    class="flex flex-col items-center justify-center w-14  h-14 rounded-full ion-activatable shadow-lg ripple-parent"
+                    @click="$router.push('/global-impact')">
                   <img class="w-12 sm:w-14 absolute opacity-75" src="@/assets/img/world.svg">
                   <span class="text-3xl sm:text-4xl font-medium text-white absolute roboto">
                                     {{ countriesCount }}
                                 </span>
                   <ion-ripple-effect/>
                 </div>
-                <span class="text-white economica">{{$t('countries')}}</span>
+                <span class="text-white economica">{{ $t('countries') }}</span>
               </div>
 
               <div v-if="totalStats" class="text-right">
@@ -100,7 +100,8 @@
                   <img :src="(user.picture && user.picture.publicUrl) || '/img/user-placeholder.png'">
                 </ion-avatar>
                 <ion-label class="font-bold my-6 lg:my-4">{{ user.username }}</ion-label>
-                <p class="pr-2">{{ user['total' + capitalize(measure)] | localeString }} {{ units }}</p>
+                <count-chip :count="user['total' + capitalize(measure)]"
+                            :type="measure === 'volume' ? 'liters': 'kilos'"/>
               </ion-item>
             </ion-list>
             <div v-else class="pt-2 px-6 mb-24 opacity-50">
@@ -124,28 +125,39 @@ import CommunityMap from '@/views/components/community/CommunityMap.vue'
 import MonthsChart from '@/views/components/community/MonthsChart.vue'
 import TransparentHeader from '@/views/components/common/TransparentHeader.vue'
 import Wave from '@/views/components/common/Wave.vue'
-import { nativeProvider } from '@/providers/native/native.provider'
+import {nativeProvider} from '@/providers/native/native.provider'
 import ToggleSwitch from '@/views/components/community/ToggleSwitch.vue'
 import PageTransparentHeader from '@/views/components/common/PageTransparentHeader.vue'
 import NumberDisplay from '@/views/components/community/NumberDisplay.vue'
-import { Measure } from '@/types/Measure'
-import { statsModule } from '@/store/statsModule'
-import { locationModule } from '@/store/locationModule'
+import {Measure} from '@/types/Measure'
+import {statsModule} from '@/store/statsModule'
+import {locationModule} from '@/store/locationModule'
 import TotalStats from '@/types/TotalStats'
 import MonthStats from '@/types/MonthStats'
 import TopUsers from '@/types/TopUsers'
-import { countries } from 'countries-list'
-import { Watch } from 'vue-property-decorator'
+import {countries} from 'countries-list'
+import {Watch} from 'vue-property-decorator'
 import * as _ from 'lodash'
-import { cleanupsModule } from '@/store/cleanupsModule'
+import {cleanupsModule} from '@/store/cleanupsModule'
 import ModalPresenter from '@/tools/ModalPresenter'
 import CleanupsMapModal from '@/views/pages/home/community/CleanupsMapPage.vue'
-import { appModule } from '@/store/appModule'
+import {appModule} from '@/store/appModule'
 import HomeHeader from '@/views/components/home/HomeHeader.vue'
+import CountChip from '@/views/components/common/CountChip.vue'
 
 @Component({
   name: 'community-page',
-  components: { HomeHeader, NumberDisplay, PageTransparentHeader, ToggleSwitch, Wave, TransparentHeader, MonthsChart, CommunityMap }
+  components: {
+    HomeHeader,
+    NumberDisplay,
+    PageTransparentHeader,
+    ToggleSwitch,
+    Wave,
+    TransparentHeader,
+    MonthsChart,
+    CommunityMap,
+    CountChip
+  }
 })
 export default class CommunityPage extends Vue {
 
@@ -186,7 +198,7 @@ export default class CommunityPage extends Vue {
   }
 
   get cleanupsMarkers() {
-    return cleanupsModule.markers
+    return cleanupsModule.getMarkers
   }
 
   get ready() {
@@ -228,7 +240,7 @@ export default class CommunityPage extends Vue {
 
   fetchTopUsers(area) {
     this.area = area
-    return statsModule.fetchTopUsers({ country: this.country, measure: this.measure })
+    return statsModule.fetchTopUsers({country: this.country, measure: this.measure})
   }
 
   measureChanged(measure: string) {

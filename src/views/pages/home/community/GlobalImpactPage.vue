@@ -19,22 +19,10 @@
           <ion-label>
             <p class="font-bold pl-2">{{ countryName(country) }}</p>
             <div class="ion-text-wrap">
-              <ion-chip v-if="country.cleanups !== '0'" color="secondary">
-                <ion-icon :src="require('ionicons5/dist/svg/trash.svg')" class="mr-1 text-sm"/>
-                {{ country.cleanups }} {{ $t('cleanups') }}
-              </ion-chip>
-              <ion-chip color="secondary" v-if="country.volume">
-                <ion-icon class="mr-1 text-sm" :src="require('@/assets/img/icons/bag.svg')"/>
-                {{ country.volume }} {{ $t('liters') }}
-              </ion-chip>
-              <ion-chip color="secondary" v-if="country.weight !== '0.00'">
-                <ion-icon :src="require('@/assets/img/icons/scale.svg')" class="mr-1 text-sm"/>
-                {{ country.weight | localeString }} {{ $t('kilos') }}
-              </ion-chip>
-              <ion-chip color="secondary" v-if="country.users">
-                <ion-icon name="person" class="mr-1 text-sm"/>
-                {{ country.users }} {{ $tc('users', country.users) }}
-              </ion-chip>
+              <count-chip v-if="country.cleanups !== '0'" :count="country.cleanups" type="cleanups"/>
+              <count-chip v-if="country.volume" :count="country.volume" type="liters"/>
+              <count-chip v-if="country.weight !== '0.00'" :count="country.weight" type="kilos"/>
+              <count-chip v-if="country.users" :count="country.users" type="users"/>
             </div>
           </ion-label>
         </ion-item>
@@ -43,13 +31,15 @@
   </ion-page>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { statsModule } from '@/store/statsModule'
-import { countries } from 'countries-list'
+import {Component, Vue} from 'vue-property-decorator'
+import {statsModule} from '@/store/statsModule'
+import {countries} from 'countries-list'
 import * as _ from 'lodash'
+import CountChip from '@/views/components/common/CountChip.vue'
 
 @Component({
-  name: 'global-impact-page'
+  name: 'global-impact-page',
+  components: {CountChip}
 })
 export default class GlobalImpactPage extends Vue {
 

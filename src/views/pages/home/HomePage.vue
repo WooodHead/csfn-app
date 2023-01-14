@@ -1,24 +1,5 @@
 <template>
   <ion-page class="ion-page home-page">
-    <ion-fab class="add-fab" horizontal="end" mode="ios" vertical="bottom">
-      <ion-fab-button color="white" @click="$router.push('/edit-cleanup')">
-        <ion-icon color="primary" name="add-outline" size="large"
-                  style="stroke: var(--ion-color-primary); stroke-width: 50px"/>
-      </ion-fab-button>
-      <!--
-    <ion-fab-list side="top">
-      <ion-fab-button color="white" :data-desc="$t('event')" @click="$router.push('/publish?type=event')">
-        <ion-icon name="flag" color="secondary"/>
-      </ion-fab-button>
-      <ion-fab-button color="white" :data-desc="$t('alert')" @click="$router.push('/publish?type=alert')">
-        <ion-icon name="alert" color="secondary"/>
-      </ion-fab-button>
-      <ion-fab-button color="white" :data-desc="$t('cleanup')" @click="$router.push('/publish?type=cleanup')">
-          <ion-icon name="trash" color="secondary"/>
-      </ion-fab-button>
-      </ion-fab-list>
-      -->
-    </ion-fab>
 
     <ion-slides ref="slider" :options="{initialSlide: 3, resistanceRatio: 1, cssMode: true, centeredSlides: true}"
                 class="w-full h-full"
@@ -27,19 +8,24 @@
         <current-user-page v-if="loaded || $route.params.tab === 'user'" ref="user"/>
       </ion-slide>
       <ion-slide>
-        <community-page v-if="loaded || $route.params.tab === 'community'" ref="community"/>
+        <groups-page v-if="loaded || $route.params.tab === 'groups'" ref="groups"/>
       </ion-slide>
       <ion-slide>
-        <alerts-page v-if="loaded || $route.params.tab === 'alerts'" ref="alerts"/>
+        <community-page v-if="loaded || $route.params.tab === 'community'" ref="community"/>
       </ion-slide>
       <ion-slide>
         <events-page v-if="loaded || $route.params.tab === 'events'" ref="events"/>
       </ion-slide>
     </ion-slides>
 
-    <ion-tab-bar>
-      <ion-tab-button v-for="tab in tabs" :key="tab"
+    <ion-tab-bar mode="ios" class="home-tabs">
+      <ion-tab-button v-for="tab in tabs" :key="tab" mode="ios" :disabled="!loaded"
                       :selected="selectedTab === tab" @click="slideTo(tab)">
+        <transition name="fade">
+          <ion-badge color="danger" mode="ios" class="-mt-2" v-if="tab === 'groups' && userGroupsHasRequests">
+            {{ userGroupsHasRequests }}
+          </ion-badge>
+        </transition>
         <transition name="fade">
           <ion-icon v-if="selectedTab === tab" :src="require('@/assets/img/tabs/' + tab + '.svg')"
                     size="large"></ion-icon>
@@ -47,6 +33,13 @@
         </transition>
       </ion-tab-button>
     </ion-tab-bar>
+
+    <ion-fab class="add-fab" horizontal="end" mode="ios" vertical="bottom">
+      <ion-fab-button color="white" @click="publish" mode="ios">
+        <ion-icon color="primary" name="add-outline" size="large"
+                  style="stroke: var(--ion-color-primary); stroke-width: 50px"/>
+      </ion-fab-button>
+    </ion-fab>
   </ion-page>
 </template>
 
@@ -54,23 +47,27 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import HomeHeader from '@/views/components/home/HomeHeader.vue'
-import CleanupCard from '@/views/components/home/CleanupCard.vue'
+import CleanupCard from '@/views/components/common/CleanupCard.vue'
 import PlaceholderCard from '@/views/components/home/PlaceholderCard.vue'
 import HomeCleanupsList from '@/views/components/home/CleanupsList.vue'
 import CurrentUserPage from '@/views/pages/home/user/CurrentUserPage.vue'
 import CommunityPage from '@/views/pages/home/community/CommunityPage.vue'
-import AlertsPage from '@/views/pages/home/alerts/AlertsPage.vue'
 import EventsPage from '@/views/pages/home/events/EventsPage.vue'
-import { Ref, Watch } from 'vue-property-decorator'
-import { nativeProvider } from '@/providers/native/native.provider'
-import { cleanupsModule } from '@/store/cleanupsModule'
+import {Ref, Watch} from 'vue-property-decorator'
+import {nativeProvider} from '@/providers/native/native.provider'
+import {cleanupsModule} from '@/store/cleanupsModule'
+import GroupsPage from '@/views/pages/home/groups/GroupsPage.vue'
+import {userModule} from '@/store/userModule'
+import {userProvider} from '@/providers/data/user.provider'
+import ModalPresenter from '@/tools/ModalPresenter'
+import PublishAsModal from '@/views/modals/PublishAsModal.vue'
 
 @Component({
   name: 'HomePage',
   components: {
     EventsPage,
-    AlertsPage,
     CommunityPage,
+    GroupsPage,
     CurrentUserPage,
     HomeCleanupsList,
     PlaceholderCard: PlaceholderCard,
@@ -82,21 +79,26 @@ export default class HomePage extends Vue {
 
   loaded = false
 
-  tabs = ['user', 'community', 'alerts', 'events']
+  tabs = ['user', 'groups', 'community', 'events']
 
   selectedTab = ''
 
   @Ref('slider')
   slider: HTMLIonSlidesElement
 
+  get userGroupsHasRequests() {
+    return userModule.getGroupsHasRequests
+  }
+
   mounted() {
     nativeProvider.hideSplashScreen()
     cleanupsModule.setCleanup(null)
+    userModule.fetchUserGroupsHasRequests()
     this.changedRoute(this.$route)
     this.slider.slideTo(this.tabs.indexOf(this.$route.params.tab), 0)
     setTimeout(() => {
       this.loaded = true
-    }, 2000)
+    }, 1000)
   }
 
   activated() {
@@ -129,18 +131,41 @@ export default class HomePage extends Vue {
     this.slider.isBeginning().then((beg) => this.slider.lockSwipeToPrev(beg))
     this.slider.isEnd().then((end) => this.slider.lockSwipeToNext(end))
     this.slider.getActiveIndex()
-      .then(index => {
-        if (this.tabs[index] !== this.selectedTab) {
-          this.$router.replace('/home/' + this.tabs[index])
-        }
-      })
+        .then(index => {
+          if (this.tabs[index] !== this.selectedTab) {
+            this.$router.replace('/home/' + this.tabs[index])
+          }
+        })
+  }
+
+  publish() {
+    userProvider.fetchUserGroups(userModule.getCurrentUser.id, 0, 0, true)
+        .then(({data, meta}) => {
+          if (meta.totalItems) {
+            ModalPresenter.present(this.$ionic, PublishAsModal, {
+              user: userModule.getCurrentUser,
+              groups: data.map(({group}) => group),
+              texts: {
+                title: this.$t('publish-as'),
+                cancel: this.$t('cancel'),
+                accept: this.$t('accept')
+              },
+            }, 'publish-as-modal')
+                .then(({data}) => {
+                  if (data) {
+                    this.$router.push('/edit-cleanup?group=' + (data !== 'user' ? data : ''))
+                  }
+                })
+          } else {
+            this.$router.push('/edit-cleanup')
+          }
+        })
   }
 }
 </script>
 <style>
-.home-tabs {
-  --padding: 0;
-  --pading-top: 0;
+.home-tabs .tab-disabled {
+  opacity: 1;
 }
 
 .tab-button {
@@ -184,16 +209,46 @@ ion-tab-button {
   transition: border 0.25s;
 }
 
-.tab-selected {
-  border-top: 3px solid var(--ion-color-primary);
+ion-tab-button {
+  position: relative;
 }
 
-.tab-selected ion-icon {
-  margin-top: -2px;
-  transition: all 0.25s;
+ion-tab-button:after {
+  content: '';
+  background: var(--ion-color-primary);
+  position: absolute;
+  margin-top: -1px;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+ion-tab-button.tab-selected:after {
+  opacity: 1;
 }
 
 .add-fab {
   margin-bottom: calc(50px + var(--ion-safe-area-bottom));
 }
+
+.publish-as-modal {
+  --min-height: 50vh;
+  --height: 50vh;
+}
+
+.publish-as-modal .modal-wrapper {
+  position: absolute;
+  bottom: 0;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.publish-as-modal ion-header ion-toolbar {
+  padding-top: 0 !important;
+}
+
 </style>

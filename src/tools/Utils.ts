@@ -2,11 +2,16 @@ import Address from '@/types/Address'
 import Coords from '@/types/Coords'
 import CoordsBound from '@/types/CoordsBound'
 import distance from '@turf/distance'
+import language from '@/tools/language'
 import GeocoderAddressComponent = google.maps.GeocoderAddressComponent
 import GeocoderResult = google.maps.GeocoderResult
 
 export function addressToString(address: Address) {
   return [address.city, address.state, address.country].filter(s => !!s).join(', ')
+}
+
+export function cityToString(address: Address) {
+  return [address.city, address.country].filter(s => !!s).join(', ')
 }
 
 export function coordsBoundToString(bounds: CoordsBound): string {
@@ -16,6 +21,9 @@ export function coordsBoundToString(bounds: CoordsBound): string {
   return [bounds.sw.lat, bounds.sw.lng, bounds.ne.lat, bounds.ne.lng].join(',')
 }
 
+export function coordsToString({lat, lng}: Coords) {
+  return `${Number(lat)},${Number(lng)}`
+}
 
 export function calculateDistance(frm: Coords,
                                   to: Coords): number {
@@ -71,4 +79,13 @@ export function geocoderToAddress(result: GeocoderResult): Address {
 
 export function findAddressComponentByType(addressComponents: GeocoderAddressComponent[], type: string) {
   return addressComponents.filter(({types}) => types.includes(type))[0]
+}
+
+export function localeString(value: number) {
+  return Intl.NumberFormat(language(), {useGrouping: true}).format(value)
+}
+
+export const monthNames = {
+  en: ['January', 'February', 'March', 'May', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  es: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 }

@@ -150,7 +150,7 @@ ion-item {
   --border-color: #eee;
 }
 
-ion-item ion-icon {
+ion-item ion-icon[slot=start] {
   margin: auto 16px auto 0;
 }
 
@@ -202,7 +202,7 @@ ion-slides {
 }
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .15s;
+  transition: opacity .3s;
 }
 
 .fade-enter, .fade-leave-to {
@@ -217,6 +217,29 @@ ion-slides {
   bottom: -100px !important;
   opacity: 0;
   position: fixed;
+}
+
+.slide-left-enter-active, .slide-left-leave-active {
+  transition: transform 0.3s, opacity .3s;
+}
+
+.slide-left-enter {
+  transform: translateX(100%);
+}
+
+.slide-left-leave-to {
+  transform: translateX(-100%);
+}
+
+.slide-right-enter-active, .slide-right-leave-active {
+  transition: transform 0.3s, opacity .3s;
+}
+
+.slide-right-enter{
+  transform: translateX(-100%);
+}
+.slide-right-leave-to {
+  transform: translateX(100%);
 }
 
 .bg-poly {
@@ -301,4 +324,42 @@ ion-chip.chip-outline.ion-color {
 
 ion-app.ios ion-button ion-icon {
   font-size: larger !important;
+}
+
+ion-popover {
+  --width: auto !important;
+}
+
+ion-badge {
+  min-width: 1.5em;
+  border-radius: 999px;
+}
+
+.tooltip {
+  background-color: var(--ion-color-dark);
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  outline: none;
+  padding: 0 4px;
+  position: absolute;
+  white-space: nowrap;
+}
+
+.tooltip::after {
+  border-color: var(--ion-color-dark) transparent transparent transparent;
+  border-style: solid;
+  border-width: 5px;
+  content: " ";
+  left: 50%;
+  margin-left: -5px;
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+}
+
+ion-item.item-no-padding {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
 }

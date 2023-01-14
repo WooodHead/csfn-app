@@ -1,24 +1,21 @@
 <template>
-  <ion-app>
-    <div :class="{'notch': hasNotch}">
-      <transition mode="in-out" name="fade">
-        <router-view></router-view>
-      </transition>
-    </div>
+  <div :class="{'notch': hasNotch}">
+    <ion-app>
+      <ion-vue-router mode="md"/>
+    </ion-app>
     <div id="empty"/>
-  </ion-app>
+  </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import CurrentUserPage from '@/views/pages/home/user/CurrentUserPage.vue'
 import EventsPage from '@/views/pages/home/events/EventsPage.vue'
-import AlertsPage from '@/views/pages/home/alerts/AlertsPage.vue'
 import CommunityPage from '@/views/pages/home/community/CommunityPage.vue'
-import { hasNotch } from '@/tools/Utils'
+import {hasNotch} from '@/tools/Utils'
 
 @Component({
-  components: { CurrentUserPage, EventsPage, AlertsPage, CommunityPage }
+  components: {CurrentUserPage, EventsPage, CommunityPage}
 })
 export default class Main extends Vue {
 

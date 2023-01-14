@@ -1,6 +1,8 @@
 <template>
-  <div :class="isScrolled ? 'scrolled' : ''">
-    <slot></slot>
+  <div>
+    <div :class="isScrolled ? 'scrolled' : ''">
+      <slot></slot>
+    </div>
   </div>
 </template>
 <script lang=ts>

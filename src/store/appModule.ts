@@ -1,8 +1,8 @@
-import { Action, Module, Mutation, VuexModule } from 'vuex-class-modules'
-import { store } from '@/store/index'
-import { authModule } from '@/store/authModule'
-import { nativeProvider } from '@/providers/native/native.provider'
-import { facebookProvider } from '@/providers/facebook/facebook.provider'
+import {Action, Module, Mutation, VuexModule} from 'vuex-class-modules'
+import {store} from '@/store/index'
+import {authModule} from '@/store/authModule'
+import {nativeProvider} from '@/providers/native/native.provider'
+import {facebookProvider} from '@/providers/facebook/facebook.provider'
 import Vue from 'vue'
 
 @Module
@@ -13,7 +13,7 @@ class AppModule extends VuexModule {
   loadedCommunity = false
 
   constructor() {
-    super({ store, name: 'app' })
+    super({store, name: 'app'})
   }
 
   get isInitialized() {
@@ -64,10 +64,10 @@ class AppModule extends VuexModule {
   }
 
   @Action
-  showLoader(ionic: any) {
-    return ionic.loadingController.create()
-      .then((loader) => loader.present()
-        .then(() => this.setLoader(loader)))
+  async showLoader(ionic: any) {
+    const loader = await ionic.loadingController.create()
+    this.setLoader(loader)
+    await loader.present()
   }
 
   @Action

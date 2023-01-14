@@ -25,7 +25,7 @@ import Map from '@/tools/Map'
 import Component from 'vue-class-component'
 import { Emit, Prop, Watch } from 'vue-property-decorator'
 import Coords from '@/types/Coords'
-import MapCleanupCard from '@/views/components/home/CleanupCard.vue'
+import MapCleanupCard from '@/views/components/common/CleanupCard.vue'
 import Cleanup from '@/types/Cleanup'
 
 @Component({

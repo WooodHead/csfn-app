@@ -1,5 +1,9 @@
 import {CapacitorConfig} from '@capacitor/cli'
 
+const {networkInterfaces} = require('os')
+
+const address = networkInterfaces()['en0'][1].address
+
 export default {
   appId: 'com.cleansomething.app',
   appName: 'CSFN',
@@ -8,6 +12,8 @@ export default {
   webDir: 'dist',
   backgroundColor: '#ffffffff',
   server: {
+    url: process.env.NODE_ENV === 'development' ? `http://${address}:8080` : undefined,
+    cleartext: true,
     hostname: 'native.cleansomethingfornothing.com',
     allowNavigation: [
       'app.cleansomethingfornothing.com'

@@ -33,14 +33,8 @@
             <p class="font-bold pl-2">{{ title(activity) }}</p>
             <p class="pl-2">{{ activity.description }}</p>
             <div class="ion-text-wrap">
-              <ion-chip v-if="activity.volume" color="secondary">
-                <ion-icon :src="require('@/assets/img/icons/bag.svg')" class="mr-1 text-sm"/>
-                {{ activity.volume }} {{ $t('liters') }}
-              </ion-chip>
-              <ion-chip v-if="activity.weight" color="secondary">
-                <ion-icon :src="require('@/assets/img/icons/scale.svg')" class="mr-1 text-sm"/>
-                {{ activity.weight | localeString }} {{ $t('kilos') }}
-              </ion-chip>
+              <count-chip :count="activity.volume" type="liters"/>
+              <count-chip :count="activity.weight" type="kilos"/>
             </div>
           </ion-label>
         </ion-item>
@@ -55,9 +49,11 @@ import { userModule } from '@/store/userModule'
 import Cleanup from '@/types/Cleanup'
 import { Activity } from '@/types/Activity'
 import { Prop } from 'vue-property-decorator'
+import CountChip from '@/views/components/common/CountChip.vue'
 
 @Component({
-  name: 'user-activities-page'
+  name: 'user-activities-page',
+  components: {CountChip}
 })
 export default class UserActivitiesPage extends Vue {
 

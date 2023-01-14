@@ -3,6 +3,7 @@
     "target": "esnext",
     "module": "esnext",
     "jsx": "preserve",
+    "strict": false,
     "importHelpers": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,

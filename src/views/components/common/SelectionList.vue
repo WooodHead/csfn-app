@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <ion-list class="p-0">
     <ion-item v-for="(element, i) of elements" :key="i" button detail="false"
               @click="selected(element)" lines="none">
       <ion-icon :name="icon" color="primary" v-if="icon" slot="start"></ion-icon>
       <ion-label>{{ elementValue(element) }}</ion-label>
     </ion-item>
-  </div>
+  </ion-list>
 </template>
 <script lang="ts">
 import Vue from 'vue'
