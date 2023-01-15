@@ -57,9 +57,9 @@
                 </transition>
               </div>
 
-              <div class="flex flex-col items-center mt-4 h-20" v-if="group">
+              <div class="flex flex-col items-center mt-4 h-20 mb-8" v-if="group">
                 <span class="text-xl font-bold">{{ group.name }}</span>
-                <span class="text-sm opacity-75 mt-1">{{ group.mission }}</span>
+                <span class="text-sm opacity-75 mt-1 mx-14 text-center">{{ group.mission }}</span>
                 <div class="text-xs opacity-50 mt-2 flex items-center">
                   <ion-icon name="location-sharp"/>
                   {{ group.city }}, {{ group.country }}

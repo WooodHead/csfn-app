@@ -83,7 +83,10 @@ export default class HttpTool {
     return Http.request({
       method,
       url: process.env.VUE_APP_BACK_URL + this.baseUrl + path,
-      headers,
+      headers: {
+        ...headers,
+        'X-Api-Version': process.env.VUE_APP_API_VERSION
+      },
       data,
       params: params && Object.fromEntries(Object.entries(params).filter(([key, value]) => value != null)),
       webFetchExtra: {
