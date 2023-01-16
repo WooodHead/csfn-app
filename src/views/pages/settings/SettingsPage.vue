@@ -17,15 +17,20 @@
     </ion-header>
     <ion-content class="list-large-items">
       <ion-list>
-        <ion-item button @click="$router.push('/profile-settings')">
+        <ion-item button @click="$router.push('/settings/profile')">
           <ion-icon slot="start" :src="require('ionicons5/dist/svg/person-outline.svg')"
                     color="back"></ion-icon>
           <ion-label>{{ $t('profile') }}</ion-label>
         </ion-item>
-        <ion-item button @click="$router.push('/security-settings')">
+        <ion-item button @click="$router.push('/settings/security')">
           <ion-icon slot="start" :src="require('ionicons5/dist/svg/shield-outline.svg')"
                     color="black"></ion-icon>
           <ion-label>{{ $t('security') }}</ion-label>
+        </ion-item>
+        <ion-item button @click="$router.push('/settings/support')">
+          <ion-icon slot="start" :src="require('ionicons5/dist/svg/help-circle-outline.svg')"
+                    color="black"></ion-icon>
+          <ion-label>{{ $t('support') }}</ion-label>
         </ion-item>
         <ion-item button @click="openPrivacyPolicy">
           <ion-icon slot="start" :src="require('ionicons5/dist/svg/document-lock-outline.svg')"
@@ -44,8 +49,8 @@
 import {App} from '@capacitor/app'
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { authModule } from '@/store/authModule'
-import { appModule } from '@/store/appModule'
+import {authModule} from '@/store/authModule'
+import {appModule} from '@/store/appModule'
 
 @Component({
   name: 'SettingsPage'
@@ -59,26 +64,26 @@ export default class SettingsPage extends Vue {
 
   openInfo() {
     App.getInfo()
-      .then((info) => this.$ionic.alertController.create({
-        message: '<div class="text-center text-xl economica text-black mt-4">Clean Something For Nothing</div>' +
-          '<div class="text-base text-black text-center my-3">v' + info.version + '</div>' +
-          '<span class="text-xs">Idea by César González</span><br>' +
-          '<span class="text-xs">Developed by Lester Pérez</span>',
-        cssClass: 'alert-no-header'
-      }))
-      .then((alert) => alert.present())
+        .then((info) => this.$ionic.alertController.create({
+          message: '<div class="text-center text-xl economica text-black mt-4">Clean Something For Nothing</div>' +
+              '<div class="text-base text-black text-center my-3">v' + info.version + '</div>' +
+              '<span class="text-xs">Idea by César González</span><br>' +
+              '<span class="text-xs">Developed by Lester Pérez</span>',
+          cssClass: 'alert-no-header'
+        }))
+        .then((alert) => alert.present())
   }
 
   logout() {
     appModule.showLoader(this.$ionic)
-      .then(() => authModule.doLogout())
-      .then(() => {
-        appModule.hideLoader()
-        this.$router.replace('/login')
-      })
-      .catch(() => {
-        appModule.hideLoader()
-      })
+        .then(() => authModule.doLogout())
+        .then(() => {
+          appModule.hideLoader()
+          this.$router.replace('/login')
+        })
+        .catch(() => {
+          appModule.hideLoader()
+        })
   }
 
 }

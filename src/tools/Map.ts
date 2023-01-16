@@ -1,6 +1,7 @@
 import {locationProvider} from '@/providers/location/location.provider'
 import Coords from '@/types/Coords'
 import {isEqual} from 'lodash'
+import {MarkerClusterer, Renderer} from '@googlemaps/markerclusterer'
 import LatLngBounds = google.maps.LatLngBounds
 
 export default class Map {
@@ -13,10 +14,11 @@ export default class Map {
   pin: string
   origin: Coords
   selected: Coords
-  markers: any[] = []
+  markers: google.maps.Marker[] = []
   isInput: boolean
   circle: any
   onTouch: Function
+  clusterer: MarkerClusterer
 
   constructor({element, origin, isInput, zoom, pin, onTouch, onReady, bounds}:
                 { element: string, origin: Coords, isInput: boolean, zoom?: number, pin?: string, onTouch?: Function, onReady?: Function, bounds?: LatLngBounds }) {
@@ -30,6 +32,7 @@ export default class Map {
     this.onTouch = onTouch
     this.map = new google.maps.Map(document.getElementById(element), {
       center: !bounds ? origin : undefined,
+      minZoom: 5,
       zoom: zoom || Map.zoom,
       disableDefaultUI: true,
       clickableIcons: false,
@@ -66,6 +69,10 @@ export default class Map {
 
     if (isInput) {
       this.map.addListener('click', this.mapClicked.bind(this))
+    }
+
+    if (!isInput) {
+      this.clusterer = new MarkerClusterer({map: this.map, renderer})
     }
 
     google.maps.event.trigger(this.map, 'resize')
@@ -106,7 +113,8 @@ export default class Map {
 
   public addMarker(position: Coords,
                    pin: string,
-                   onClick?: Function) {
+                   onClick?: Function,
+                   id?: string) {
     if (this.markers.filter(marker => isEqual(marker.getPosition(), position)).length > 0) {
       return
     }
@@ -117,16 +125,29 @@ export default class Map {
       map: this.map
     })
 
+    if (id) {
+      marker.set('id', id)
+    }
+
     if (onClick) {
       marker.addListener('click', onClick)
     }
 
     this.markers.push(marker)
+    this.clusterer.addMarker(marker)
   }
 
   removeMarkers() {
+    this.clusterer.removeMarkers(this.markers)
     this.markers.forEach((marker) => marker.setMap(null))
     this.markers = []
+  }
+
+  removeMarkersById(ids: string[]) {
+    const markers = this.markers.filter(marker => ids.includes(marker.get('id')))
+    markers.forEach((marker) => marker.setMap(null))
+    this.clusterer.removeMarkers(markers)
+    this.markers = this.markers.filter(marker => !ids.includes(marker.get('id')))
   }
 
   setCircle(coords: Coords,
@@ -200,5 +221,28 @@ export default class Map {
     }
     this.zoom = this.map.getZoom()
     this.bounds = this.map.getBounds()
+  }
+}
+
+const renderer: Renderer = {
+  render({count, position, markers}) {
+    const svg = window.btoa(`
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+            <circle cx="120" cy="120" r="70"  fill="#FFFFFF" stroke="#59B14A" stroke-width="20px"/>    
+          </svg>`)
+    return new google.maps.Marker({
+      position,
+      opacity: 1,
+      icon: {
+        url: `data:image/svg+xml;base64,${svg}`,
+        scaledSize: new google.maps.Size(60, 60),
+      },
+      label: {
+        text: String(count),
+        color: '#59B14A',
+        fontSize: '16px',
+        fontWeight: 'bold'
+      },
+    })
   }
 }

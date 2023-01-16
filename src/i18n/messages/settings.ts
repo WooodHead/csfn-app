@@ -28,7 +28,9 @@ export default {
       'If you want to fully remove your account you can contact us using the methods listed in the Support page in Settings.',
     'deactivate-account-confirmation': 'Are you sure you want to deactivate your account?',
     'deactivate-account-success': 'Your account was deactivated',
-    'privacy-policy': 'Privacy Policy'
+    'privacy-policy': 'Privacy Policy',
+    'support': 'Support',
+    'support-message': 'If you have any questions, suggestions or want to report some problem you can get in touch with us using this methods . We\'d love hearing from you!'
   },
   es: {
     'profile': 'Perfil',
@@ -59,7 +61,9 @@ export default {
       'Si deseas eliminar tu cuenta por completo ponte en contacto con nosotros con los medios que puedes encontrar en la página de Soporte en Ajustes.',
     'deactivate-account-confirmation': '¿Seguro que deseas desactivar tu cuenta?',
     'deactivate-account-success': 'Tu cuenta ha sido desactivada',
-    'privacy-policy': 'Política de privacidad'
+    'privacy-policy': 'Política de privacidad',
+    'support': 'Soporte',
+    'support-message': 'Si tienes cualquier duda, sugerencia o quieres notificar algún problema nos puedes contactar usando los siguientes canales. ¡Nos encantará saber de ti!'
   }
 }
 

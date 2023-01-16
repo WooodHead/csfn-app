@@ -60,6 +60,7 @@ export default class CleanupsMap extends Vue {
 
   @Watch('cleanups')
   cleanupsChanged(cleanups: { [id: string]: Cleanup }) {
+    console.log(cleanups)
     if (!cleanups) return
     this.map.removeMarkers()
     for (const cleanup of Object.values(cleanups)) {

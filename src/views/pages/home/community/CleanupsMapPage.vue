@@ -21,7 +21,7 @@
                         @selected="selectedSearch">
         </selection-list>
       </ion-card>
-      
+
       <div id="map_canvas" class="h-full w-full z-30"></div>
       <transition name="fade-up">
         <div v-if="selectedCleanup"
@@ -48,7 +48,7 @@ import Location from '@/types/Location'
 import InputItem from '@/views/components/common/InputItem.vue'
 import SelectionList from '@/views/components/common/SelectionList.vue'
 import CleanupCard from '@/views/components/common/CleanupCard.vue'
-import {debounce} from 'lodash'
+import _, {debounce} from 'lodash'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import {Watch} from 'vue-property-decorator'
@@ -58,14 +58,14 @@ import {Watch} from 'vue-property-decorator'
   components: {SelectionList, TextItem: InputItem, CleanupCard}
 })
 export default class MapModal extends Vue {
-  
+
   loading = false
   searchText = ''
   searchResults: Location[] = []
   selectedResult: Location
   selectedCleanup = 0
   map: Map
-  
+
   get cleanups() {
     return cleanupsModule.getMarkers
   }
@@ -95,7 +95,7 @@ export default class MapModal extends Vue {
       }
     })
   }
-  
+
   touched() {
     (this.$refs['text-input'] as HTMLInputElement).blur()
     this.searchResults = []
@@ -105,61 +105,67 @@ export default class MapModal extends Vue {
       this.fetch()
     }, 100)()
   }
-  
+
   fetch() {
     this.loading = true
     cleanupsModule.fetchMarkers(this.map.getBounds())
   }
-  
+
   @Watch('cleanups')
-  cleanupsChanged(cleanups: { [id: string]: Cleanup }) {
+  cleanupsChanged(cleanups: Cleanup[], previousCleanups: Cleanup []) {
     this.loading = false
-    for (const cleanup of Object.values(cleanups)) {
+
+    const removed: string[] = _.differenceBy(previousCleanups, cleanups, 'id').map(({id}) => 'c' + id)
+    const added: Cleanup[] = _.differenceBy(cleanups, previousCleanups, 'id')
+
+    this.map.removeMarkersById(removed)
+    for (const cleanup of added) {
       this.map.addMarker(cleanup.location.coords,
-        '/img/pin_cleanup.png',
-        () => this.selectCleanup(cleanup))
+          '/img/pin_cleanup.png',
+          () => this.selectCleanup(cleanup),
+          'c' + cleanup.id)
     }
   }
-  
+
   selectCleanup(cleanup: Cleanup) {
     //this.map.moveCamera({ lat: cleanup.location.coords.lat - 0.01, lng: cleanup.location.coords.lng })
     cleanupsModule.fetchCleanup(cleanup.id)
     this.selectedCleanup = cleanup.id
   }
-  
+
   openSelectedCleanup() {
     cleanupsModule.setOpenedMap(this.map)
     this.$router.push('/cleanup/' + this.selectedCleanup)
   }
-  
+
   search() {
     this.loading = true
     placesProvider.searchPlace(this.searchText, locationModule.getAddress.countryCode)
-      .then((results) => {
-        this.loading = false
-        this.searchResults = results
-      })
-      .catch((error) => {
-        this.loading = false
-        ToastPresenter.present(this.$ionic, ErrorMessage.getMessage(error))
-      })
+        .then((results) => {
+          this.loading = false
+          this.searchResults = results
+        })
+        .catch((error) => {
+          this.loading = false
+          ToastPresenter.present(this.$ionic, ErrorMessage.getMessage(error))
+        })
   }
-  
+
   clear() {
     setTimeout(() => {
       this.searchResults = []
     }, 300)
   }
-  
+
   selectedSearch(selected: Location) {
     this.searchText = ''
     this.selectedResult = selected
     this.map.moveCamera(selected.coords, 10)
   }
-  
+
   addressToString(address) {
     return addressToString(address)
   }
-  
+
 }
 </script>

@@ -10,6 +10,7 @@ import settings from '@/i18n/messages/settings'
 import stats from '@/i18n/messages/stats'
 import levels from '@/i18n/messages/levels'
 import groups from '@/i18n/messages/groups'
+import welcome from '@/i18n/messages/welcome'
 
 export default {
   en: {
@@ -24,7 +25,8 @@ export default {
     ...settings.en,
     ...stats.en,
     ...levels.en,
-    ...groups.en
+    ...groups.en,
+    ...welcome.en
   },
   es: {
     ...auth.es,
@@ -38,6 +40,7 @@ export default {
     ...settings.es,
     ...stats.es,
     ...levels.es,
-    ...groups.es
+    ...groups.es,
+    ...welcome.es
   }
 }

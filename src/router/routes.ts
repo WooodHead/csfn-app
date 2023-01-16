@@ -24,6 +24,7 @@ import GroupRequestsPage from '@/views/pages/group/settings/GroupRequestsPage.vu
 import MemberRequestPage from '@/views/pages/group/MemberRequestPage.vue'
 import MembersListPage from '@/views/pages/group/MembersListPage.vue'
 import GroupReportPage from '@/views/pages/group/settings/GroupReportPage.vue'
+import SupportPage from '@/views/pages/settings/SupportPage.vue'
 
 const routes: RouteConfig[] = [
   {
@@ -150,11 +151,15 @@ const routes: RouteConfig[] = [
     name: 'GlobalImpactPage',
     component: GlobalImpactPage
   }, {
-    path: '/security-settings',
+    path: '/settings/security',
     name: 'SecuritySettingsPage',
     component: SecuritySettingsPage
   }, {
-    path: '/profile-settings',
+    path: '/settings/support',
+    name: 'SecuritySettingsPage',
+    component: SupportPage
+  }, {
+    path: '/settings/profile',
     name: 'ProfileSettingsPage',
     component: ProfileSettingsPage
   }
