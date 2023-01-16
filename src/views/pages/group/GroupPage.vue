@@ -57,7 +57,7 @@
                 </transition>
               </div>
 
-              <div class="flex flex-col items-center mt-4 h-20 mb-8" v-if="group">
+              <div class="flex flex-col items-center mt-4" v-if="group">
                 <span class="text-xl font-bold">{{ group.name }}</span>
                 <span class="text-sm opacity-75 mt-1 mx-14 text-center">{{ group.mission }}</span>
                 <div class="text-xs opacity-50 mt-2 flex items-center">
@@ -66,7 +66,7 @@
                 </div>
               </div>
 
-              <div class="flex justify-around w-full mt-5 px-2" v-if="group">
+              <div class="flex justify-around w-full mt-2 px-2" v-if="group">
                 <user-counter :icon-src="require('ionicons5/dist/svg/trash-outline.svg')" :label="$t('cleanups')"
                               :max="1" progress-value="1" :key="'cleanups' + totalCleanups"
                               :value="totalCleanups" no-animate/>

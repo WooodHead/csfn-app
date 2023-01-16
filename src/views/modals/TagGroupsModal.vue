@@ -156,7 +156,6 @@ export default class TagGroupsModal extends Vue {
   findAll() {
     groupsProvider.fetchGroups(this.isGroup ? this.currentGroup.coords : locationModule.userCoords, 1, 0, {
       search: this.searchText,
-      includeUser: !this.isGroup ? userModule.getCurrentUser.id : null,
       excludeId: this.groupId
     }).then(({data}) => this.searchResults = data)
         .finally(() => this.loadingSearch = false)

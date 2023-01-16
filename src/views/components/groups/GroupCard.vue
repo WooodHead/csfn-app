@@ -12,7 +12,7 @@
         <group-status-button :status="status" readonly/>
       </div>
       <ion-avatar class="w-24 h-24 -mt-12 ml-3 bg-white z-10 relative">
-        <ion-img :src="group.picture.publicUrl" class="rounded-full shadow-md"/>
+        <img :src="group.picture.publicUrl" class="rounded-full shadow-md"/>
       </ion-avatar>
       <ion-card-header mode="md">
         <ion-card-title mode="md" class="font-bold">{{ group.name }}</ion-card-title>

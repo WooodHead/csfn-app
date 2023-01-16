@@ -111,7 +111,7 @@
               <div class="px-4 py-4 lg:px-24">
                 <!-- Location -->
                 <div class="flex items-center mb-4">
-                  <ion-icon class="mr-2 text-lg" color="secondary" name="location-sharp"></ion-icon>
+                  <ion-icon class="mr-2 text-lg w-8" color="secondary" name="location-sharp"></ion-icon>
                   <ion-label class="font-bold ion-text-wrap">
                     <span class="text-base">{{ addressString }}</span>
                   </ion-label>
