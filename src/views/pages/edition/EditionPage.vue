@@ -404,7 +404,8 @@ export default class EditionPage extends Vue {
         suggestions: this.$t('suggestions'),
         selected: this.$t('selected'),
         results: this.$t('results'),
-        noResults: this.$t('no-results')
+        noResults: this.$t('no-results'),
+        noSuggestions: this.$t('search-a-group')
       },
       groupId: +this.fromGroup,
       initSelected: this.activity.taggedGroups,

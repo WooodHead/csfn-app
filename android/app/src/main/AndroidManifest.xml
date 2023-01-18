@@ -15,6 +15,7 @@
             android:name="com.cleansomething.app.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
             android:label="@string/title_activity_main"
+            android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBarLaunch">
 

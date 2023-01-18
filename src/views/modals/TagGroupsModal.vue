@@ -71,6 +71,7 @@
 
       <empty-text v-if="!searchText && !loadingSearch && !suggestions.length" :text="texts.noSuggestions"/>
       <empty-text v-if="searchText && !loadingSearch && !searchResults.length" :text="texts.noResults"/>
+
     </ion-content>
   </div>
 </template>

@@ -39,17 +39,24 @@
                     color="back"></ion-icon>
           <ion-label>{{ $t('download-report') }}</ion-label>
         </ion-item>
-
       </ion-list>
+
     </ion-content>
   </ion-page>
 </template>
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator'
 import {groupsModule} from '@/store/groupsModule'
+import {Keyboard, KeyboardInfo} from '@capacitor/keyboard'
+import {height} from 'tailwindcss/lib/plugins'
 
 @Component({
-  name: 'GroupSettingsPage'
+  name: 'GroupSettingsPage',
+  methods: {
+    height() {
+      return height
+    }
+  }
 })
 export default class GroupSettingsPage extends Vue {
 
@@ -63,6 +70,7 @@ export default class GroupSettingsPage extends Vue {
     this.id = +this.$route.params.id
     groupsModule.fetchGroupHasRequests(this.id)
   }
+
 
 }
 </script>

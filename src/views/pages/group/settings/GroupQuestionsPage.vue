@@ -36,6 +36,7 @@
         </ion-button>
       </ion-list>
 
+      <div :style="`height: ${keyboardHeight}px`"></div>
     </ion-content>
     <ion-footer>
       <ion-toolbar>
@@ -52,6 +53,7 @@ import {groupsProvider} from '@/providers/data/groups.provider'
 import {GroupQuestion} from '@/types/GroupQuestions'
 import ToastPresenter from '@/tools/ToastPresenter'
 import EmptyText from '@/views/components/common/EmptyText.vue'
+import {Keyboard, KeyboardInfo} from '@capacitor/keyboard'
 
 @Component({
   name: 'GroupQuestionsPage',
@@ -62,11 +64,18 @@ export default class GroupQuestionsPage extends Vue {
   id = null
   questions: GroupQuestion[] = []
   loading = false
+  keyboardHeight = null
 
   mounted() {
     this.id = +this.$route.params.id
     groupsProvider.findGroupQuestions(this.id)
         .then((questions) => this.questions = questions)
+    Keyboard.addListener('keyboardWillShow', (info: KeyboardInfo) => {
+      this.keyboardHeight = info.keyboardHeight
+    })
+    Keyboard.addListener('keyboardWillHide', () => {
+      this.keyboardHeight = 0
+    })
   }
 
   add() {

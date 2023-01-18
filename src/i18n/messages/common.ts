@@ -27,6 +27,7 @@ export default {
     'photo-select-all': 'Allow all',
     'suggestions': 'Suggestions',
     'search-a-user': 'Search some users to tag them',
+    'search-a-group': 'Search some group to tag it',
     'no-results': 'No results found',
     'confirmation-message': 'Are you sure you want to {0}?',
     'selected': 'Selected',

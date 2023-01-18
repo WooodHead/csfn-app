@@ -56,8 +56,8 @@
           <ion-card v-if="user.totalCleanups" mode="ios">
             <div style="height: 250px">
               <user-stats
-                :key="userStats.reduce((a, b) => a + b.date, '') + userStats.reduce((a, b) => a + b.volume, 0)"
-                :stats="userStats"/>
+                  :key="userStats.reduce((a, b) => a + b.date, '') + userStats.reduce((a, b) => a + b.volume, 0)"
+                  :stats="userStats"/>
             </div>
           </ion-card>
           <ion-card v-else>
@@ -98,8 +98,8 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import TransparentHeader from '@/views/components/common/TransparentHeader.vue'
 import Avatar from '@/views/components/common/Avatar.vue'
-import { userModule } from '@/store/userModule'
-import { UserLevel } from '@/types/UserLevel'
+import {userModule} from '@/store/userModule'
+import {UserLevel} from '@/types/UserLevel'
 import Wave from '@/views/components/common/Wave.vue'
 import CommunityMap from '@/views/components/community/CommunityMap.vue'
 import PageTransparentHeader from '@/views/components/common/PageTransparentHeader.vue'
@@ -150,7 +150,7 @@ export default class CurrentUserPage extends Vue {
 
   init() {
     userModule.fetchCurrentUser()
-      .then(() => userModule.fetchCurrentUserStats())
+        .then(() => userModule.fetchCurrentUserStats())
   }
 
   exit() {
@@ -158,7 +158,7 @@ export default class CurrentUserPage extends Vue {
   }
 
   openCleanup(id: string) {
-    this.$router.push({ name: 'Cleanup', params: { id } })
+    this.$router.push({name: 'Cleanup', params: {id}})
   }
 
   progress(userTotal: number,
@@ -187,7 +187,7 @@ export default class CurrentUserPage extends Vue {
 
 .ios {
   .user-content > div:first-child {
-    margin-top: calc(var(--ion-safe-area-top) + 23px);
+    margin-top: 44px !important;
   }
 }
 

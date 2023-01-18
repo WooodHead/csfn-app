@@ -88,7 +88,9 @@ export default class HttpTool {
         'X-Api-Version': process.env.VUE_APP_API_VERSION
       },
       data,
-      params: params && Object.fromEntries(Object.entries(params).filter(([key, value]) => value != null)),
+      params: params && Object.fromEntries(Object.entries(params)
+        .filter(([key, value]) => value != null)
+        .map(([key, value]) => [key, value + ''])),
       webFetchExtra: {
         credentials: 'include'
       }

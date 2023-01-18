@@ -66,6 +66,7 @@
 
       </div>
 
+      <div :style="`height: ${keyboardHeight}px`"></div>
     </ion-content>
 
     <ion-footer>
@@ -95,6 +96,7 @@ import UnknownError from '@/types/errors/UnknownError'
 import ToastPresenter from '@/tools/ToastPresenter'
 import {imagesProvider} from '@/providers/data/images.provider'
 import {GroupUpdateRequest} from '@/types/GroupUpdateRequest'
+import {Keyboard, KeyboardInfo} from '@capacitor/keyboard'
 
 @Component({
   name: 'GroupProfilePage',
@@ -109,6 +111,7 @@ export default class GroupProfilePage extends Vue {
   errors = {}
   scroll = 0
   updateRequest: GroupUpdateRequest = null
+  keyboardHeight = null
 
   get group() {
     return groupsModule.getCurrentGroup
@@ -141,6 +144,12 @@ export default class GroupProfilePage extends Vue {
   mounted() {
     this.id = +this.$route.params.id
     this.fetch()
+    Keyboard.addListener('keyboardWillShow', (info: KeyboardInfo) => {
+      this.keyboardHeight = info.keyboardHeight
+    })
+    Keyboard.addListener('keyboardWillHide', () => {
+      this.keyboardHeight = 0
+    })
   }
 
   fetch() {
