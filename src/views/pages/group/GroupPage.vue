@@ -53,7 +53,8 @@
 
               <div class="absolute top-0 right-0 p-2 w-1/3 text-right">
                 <transition name="fade">
-                  <group-status-button :loading="loadingStatus" :status="status" @join="join" @leave="leave"/>
+                  <group-status-button :loading="loadingStatus" :status="status" @join="join" @leave="leave"
+                                       @cancelJoin="cancelJoin"/>
                 </transition>
               </div>
 
@@ -215,6 +216,7 @@ export default class GroupPage extends Vue {
   firstMembers: PaginatedResult<{ user: User }> = null
   slideDirection = 'left'
   loading = true
+  joinRequestId?: number = null
 
   @Watch('segment')
   segmentChanged(newValue, oldValue) {
@@ -273,7 +275,10 @@ export default class GroupPage extends Vue {
   fetchStatus() {
     this.loadingStatus = true
     userModule.fetchGroupStatus(this.id)
-        .then(({status}) => this.status = status)
+        .then(({status, requestId}) => {
+          this.status = status
+          this.joinRequestId = requestId
+        })
         .finally(() => this.loadingStatus = false)
   }
 
@@ -298,6 +303,11 @@ export default class GroupPage extends Vue {
             this.$router.push('/group/' + this.id + '/member-request')
           }
         })
+  }
+
+  cancelJoin() {
+    groupsProvider.removeMemberRequest(this.id, this.joinRequestId)
+        .then(() => this.fetchStatus())
   }
 
   leave() {

@@ -71,7 +71,6 @@
                 <div class="space-x-2 -ml-1 ion-text-nowrap overflow-hidden  relative chips-list"
                      :class="{'chips-overflow': invisibleUsers}">
                   <user-chip v-for="(user, i) in cleaners" :key="i" :user="user" ref="user-chips"/>
-
                   <transition name="fade">
                     <div class="invisible-count font-bold opacity-50 text-sm pr-2" v-if="invisibleUsers">
                       +{{ invisibleUsers }}
@@ -191,6 +190,7 @@ export default class ActivityPage extends Vue {
   isAdmin = false
   invisibleUsers = 0
   invisibleGroups = 0
+  pendingTagRequest = null
 
   @Ref('activity-content')
   content: HTMLIonContentElement
@@ -237,10 +237,17 @@ export default class ActivityPage extends Vue {
     const menu: PopoverListItem[] = []
 
     if (!_.find(this.cleaners, {id: userModule.getCurrentUser.id}) && this.activity?.group && !this.isAdmin) {
-      menu.push({
-        label: this.$t('tag-me'),
-        onClick: this.sendTagRequest
-      })
+      if (!this.pendingTagRequest) {
+        menu.push({
+          label: this.$t('tag-me'),
+          onClick: this.sendTagRequest
+        })
+      } else {
+        menu.push({
+          label: this.$t('cancel-tag-request'),
+          onClick: this.cancelTagRequest
+        })
+      }
     }
 
     return menu
@@ -253,6 +260,7 @@ export default class ActivityPage extends Vue {
           if (this.activity.group && !this.activity.user) {
             userProvider.fetchUserGroupStatus(this.currentUser.id, this.activity.group.id)
                 .then(({status}) => this.isAdmin = status === GroupStatus.ADMIN)
+            this.fetchTagRequest()
           }
         })
     setTimeout(() => {
@@ -277,8 +285,21 @@ export default class ActivityPage extends Vue {
     }, 500)
   }
 
+  fetchTagRequest() {
+    userProvider.fetchTagRequest(this.currentUser.id, this.activity.id)
+        .then(request => this.pendingTagRequest = request)
+  }
+
   showMoreMenu(event) {
     PopoverPresenter.presentList(this.$ionic, event, this.moreMenu)
+  }
+
+  cancelTagRequest() {
+    groupsProvider.removeTagRequest(this.activity.group.id, this.pendingTagRequest.id)
+        .then(() => {
+          this.pendingTagRequest = null
+          ToastPresenter.present(this.$ionic, this.$t('cancel-tag-request-sent'), 'success')
+        })
   }
 
   openMap() {
@@ -321,7 +342,10 @@ export default class ActivityPage extends Vue {
 
   sendTagRequest() {
     groupsProvider.sendTagRequest(this.activity.group.id, this.activity.id)
-        .then(() => ToastPresenter.present(this.$ionic, this.$t('tag-request-sent'), 'success'))
+        .then(() => {
+          ToastPresenter.present(this.$ionic, this.$t('tag-request-sent'), 'success')
+          this.fetchTagRequest()
+        })
         .catch(error => {
           ToastPresenter.present(this.$ionic, ErrorMessage.getMessage(error))
         })

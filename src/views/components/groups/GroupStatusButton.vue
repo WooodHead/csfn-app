@@ -5,7 +5,7 @@
       <ion-icon :name="icon" class="mr-1 -ml-1 opacity-80 text-base"/>
       <ion-label class="opacity-80">{{ $t((status || 'join').toLowerCase()) }}</ion-label>
       <ion-icon name="chevron-down-sharp" class="ml-0 text-sm"
-                v-if="status && !readonly && status !== 'PENDING_MEMBER'"/>
+                v-if="status && !readonly"/>
     </template>
   </ion-chip>
 </template>
@@ -83,6 +83,10 @@ export default class GroupStatusButton extends Vue {
         case GroupStatus.FOLLOWING:
           break
         case GroupStatus.PENDING_MEMBER:
+          PopoverPresenter.presentList(this.$ionic, event, [{
+            label: this.$t('cancel-join-request'),
+            onClick: this.cancelJoin
+          }])
           break
         case null:
           this.join()
@@ -93,6 +97,11 @@ export default class GroupStatusButton extends Vue {
   @Emit('join')
   join() {
     return
+  }
+
+  cancelJoin() {
+    askConfirmation(this.$ionic, this.$t('cancel-join-request'), this.$t('confirmation-message', [this.$t('cancel-join-request-message')]), this.$t('yes'), this.$t('no'))
+        .then(() => this.$emit('cancelJoin'))
   }
 
   leave() {

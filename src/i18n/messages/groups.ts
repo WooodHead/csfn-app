@@ -55,7 +55,9 @@ export default {
     'always': 'Always',
     'specific-month': 'Specific month',
     'dates-range': 'Dates range',
-    'download': 'Download'
+    'download': 'Download',
+    'cancel-join-request': 'Cancel request',
+    'cancel-join-request-message': 'cancel the request to join the group'
   },
   es: {
     'group': 'Group',
@@ -113,6 +115,8 @@ export default {
     'always': 'Siempre',
     'specific-month': 'Mes específico',
     'dates-range': 'Rango de fechas',
-    'download': 'Descargar'
+    'download': 'Descargar',
+    'cancel-join-request': 'Cancelar petición',
+    'cancel-join-request-message': 'cancelar la petición para unirte al grupo'
   }
 }

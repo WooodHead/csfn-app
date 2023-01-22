@@ -89,7 +89,7 @@
               <ion-item v-for="(user, i) in topUsers[area]" :key="user.id"
                         :class="i === 0 ? 'user-gold' : i === 1 ? 'user-silver' : i === 2 ? 'user-bronze' : ''"
                         button
-                        class=" user lg:my-2 lg:rounded-full"
+                        class=" user lg:my-2 lg:rounded-full visible"
                         detail="false">
                                 <span slot="start"
                                       :style="`background-color: rgba(var(--ion-color-secondary-rgb), 0.${90 - (i/2 * 10)})`"

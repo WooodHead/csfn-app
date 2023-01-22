@@ -241,11 +241,11 @@ class UserModule extends VuexModule {
   @Action
   fetchGroupStatus(groupId: number) {
     return userProvider.fetchUserGroupStatus(this.currentUser.id, groupId)
-      .then(({status}) => {
+      .then(({status, requestId}) => {
         if (status === GroupStatus.ADMIN) {
           groupsModule.fetchGroupHasRequests(groupId)
         }
-        return {status}
+        return {status, requestId}
       })
   }
 

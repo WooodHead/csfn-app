@@ -6,12 +6,12 @@
     </ion-avatar>
     <ion-label class="mr-2 font-bold">{{ username }}</ion-label>
     <ion-icon v-if="removable" name="close-circle" @click="remove"></ion-icon>
+    <ion-icon v-if="endIcon" :name="endIcon" class="-ml-1"/>
   </ion-chip>
 </template>
 <script lang="ts">
 import {Component, Emit, Prop, Vue} from 'vue-property-decorator'
 import User from '@/types/User'
-import {i18n} from '@/i18n'
 
 @Component({
   name: 'UserChip'
@@ -23,6 +23,10 @@ export default class UserChip extends Vue {
 
   @Prop(Boolean)
   removable?: boolean
+
+  @Prop(String)
+  endIcon: string
+
 
   @Emit('remove')
   remove() {

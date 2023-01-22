@@ -35,7 +35,7 @@ export class UserProvider extends DataProvider {
       .catch(handleBackError('fetch-groups'))
   }
 
-  fetchUserGroupStatus(userId: number, groupId: number): Promise<{ status: GroupStatus }> {
+  fetchUserGroupStatus(userId: number, groupId: number): Promise<{ status: GroupStatus, requestId?: number }> {
     return this.http.get(`/${userId}/groups/${groupId}`)
       .then(({data}) => data)
       .catch(handleBackError('fetch-group-status'))
@@ -51,6 +51,11 @@ export class UserProvider extends DataProvider {
     return this.http.delete(`/${userId}/groups/${groupId}`)
       .then(() => undefined)
       .catch(handleBackError('leave-group'))
+  }
+
+  fetchTagRequest(userId: number, cleanupId: number) {
+    return this.http.get(`/${userId}/tag-requests/${cleanupId}`)
+      .then(({data}) => data)
   }
 
   fetchUser(): Promise<User> {
