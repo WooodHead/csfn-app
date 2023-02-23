@@ -17,12 +17,12 @@
             </div>
             <input-error :error="this.fieldErrors.picture && this.fieldErrors.picture[0]"></input-error>
           </div>
-          <input-item v-model="userRegistration.username" :errors="fieldErrors.username"
+          <input-item v-model.trim="userRegistration.username" :errors="fieldErrors.username"
                       :placeholder="$t('username')"
                       :rounded="true"
                       icon="person"
                       type="text" @focus="resetError('username')"></input-item>
-          <input-item v-model="userRegistration.email" :errors="fieldErrors.email" :rounded="true" icon="mail"
+          <input-item v-model.trim="userRegistration.email" :errors="fieldErrors.email" :rounded="true" icon="mail"
                       placeholder="Email"
                       type="email" @focus="resetError('email')"></input-item>
           <input-item v-model="userRegistration.password" :errors="fieldErrors.password"

@@ -32,11 +32,11 @@
             <ion-text>
               <h3><span class="font-bold text-base">{{ group.name }}</span></h3>
             </ion-text>
-            <p>{{ group.mission }}</p>
-            <p>
+            <span class="text-sm opacity-75">{{ group.mission }}</span>
+            <span class="flex items-center opacity-50">
               <ion-icon name="location-sharp" class="mr-0"/>
               {{ group.city }}, {{ group.country }}
-            </p>
+            </span>
           </ion-label>
         </ion-item>
 

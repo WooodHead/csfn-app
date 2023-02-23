@@ -16,7 +16,7 @@ export default {
     'slide-1-title': 'SUBE LIMPIEZAS',
     'slide-1-points': 'Añade fotos,' +
       '¿Cuantas bolsas?,' +
-      'Regístralo en el mapa por GPS,',
+      'Regístralo en el mapa por GPS',
     'slide-2-title': 'TU GRUPO',
     'slide-2-points': 'Únete a tu grupo de limpieza,' +
       'Conoce gente de tu zona,' +

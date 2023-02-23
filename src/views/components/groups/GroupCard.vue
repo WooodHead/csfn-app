@@ -25,7 +25,7 @@
         </div>
         <div class="mt-3 flex items-center justify-end">
           <count-chip small v-if="group.totalVolume" :count="group.totalVolume" type="liters"/>
-          <count-chip small v-if="group.totalWeight !== '0.00'" :count="group.totalWeight" type="kilos"/>
+          <count-chip small v-if="group.totalWeight !== 0" :count="group.totalWeight" type="kilos"/>
         </div>
       </ion-card-content>
     </div>

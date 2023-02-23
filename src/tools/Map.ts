@@ -134,7 +134,9 @@ export default class Map {
     }
 
     this.markers.push(marker)
-    this.clusterer.addMarker(marker)
+    if (this.clusterer) {
+      this.clusterer.addMarker(marker)
+    }
   }
 
   removeMarkers() {

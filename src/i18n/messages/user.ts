@@ -15,7 +15,6 @@ export default {
     'users-p': 'User | Users'
   },
   es: {
-    'continue-with': 'Continuar con {param}',
     'firstName': 'Nombre',
     'lastName': 'Apellido',
     'username': 'Usuario',

@@ -59,7 +59,7 @@
               </div>
 
               <div class="flex flex-col items-center mt-4" v-if="group">
-                <span class="text-xl font-bold">{{ group.name }}</span>
+                <span class=" text-xl font-bold inline-flex items-center -mr-8">  {{ group.name }} <ion-chip class="w-6 h-6 p-0 ml-2" color="dark"><ion-icon class="text-sm m-auto" name="leaf"></ion-icon></ion-chip></span>
                 <span class="text-sm opacity-75 mt-1 mx-14 text-center">{{ group.mission }}</span>
                 <div class="text-xs opacity-50 mt-2 flex items-center">
                   <ion-icon name="location-sharp"/>
@@ -110,8 +110,8 @@
                                      class="rounded-full border border-solid border-white -ml-3"/>
                   <ion-skeleton-text animated style="height: 30px; width: 200px;" class="rounded-full ml-4"/>
                 </div>
-              </div>
 
+              </div>
               <ion-segment mode="md" :value="segment" @ionChange="segment = $event.target.value">
                 <ion-segment-button mode="md" value="0">{{ $t('cleanups') }}</ion-segment-button>
                 <ion-segment-button mode="md" value="1">{{ $t('info') }}</ion-segment-button>

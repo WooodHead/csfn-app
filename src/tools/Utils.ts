@@ -71,7 +71,7 @@ export function geocoderToAddress(result: GeocoderResult): Address {
 
   return {
     city: city.long_name,
-    state: state.long_name,
+    state: state?.long_name,
     country: country.long_name,
     countryCode: country.short_name
   }

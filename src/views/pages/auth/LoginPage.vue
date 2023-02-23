@@ -9,7 +9,7 @@
           <img alt="title" class="z-10 hidden sm:block" src="@/assets/img/text_white.png" width="95%">
           <div></div>
           
-          <input-item v-model="userLogin.email" :errors="fieldErrors.email" :placeholder="$t('email')"
+          <input-item v-model.trim="userLogin.email" :errors="fieldErrors.email" :placeholder="$t('email')"
                       :rounded="true"
                       icon="mail"
                       type="email" onBlur="blur"

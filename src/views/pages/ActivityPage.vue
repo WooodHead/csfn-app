@@ -334,7 +334,7 @@ export default class ActivityPage extends Vue {
 
   openGroupsModal() {
     ModalPresenter.present(this.$ionic, GroupsListModal, {
-      title: this.$t('organizers'),
+      title: this.$t(!this.activity.group ? 'tagged-group' : this.groups.length === 1 ? 'organizer' : 'organizers'),
       groups: this.groups,
       $router: this.$router
     })

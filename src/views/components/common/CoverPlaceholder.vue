@@ -30,7 +30,7 @@ export default class CoverPlaceholder extends Vue {
     }).then((colors) => {
       this.colors = colors
           .map(({hex}) => hex)
-          .filter((hex) => hex !== '#ffffff' && hex !== '#000000')
+          //.filter((hex) => colors.length < 2 || (hex !== '#ffffff' && hex !== '#000000'))
           .sort((a, b) => tinycolor(a).getBrightness() - tinycolor(b).getBrightness())
     })
   }

@@ -32,9 +32,10 @@ class UserModule extends VuexModule {
   private currentUserStats: UserProfileStats[] = []
   private currentUserGroups: UserGroup[] = []
   private currentUserHasMoreGroups = true
+  private currentUserHasMoreGroupSuggestions = true
   private groupSuggestions: Group[] = []
   private groupsHasRequests: number = null
-  private groupRequests: Record<number, boolean> = null
+
 
   constructor() {
     super({store, name: 'user'})
@@ -87,6 +88,10 @@ class UserModule extends VuexModule {
 
   get currentUserGroupSuggestions() {
     return this.groupSuggestions
+  }
+
+  get getCurrentUserHasMoreGroupSuggestions() {
+    return this.currentUserHasMoreGroupSuggestions
   }
 
   get getGroupsHasRequests() {
@@ -142,7 +147,14 @@ class UserModule extends VuexModule {
 
   @Mutation
   setGroupSuggestions(groups: PaginatedResult<Group>) {
-    this.groupSuggestions = groups.data
+    if (this.groupSuggestions?.length) {
+      this.groupSuggestions.push(...groups.data)
+    } else {
+      this.groupSuggestions = groups.data
+    }
+    if (groups.meta?.totalItems === this.groupSuggestions.length) {
+      this.currentUserHasMoreGroupSuggestions = false
+    }
   }
 
   @Mutation
@@ -212,8 +224,8 @@ class UserModule extends VuexModule {
       })
   }
 
-  fetchCurrentUserGroupSuggestions() {
-    groupsProvider.fetchGroups(locationModule.userCoords, 1, 5, {excludeUser: this.currentUser.id})
+  fetchCurrentUserGroupSuggestions(page: number) {
+    return groupsProvider.fetchGroups(locationModule.userCoords, page, 5, {excludeUser: this.currentUser.id})
       .then((groups) => this.setGroupSuggestions(groups))
   }
 

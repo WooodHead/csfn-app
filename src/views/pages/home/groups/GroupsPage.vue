@@ -29,14 +29,14 @@
 
         <EmptyText :text="$t('no-groups')" v-if="!loading && !groups.length && !suggestions.length"/>
 
-        <div class="pt-6 text-left relative" v-if="showSuggestions && !loading && suggestions.length"
+        <div class="pt-6 text-left relative" v-if="suggestions.length"
              :class="{'-mt-14': !groups.length}">
           <ion-label class="font-bold text-xl text-left ml-6" color="primary">{{ $t('suggestions') }}</ion-label>
           <group-card v-for="group in suggestions" :key="group.id" :group="group"
                       @click="openGroup(group)"/>
         </div>
 
-        <ion-infinite-scroll @ionInfinite="next" :disabled="!hasMoreGroups">
+        <ion-infinite-scroll @ionInfinite="next" :disabled="!hasMoreGroups && !hasMoreGroupSuggestions">
           <ion-infinite-scroll-content/>
         </ion-infinite-scroll>
         <div class="pb-32"/>
@@ -68,7 +68,8 @@ import EmptyText from '@/views/components/common/EmptyText.vue'
 export default class GroupsPage extends Vue {
 
   loading = true
-  page = 1
+  userGroupsPage = 1
+  suggestionsPage = 1
 
   get groups() {
     return userModule.getCurrentUserGroups
@@ -76,6 +77,10 @@ export default class GroupsPage extends Vue {
 
   get hasMoreGroups() {
     return userModule.getCurrentUserHasMoreGroups
+  }
+
+  get hasMoreGroupSuggestions() {
+    return userModule.getCurrentUserHasMoreGroupSuggestions
   }
 
   get suggestions() {
@@ -96,10 +101,10 @@ export default class GroupsPage extends Vue {
 
   init() {
     userModule.fetchUserGroupsHasRequests()
-    this.fetch(true)
+    this.fetchUserGroups(true)
         .then(() => {
-          if (this.groups.length < 5) {
-            return userModule.fetchCurrentUserGroupSuggestions()
+          if (!this.hasMoreGroups) {
+            return this.fetchSuggestions()
           }
         })
         .catch(console.error)
@@ -108,8 +113,12 @@ export default class GroupsPage extends Vue {
         })
   }
 
-  fetch(reset = false) {
-    return userModule.fetchCurrentUserGroups({page: this.page, reset})
+  fetchUserGroups(reset = false) {
+    return userModule.fetchCurrentUserGroups({page: this.userGroupsPage, reset})
+  }
+
+  fetchSuggestions() {
+    return userModule.fetchCurrentUserGroupSuggestions(this.suggestionsPage)
   }
 
   openGroup(group) {
@@ -118,11 +127,20 @@ export default class GroupsPage extends Vue {
   }
 
   next(event) {
-    this.page++
-    this.fetch()
+    (this.hasMoreGroups ? this.nextUserGroups() : this.nextSuggestions())
         .finally(() => {
           event.target.complete()
         })
+  }
+
+  nextUserGroups(): Promise<void> {
+    this.userGroupsPage++
+    return this.fetchUserGroups()
+  }
+
+  nextSuggestions(): Promise<void> {
+    this.suggestionsPage++
+    return this.fetchSuggestions()
   }
 
   exit() {
