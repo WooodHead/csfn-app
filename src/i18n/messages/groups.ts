@@ -57,7 +57,8 @@ export default {
     'dates-range': 'Dates range',
     'download': 'Download',
     'cancel-join-request': 'Cancel request',
-    'cancel-join-request-message': 'cancel the request to join the group'
+    'cancel-join-request-message': 'cancel the request to join the group',
+    'groups-info': 'The group profile is dedicated to Cleanup groups, NGO, schools, municipalities or companies. They can be used to clean up together or sum up the member’s solo-cleanups under the group counter.<br> If you are any of them register your group here: <a target="_blank" href="https://cleansomethingfornothing.com/group-request/">Register group</a>.',
   },
   es: {
     'group': 'Group',
@@ -117,6 +118,8 @@ export default {
     'dates-range': 'Rango de fechas',
     'download': 'Descargar',
     'cancel-join-request': 'Cancelar petición',
-    'cancel-join-request-message': 'cancelar la petición para unirte al grupo'
+    'cancel-join-request-message': 'cancelar la petición para unirte al grupo',
+    'groups-info': 'El perfil de grupo de limpiezas está dedicado a grupos locales, ONG, colegios, municipios o empresas. Con ellos se pueden hacer limpiezas conjuntas o bien sumar los esfuerzos individuales bajo el paraguas del grupo.<br> Si lideras uno de ellos puedes registrarte aquí: <a target="_blank" href="https://cleansomethingfornothing.com/group-request/">Registrar grupo</a>,',
+    'register-group': 'Registrar Grupo'
   }
 }

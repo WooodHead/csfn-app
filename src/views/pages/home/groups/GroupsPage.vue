@@ -1,7 +1,13 @@
 <template>
   <page-transparent-header ref="page">
     <ion-page class="ion-page">
-      <transparent-header :no-back="true" :no-gradient="true" :title="$t('groups')"/>
+      <transparent-header :no-back="true" :no-gradient="true" :title="$t('groups')">
+        <template slot="end-buttons">
+          <ion-button @click="showInfo" shape="round">
+            <ion-icon :src="require('ionicons5/dist/svg/information-circle-outline.svg')"/>
+          </ion-button>
+        </template>
+      </transparent-header>
 
       <ion-content ref="events-content" :scroll-events="true" class="fullscreen " color="white"
                    @ionScroll="$refs['page'].scrolled($event)">
@@ -96,12 +102,14 @@ export default class GroupsPage extends Vue {
   }
 
   mounted() {
+    userModule.resetCurrentGroups()
+    userModule.resetGroupSuggestions()
     this.loading = true
   }
 
   init() {
     userModule.fetchUserGroupsHasRequests()
-    this.fetchUserGroups(true)
+    this.fetchUserGroups()
         .then(() => {
           if (!this.hasMoreGroups) {
             return this.fetchSuggestions()
@@ -113,8 +121,8 @@ export default class GroupsPage extends Vue {
         })
   }
 
-  fetchUserGroups(reset = false) {
-    return userModule.fetchCurrentUserGroups({page: this.userGroupsPage, reset})
+  fetchUserGroups() {
+    return userModule.fetchCurrentUserGroups(this.userGroupsPage)
   }
 
   fetchSuggestions() {
@@ -145,6 +153,18 @@ export default class GroupsPage extends Vue {
 
   exit() {
     return
+  }
+
+  async showInfo() {
+    await (await this.$ionic.alertController.create({
+      header: this.$t('groups').toString(),
+      message: this.$t('groups-info').toString(),
+      buttons: [{
+        text: this.$t('accept').toString(),
+        role: 'cancel'
+      }],
+      cssClass: 'text-xs leading-5'
+    })).present()
   }
 
 }

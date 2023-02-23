@@ -20,6 +20,7 @@ import {locationModule} from '@/store/locationModule'
 import {PaginatedResult} from '@/types/PaginatedResult'
 import {groupsModule} from '@/store/groupsModule'
 import {GroupStatus} from '@/types/GroupStatus'
+import _ from 'lodash'
 
 @Module
 class UserModule extends VuexModule {
@@ -134,27 +135,28 @@ class UserModule extends VuexModule {
   }
 
   @Mutation
-  setCurrentUserGroups({groups, reset}: { groups: PaginatedResult<UserGroup>, reset: boolean }) {
-    if (this.currentUserGroups?.length && !reset) {
-      this.currentUserGroups.push(...groups.data)
+  resetGroupSuggestions() {
+    this.groupSuggestions = null
+  }
+
+  @Mutation
+  setCurrentUserGroups(groups: PaginatedResult<UserGroup>) {
+    if (this.currentUserGroups?.length) {
+      this.currentUserGroups = _.uniqBy([...this.currentUserGroups, ...groups.data], 'id')
     } else {
       this.currentUserGroups = groups.data
     }
-    if (groups.meta?.totalItems === this.currentUserGroups.length) {
-      this.currentUserHasMoreGroups = false
-    }
+    this.currentUserHasMoreGroups = groups.meta?.totalItems !== this.currentUserGroups.length
   }
 
   @Mutation
   setGroupSuggestions(groups: PaginatedResult<Group>) {
     if (this.groupSuggestions?.length) {
-      this.groupSuggestions.push(...groups.data)
+      this.groupSuggestions = _.uniqBy([...this.groupSuggestions, ...groups.data], 'id')
     } else {
       this.groupSuggestions = groups.data
     }
-    if (groups.meta?.totalItems === this.groupSuggestions.length) {
-      this.currentUserHasMoreGroupSuggestions = false
-    }
+    this.currentUserHasMoreGroupSuggestions = groups.meta?.totalItems !== this.groupSuggestions.length
   }
 
   @Mutation
@@ -214,10 +216,10 @@ class UserModule extends VuexModule {
   }
 
   @Action
-  fetchCurrentUserGroups({page, reset}: { page: number, reset: boolean }) {
+  fetchCurrentUserGroups(page: number) {
     return userProvider.fetchUserGroups(this.currentUser.id, page)
       .then(groups => {
-        this.setCurrentUserGroups({groups, reset})
+        this.setCurrentUserGroups(groups)
         groups.data
           .filter(({status}) => status === GroupStatus.ADMIN)
           .forEach(({group: {id}}) => groupsModule.fetchGroupHasRequests(id))

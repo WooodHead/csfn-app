@@ -363,3 +363,7 @@ ion-item.item-no-padding {
   --inner-padding-start: 0;
   --inner-padding-end: 0;
 }
+
+.alert-message a {
+  color: var(--ion-color-primary);
+}
