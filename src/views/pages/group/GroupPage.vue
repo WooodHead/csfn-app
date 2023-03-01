@@ -59,7 +59,12 @@
               </div>
 
               <div class="flex flex-col items-center mt-4" v-if="group">
-                <span class=" text-xl font-bold inline-flex items-center -mr-8">  {{ group.name }} <ion-chip class="w-6 h-6 p-0 ml-2" color="dark"><ion-icon class="text-sm m-auto" name="leaf"></ion-icon></ion-chip></span>
+                <span class=" text-xl font-bold inline-flex items-center -mr-8">
+                  {{ group.name }}
+                  <ion-chip class="w-6 h-6 p-0 ml-2" color="dark" @click="showCategoryDescription">
+                    <fa-icon class="text-sm m-auto" :icon="group.category.icon"></fa-icon>
+                  </ion-chip>
+                </span>
                 <span class="text-sm opacity-75 mt-1 mx-14 text-center">{{ group.mission }}</span>
                 <div class="text-xs opacity-50 mt-2 flex items-center">
                   <ion-icon name="location-sharp"/>
@@ -318,6 +323,18 @@ export default class GroupPage extends Vue {
           ToastPresenter.present(this.$ionic, ErrorMessage.getMessage(error))
         })
         .finally(() => this.loadingStatus = false)
+  }
+
+  async showCategoryDescription() {
+    const alert = await this.$ionic.alertController.create({
+      header: this.group.category.name,
+      message: this.group.category.description,
+      buttons: [{
+        text: this.$t('accept').toString(),
+        role: 'cancel'
+      }]
+    })
+    await alert.present()
   }
 
 }

@@ -3,6 +3,7 @@ import {Http} from '@capacitor-community/http'
 import axios from 'axios'
 import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
 import {Directory} from '@capacitor/filesystem'
+import {i18n} from '@/i18n'
 
 export default class HttpTool {
 
@@ -85,6 +86,7 @@ export default class HttpTool {
       url: process.env.VUE_APP_BACK_URL + this.baseUrl + path,
       headers: {
         ...headers,
+        'accept-language': i18n.locale,
         'X-Api-Version': process.env.VUE_APP_API_VERSION
       },
       data,
