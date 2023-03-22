@@ -364,7 +364,6 @@ export default class EditionPage extends Vue {
           this.$router.back()
         })
         .catch((error) => {
-          console.log(error)
           if (error instanceof FormError) {
             error.fieldErrors.forEach((error) => {
               this.$set(this.errors, error.param, [ErrorMessage.getMessage(error)])
@@ -493,6 +492,31 @@ export default class EditionPage extends Vue {
         }))]
       }],
       buttons: [
+        {
+          text: this.$t('custom').toString(),
+          cssClass: 'absolute left-0 top-0',
+          handler: () => {
+            this.$ionic.alertController.create({
+              header: this.$t('volume').toString(),
+              inputs: [{
+                type: 'text',
+                placeholder: this.$t('enter-liters').toString()
+              }],
+              buttons: [{
+                text: this.$t('cancel').toString()
+              },
+                {
+                  text: this.$t('confirm').toString(),
+                  handler: (value) => {
+                    if (!value[0]) return
+                    this.$set(this.activity, 'volume', +value[0])
+                    this.$set(this.activity, 'weight', this.activity.volume * 0.1)
+                    this.automaticWeight = true
+                  }
+                }]
+            }).then(alert => alert.present())
+          }
+        },
         {
           text: this.$t('cancel').toString(),
           role: 'cancel'

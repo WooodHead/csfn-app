@@ -32,7 +32,15 @@ export default {
     'confirmation-message': 'Are you sure you want to {0}?',
     'selected': 'Selected',
     'results': 'Results',
-    'anonymous': 'Anonymous'
+    'anonymous': 'Anonymous',
+    'street': 'Address',
+    'postalCode': 'Postal code',
+    'city': 'City',
+    'state': 'State',
+    'set-pin': 'Set location',
+    'coords': 'Location',
+    'custom': 'Custom',
+    'enter-liters': 'Enter liters'
   },
   es: {
     'cancel': 'Cancelar',
@@ -66,6 +74,14 @@ export default {
     'confirmation-message': '¿Seguro que quieres {0}?',
     'selected': 'Seleccionado',
     'results': 'Resultados',
-    'anonymous': 'Anónimo'
+    'anonymous': 'Anónimo',
+    'street': 'Dirección',
+    'postalCode': 'Código postal',
+    'city': 'Ciudad',
+    'state': 'Estado',
+    'set-pin': 'Poner ubicación',
+    'coords': 'Ubicación',
+    'custom': 'Custom',
+    'enter-liters': 'Introduzca los litros'
   }
 }
