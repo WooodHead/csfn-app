@@ -1,9 +1,9 @@
 <template>
   <ion-card button class="m-3 bg-white" mode="ios" @click="click">
-    <div class="h-40">
+    <div class="h-40 bg-gray-200">
       <transition name="fade">
-        <img v-if="cleanup" :src="cleanup.pictures[0].publicUrl"
-             class="w-full h-full object-center object-cover">
+        <ion-img v-if="cleanup" :src="cleanup.pictures[0].publicUrl"
+             class="w-full h-full object-center object-cover"/>
         <ion-skeleton-text v-else animated class="w-full h-full m-0 absolute"></ion-skeleton-text>
       </transition>
     </div>

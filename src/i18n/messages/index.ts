@@ -11,6 +11,7 @@ import stats from '@/i18n/messages/stats'
 import levels from '@/i18n/messages/levels'
 import groups from '@/i18n/messages/groups'
 import welcome from '@/i18n/messages/welcome'
+import recycling from '@/i18n/messages/recycling'
 
 export default {
   en: {
@@ -26,7 +27,8 @@ export default {
     ...stats.en,
     ...levels.en,
     ...groups.en,
-    ...welcome.en
+    ...welcome.en,
+    ...recycling.en
   },
   es: {
     ...auth.es,
@@ -41,6 +43,23 @@ export default {
     ...stats.es,
     ...levels.es,
     ...groups.es,
-    ...welcome.es
+    ...welcome.es,
+    ...recycling.es
+  },
+  fr: {
+    ...auth.fr,
+    ...cleanups.fr,
+    ...common.fr,
+    ...errors.fr,
+    ...user.fr,
+    ...events.fr,
+    ...community.fr,
+    ...alerts.fr,
+    ...settings.fr,
+    ...stats.fr,
+    ...levels.fr,
+    ...groups.fr,
+    ...welcome.fr,
+    ...recycling.fr
   }
 }

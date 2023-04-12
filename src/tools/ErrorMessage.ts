@@ -3,6 +3,7 @@ import {i18n} from '@/i18n'
 
 export default class ErrorMessage {
   public static getMessage(error: CSFNError): string {
+    console.log(error)
     const errorKey = i18n.te('errors.' + error?.serverMessage) ? error?.serverMessage : (error?.message || 'unknown-error')
 
     return (i18n.t('errors.' + errorKey,

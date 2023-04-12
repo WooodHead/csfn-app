@@ -21,8 +21,10 @@ export default {
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 10000,
-      splashImmersive: false
+      splashImmersive: false,
+      launchShowDuration: 1000,
+      launchFadeOutDuration: 500,
+      backgroundColor: '#FFFFFF'
     },
     GoogleAuth: {
       scopes: [

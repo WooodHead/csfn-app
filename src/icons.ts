@@ -11,7 +11,8 @@ import {
   faLandmarkFlag,
   faLeaf,
   faPeopleGroup,
-  faPersonHiking
+  faPersonHiking, faRecycle,
+  faSmoking
 } from '@fortawesome/free-solid-svg-icons'
 
 
@@ -34,6 +35,6 @@ addIcons({...ionicons5, 'md-fb': icons.logoFacebook, 'ios-fb': icons.logoFaceboo
  * Font awesome
  */
 
-library.add(faLeaf, faBriefcase, faLandmarkDome, faGraduationCap, faPeopleGroup, faHandHoldingHeart, faLandmarkFlag, faPersonHiking)
+library.add(faLeaf, faBriefcase, faLandmarkDome, faGraduationCap, faPeopleGroup, faHandHoldingHeart, faLandmarkFlag, faPersonHiking, faSmoking, faRecycle)
 
 Vue.component('fa-icon', FontAwesomeIcon)

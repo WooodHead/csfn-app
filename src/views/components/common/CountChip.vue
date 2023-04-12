@@ -1,5 +1,5 @@
 <template>
-  <ion-chip color="secondary" mode="ios" :class="{'text-xs h-7': !large, 'text-sm': large}">
+  <ion-chip :color="color" mode="ios" :class="{'text-xs h-7': !large, 'text-sm': large}">
     <ion-icon :src="icon" class="-ml-1 mr-2" :class="{'text-sm': !large, 'text-base': large}"/>
     <div style="line-height: 0.75rem">{{ value }} {{ $tc(type + '-p', count) }}</div>
   </ion-chip>
@@ -25,12 +25,15 @@ export default class CountChip extends Vue {
   @Prop(Boolean)
   large: boolean
 
+  @Prop({type: String, default: 'secondary'})
+  color: string
+
   get localizedSeparator() {
-    return (1.1).toLocaleString(language())[1]
+    return (1.1).toLocaleString(this.$i18n.locale)[1]
   }
 
   get value() {
-    return millify(Number(this.count), {decimalSeparator: this.localizedSeparator})
+    return this.count < 1000 ? this.count : millify(Number(this.count), {decimalSeparator: this.localizedSeparator})
   }
 
   get icon(): string {

@@ -4,6 +4,7 @@ import {authModule} from '@/store/authModule'
 import {nativeProvider} from '@/providers/native/native.provider'
 import {facebookProvider} from '@/providers/facebook/facebook.provider'
 import Vue from 'vue'
+import {LoggedResult} from '@/types/LoggedResult'
 
 @Module
 class AppModule extends VuexModule {
@@ -40,14 +41,14 @@ class AppModule extends VuexModule {
   }
 
   @Action
-  initialize() {
+  initialize(): Promise<LoggedResult | void> {
     return this.initialized
       ? Promise.resolve()
       : this.doInitialize()
   }
 
   @Action
-  doInitialize() {
+  doInitialize(): Promise<LoggedResult | void> {
     nativeProvider.isMobile()
       .then((isMobile) => {
         if (!isMobile) {
@@ -55,12 +56,11 @@ class AppModule extends VuexModule {
         }
       })
 
-    return Promise.all([
-      authModule.initialize()
-    ]).then(() => {
-      this.setInitializedDone()
-      return Promise.resolve()
-    })
+    return authModule.initialize()
+      .then(result => {
+        this.setInitializedDone()
+        return Promise.resolve(result)
+      })
   }
 
   @Action

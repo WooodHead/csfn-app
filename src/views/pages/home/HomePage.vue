@@ -44,16 +44,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
 import HomeHeader from '@/views/components/home/HomeHeader.vue'
 import CleanupCard from '@/views/components/common/CleanupCard.vue'
 import PlaceholderCard from '@/views/components/home/PlaceholderCard.vue'
 import HomeCleanupsList from '@/views/components/home/CleanupsList.vue'
 import CurrentUserPage from '@/views/pages/home/user/CurrentUserPage.vue'
-import CommunityPage from '@/views/pages/home/community/CommunityPage.vue'
 import EventsPage from '@/views/pages/home/events/EventsPage.vue'
-import {Ref, Watch} from 'vue-property-decorator'
+import {Component, Ref, Vue, Watch} from 'vue-property-decorator'
 import {nativeProvider} from '@/providers/native/native.provider'
 import {cleanupsModule} from '@/store/cleanupsModule'
 import GroupsPage from '@/views/pages/home/groups/GroupsPage.vue'
@@ -61,6 +58,8 @@ import {userModule} from '@/store/userModule'
 import {userProvider} from '@/providers/data/user.provider'
 import ModalPresenter from '@/tools/ModalPresenter'
 import PublishAsModal from '@/views/modals/PublishAsModal.vue'
+import {recyclingModule} from '@/store/recyclingModule'
+import CommunityPage from './community/CommunityPage.vue'
 
 @Component({
   name: 'HomePage',
@@ -93,6 +92,7 @@ export default class HomePage extends Vue {
   mounted() {
     nativeProvider.hideSplashScreen()
     cleanupsModule.setCleanup(null)
+    recyclingModule.setStation(null)
     userModule.fetchUserGroupsHasRequests()
     this.changedRoute(this.$route)
     this.slider.slideTo(this.tabs.indexOf(this.$route.params.tab), 0)
@@ -245,6 +245,17 @@ ion-tab-button.tab-selected:after {
   bottom: 0;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
+}
+
+@media (min-width: 600px) {
+  .publish-as-modal {
+    --min-height: 30vh;
+    --height: 30vh;
+  }
+
+  .publish-as-modal .modal-wrapper {
+    max-width: 500px;
+  }
 }
 
 .publish-as-modal ion-header ion-toolbar {

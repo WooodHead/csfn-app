@@ -8,7 +8,7 @@
           <img alt="icon" class="z-10 hidden sm:block" src="@/assets/img/icon.png" width="35%">
           <img alt="title" class="z-10 hidden sm:block" src="@/assets/img/text_white.png" width="95%">
           <div></div>
-          
+
           <input-item v-model.trim="userLogin.email" :errors="fieldErrors.email" :placeholder="$t('email')"
                       :rounded="true"
                       icon="mail"
@@ -27,12 +27,12 @@
                        :text="$t('continue-with', {'param': 'Google'})"
                        class="google-button text-left" color="white"
                        @click="googleLogin"></button-item>
-          
+
           <button-item :iconSrc="require('@/assets/img/icons/apple-icon.svg')"
                        :text="$t('continue-with', {'param': 'Apple'})"
                        class="text-left" color="black" v-if="isIOS"
                        @click="appleLogin"></button-item>
-          
+
           <div class="mb-10"/>
           <!--
           <button-item :iconSrc="require('@/assets/img/icons/facebook-icon.svg')"
@@ -86,57 +86,57 @@ import Component from 'vue-class-component'
   components: {ForestBg, ButtonItem, InputItem}
 })
 export default class LoginPage extends Vue {
-  
+
   loaded = false
   userLogin = new User()
   fieldErrors = {}
   typing = false
   loading = false
   isIOS = false
-  
+
   get userCountry() {
     return locationModule.getAddress.countryCode
   }
-  
+
   created() {
     nativeProvider.isIOS()
-      .then((isIOS) => {
-        this.isIOS = isIOS
-      })
+        .then((isIOS) => {
+          this.isIOS = isIOS
+        })
   }
-  
+
   º
-  
+
   mounted(): void {
     if (!this.loaded) {
       nativeProvider.hideSplashScreen()
       this.loaded = true
     }
   }
-  
+
   credentialsLogin() {
     this.loading = true
     appModule.showLoader(this.$ionic)
-      .then(() => authModule.doCredentialsLogin(this.userLogin))
-      .then((user) => {
-        appModule.hideLoader()
-        this.$router.push('/home')
-      })
-      .catch(error => {
-        console.log(error)
-        appModule.hideLoader()
-        if (error instanceof FormError) {
-          error.fieldErrors.forEach((fieldError) => {
-            this.$set(this.fieldErrors, fieldError.param, [ErrorMessage.getMessage(fieldError)])
-          })
-        }
-        if (error instanceof UnknownError) {
-          ToastPresenter.present(this.$ionic, ErrorMessage.getMessage(error))
-        }
-        this.loading = false
-      })
+        .then(() => authModule.doCredentialsLogin(this.userLogin))
+        .then(({redirect}) => {
+          appModule.hideLoader()
+          this.$router.push(redirect)
+        })
+        .catch(error => {
+          console.log(error)
+          appModule.hideLoader()
+          if (error instanceof FormError) {
+            error.fieldErrors.forEach((fieldError) => {
+              this.$set(this.fieldErrors, fieldError.param, [ErrorMessage.getMessage(fieldError)])
+            })
+          }
+          if (error instanceof UnknownError) {
+            ToastPresenter.present(this.$ionic, ErrorMessage.getMessage(error))
+          }
+          this.loading = false
+        })
   }
-  
+
   /*
   facebookLogin() {
     FacebookLogin.login({ permissions: ['email'] })
@@ -163,27 +163,26 @@ export default class LoginPage extends Vue {
    */
   googleLogin() {
     GoogleAuth.signIn()
-      .then((result) =>
-        result && result.authentication && result.authentication.idToken ? appModule.showLoader(this.$ionic)
-          .then(() => authModule.doGoogleLogin(result.authentication.idToken)) : Promise.reject(null))
-      .then((user) => {
-        appModule.hideLoader()
-        if ((user as any).isNew) {
-          FirebaseAnalytics.logEvent({name: 'sign_up', params: {method: 'google'}})
-          this.$router.push('/welcome')
-        } else {
-          FirebaseAnalytics.logEvent({name: 'login', params: {method: 'google'}})
-          this.$router.push('/home')
-        }
-      })
-      .catch((err) => {
-        if (!err || (err.message && !err.message.includes('user canceled'))) {
+        .then((result) =>
+            result && result.authentication && result.authentication.idToken ? appModule.showLoader(this.$ionic)
+                .then(() => authModule.doGoogleLogin(result.authentication.idToken)) : Promise.reject(null))
+        .then(({user, redirect}) => {
           appModule.hideLoader()
-          ToastPresenter.present(this.$ionic, this.$t('errors.unknown-error', {param: this.$t('login-with', {param: 'Google'}).toString().toLowerCase()}))
-        }
-      })
+          this.$router.push(redirect)
+          if ((user as any).isNew) {
+            FirebaseAnalytics.logEvent({name: 'sign_up', params: {method: 'google'}})
+          } else {
+            FirebaseAnalytics.logEvent({name: 'login', params: {method: 'google'}})
+          }
+        })
+        .catch((err) => {
+          if (!err || (err.message && !err.message.includes('user canceled'))) {
+            appModule.hideLoader()
+            ToastPresenter.present(this.$ionic, this.$t('errors.unknown-error', {param: this.$t('login-with', {param: 'Google'}).toString().toLowerCase()}))
+          }
+        })
   }
-  
+
   appleLogin() {
     SignInWithApple.authorize({
       clientId: 'com.cleansomething.app',
@@ -192,21 +191,20 @@ export default class LoginPage extends Vue {
     }).then((res) => {
       if (res?.response?.identityToken) {
         return appModule.showLoader(this.$ionic)
-          .then(() => authModule.doAppleLogin({
-            token: res.response.identityToken,
-            name: ((res.response.givenName || '') + ' ' + (res.response.familyName || '')).trim()
-          }))
+            .then(() => authModule.doAppleLogin({
+              token: res.response.identityToken,
+              name: ((res.response.givenName || '') + ' ' + (res.response.familyName || '')).trim()
+            }))
       } else {
         return Promise.reject(null)
       }
-    }).then((user) => {
+    }).then(({user, redirect}) => {
       appModule.hideLoader()
+      this.$router.push(redirect)
       if ((user as any).isNew) {
         FirebaseAnalytics.logEvent({name: 'sign_up', params: {method: 'apple'}})
-        this.$router.push('/welcome')
       } else {
         FirebaseAnalytics.logEvent({name: 'login', params: {method: 'apple'}})
-        this.$router.push('/home')
       }
     }).catch((err) => {
       if (!/100[01]\.\)$/.test(err?.message)) {
@@ -215,15 +213,15 @@ export default class LoginPage extends Vue {
       }
     })
   }
-  
+
   resetError(field) {
     this.$set(this.fieldErrors, field, undefined)
   }
-  
+
   focus() {
     this.typing = true
   }
-  
+
   blur() {
     this.typing = false
   }

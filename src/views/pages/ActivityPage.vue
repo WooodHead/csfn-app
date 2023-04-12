@@ -155,7 +155,7 @@ import Component from 'vue-class-component'
 import {userModule} from '@/store/userModule'
 import User from '@/types/User'
 import ModalPresenter from '@/tools/ModalPresenter'
-import MapModal from '@/views/pages/home/community/CleanupsMapPage.vue'
+import MapPage from '@/views/pages/home/community/MapPage.vue'
 import moment from 'moment'
 import PicturesModal from '@/views/modals/PicturesModal.vue'
 import TransparentHeader from '@/views/components/common/TransparentHeader.vue'
@@ -303,7 +303,7 @@ export default class ActivityPage extends Vue {
   }
 
   openMap() {
-    ModalPresenter.present(this.$ionic, MapModal, {
+    ModalPresenter.present(this.$ionic, MapPage, {
       title: this.title,
       origin: this.activity.location.coords,
       pin: '/img/cleanup_pin.png'

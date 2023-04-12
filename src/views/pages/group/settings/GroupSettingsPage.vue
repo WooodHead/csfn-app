@@ -15,13 +15,13 @@
       <ion-list>
         <ion-item button @click="$router.push(`/group/${id}/settings/profile`)">
           <ion-icon slot="start" :src="require('ionicons5/dist/svg/brush-outline.svg')"
-                    color="back"></ion-icon>
+                    color="black"></ion-icon>
           <ion-label>{{ $t('group-profile') }}</ion-label>
         </ion-item>
 
         <ion-item button @click="$router.push(`/group/${id}/settings/requests`)">
           <ion-icon slot="start" :src="require('ionicons5/dist/svg/person-add-outline.svg')"
-                    color="back"></ion-icon>
+                    color="black"></ion-icon>
           <ion-label>{{ $t('group-requests') }}</ion-label>
           <ion-badge color="danger" slot="end" v-if="requests">
             {{ requests }}
@@ -30,14 +30,32 @@
 
         <ion-item button @click="$router.push(`/group/${id}/settings/questions`)">
           <ion-icon slot="start" :src="require('ionicons5/dist/svg/help-circle-outline.svg')"
-                    color="back"></ion-icon>
+                    color="black"></ion-icon>
           <ion-label>{{ $t('group-questions') }}</ion-label>
         </ion-item>
 
         <ion-item button @click="$router.push(`/group/${id}/settings/report`)">
           <ion-icon slot="start" :src="require('ionicons5/dist/svg/download-outline.svg')"
-                    color="back"></ion-icon>
+                    color="black"></ion-icon>
           <ion-label>{{ $t('download-report') }}</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <ion-list v-if="isRecyclingGroup">
+        <ion-list-header>
+          <ion-label>{{ $t('recycling') }}</ion-label>
+        </ion-list-header>
+
+        <ion-item button @click="$router.push(`/group/${id}/settings/recycling-stations`)">
+          <ion-icon slot="start" icon="trash-outline" :src="require('ionicons5/dist/svg/location-outline.svg')"
+                    color="black"/>
+          <ion-label>{{ $t('stations') }}</ion-label>
+        </ion-item>
+
+        <ion-item button @click="$router.push(`/group/${id}/settings/recycling-station-models`)">
+          <ion-icon slot="start" icon="trash-outline" :src="require('ionicons5/dist/svg/trash-outline.svg')"
+                    color="black" />
+          <ion-label>{{ $t('station-models') }}</ion-label>
         </ion-item>
       </ion-list>
 
@@ -47,7 +65,6 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator'
 import {groupsModule} from '@/store/groupsModule'
-import {Keyboard, KeyboardInfo} from '@capacitor/keyboard'
 import {height} from 'tailwindcss/lib/plugins'
 
 @Component({
@@ -62,6 +79,14 @@ export default class GroupSettingsPage extends Vue {
 
   id: number = null
 
+  get currentGroup() {
+    return groupsModule.getCurrentGroup
+  }
+
+  get isRecyclingGroup() {
+    return this.currentGroup?.capabilities.some((capability) => capability.startsWith('RECYCLING'))
+  }
+
   get requests() {
     return groupsModule.groupHasRequests[this.id]
   }
@@ -69,8 +94,10 @@ export default class GroupSettingsPage extends Vue {
   mounted() {
     this.id = +this.$route.params.id
     groupsModule.fetchGroupHasRequests(this.id)
+    if (!groupsModule.getCurrentGroup) {
+      groupsModule.fetchGroup(this.id)
+    }
   }
-
 
 }
 </script>

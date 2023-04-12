@@ -13,9 +13,12 @@ import './icons'
 import './assets/style/tailwind.css'
 import * as _ from 'lodash'
 import {localeString} from '@/tools/Utils'
+import {scrollToSegment} from '@/mixins/scrollToSegment'
+import {FirebaseDynamicLinks} from '@pantrist/capacitor-firebase-dynamic-links'
+import {authModule} from '@/store/authModule'
 
 Vue.config.productionTip = false
-Vue.config.ignoredElements = [/^ion-/];
+Vue.config.ignoredElements = [/^ion-/]
 
 //registerWebPlugin(FacebookLogin)
 
@@ -27,7 +30,17 @@ Vue.filter('capitalize', function (value) {
 
 Vue.filter('localeString', localeString)
 
+Vue.directive('scroll-to-segment', scrollToSegment)
+
 new Vue({store, router, i18n, render: h => h(Main)})
   .$mount('#app')
 
+FirebaseDynamicLinks.addListener('deepLinkOpen', ({url}) => {
+  const slug = url.split('/app').pop()
+
+  if (slug) {
+    router.push(slug)
+    authModule.setLoggedRedirect(slug)
+  }
+})
 defineCustomElements(window)

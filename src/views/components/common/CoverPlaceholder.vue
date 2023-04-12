@@ -24,7 +24,7 @@ export default class CoverPlaceholder extends Vue {
   }
 
   mounted() {
-    extractColors(this.image, {
+    (extractColors as any)(this.image, {
       crossOrigin: true,
       splitPower: 2,
     }).then((colors) => {

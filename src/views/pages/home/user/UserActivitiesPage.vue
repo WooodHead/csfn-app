@@ -91,7 +91,7 @@ export default class UserActivitiesPage extends Vue {
   type!: string
 
   get loading() {
-    return userModule.loadingUserActivities
+    return userModule.isLoadingUserActivities
   }
 
   get activities(): Activity[] {

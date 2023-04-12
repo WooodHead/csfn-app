@@ -72,20 +72,65 @@
                 </div>
               </div>
 
-              <div class="flex justify-around w-full mt-2 px-2" v-if="group">
-                <user-counter :icon-src="require('ionicons5/dist/svg/trash-outline.svg')" :label="$t('cleanups')"
-                              :max="1" progress-value="1" :key="'cleanups' + totalCleanups"
-                              :value="totalCleanups" no-animate/>
+              <div class="relative" :class="{'h-44': group.totalCleanups && recyclingStats}">
+                <transition :name="`slide-fade-${stats === 'cleanups' ? 'right' : 'left'}`">
+                  <div class="flex justify-around w-full mt-2 px-2"
+                       :class="{'absolute pb-8': group.totalCleanups && recyclingStats}"
+                       v-if="group && (group.totalCleanups && stats === 'cleanups' || !recyclingStats) "
+                       key="cleanups-stats">
+                    <stats-counter :icon-src="require('ionicons5/dist/svg/trash-outline.svg')" :label="$t('cleanups')"
+                                   :max="1" progress-value="1" :key="'cleanups' + totalCleanups"
+                                   :value="totalCleanups" no-animate/>
 
-                <user-counter :icon-src="require('@/assets/img/icons/bag-outline.svg')"
-                              progress-value="1" :label="$t('liters')" :max="1"
-                              :value="totalVolume" :key="'volume-'+ totalVolume" no-animate/>
+                    <stats-counter :icon-src="require('@/assets/img/icons/bag-outline.svg')"
+                                   progress-value="1" :label="$t('liters')" :max="1"
+                                   :value="totalVolume" :key="'volume-'+ totalVolume" no-animate/>
 
-                <user-counter :icon-src="require('@/assets/img/icons/scale-outline.svg')"
-                              progress-value="1" :label="$t('kilos')" :max="1"
-                              :value="totalWeight" :key="'weight' + totalWeight" no-animate/>
+                    <stats-counter :icon-src="require('@/assets/img/icons/scale-outline.svg')"
+                                   progress-value="1" :label="$t('kilos')" :max="1"
+                                   :value="totalWeight" :key="'weight' + totalWeight" no-animate/>
+                    <ion-button class="absolute bottom-0 right-0 mr-2" color="blue" size="small" fill="clear"
+                                v-if="recyclingStats" @click="stats = 'recyclings'" shape="round">
+                      <fa-icon icon="fa-solid fa-recycle" slot="start" class="mr-1"/>
+                      {{ $t('recyclings') }}
+                      <ion-icon :src="require('ionicons5/dist/svg/chevron-forward.svg')" class="visible" slot="end"/>
+                    </ion-button>
+                  </div>
+
+                  <div class="flex justify-around w-full mt-2 px-2"
+                       :class="{'absolute pb-8': group.totalCleanups && recyclingStats}"
+                       v-else-if="recyclingStats && !group.totalCleanups || stats === 'recyclings'"
+                       key="recycling-stats">
+                    <stats-counter :icon-src="require('ionicons5/dist/svg/trash-outline.svg')" :label="type.type.name"
+                                   :max="1" progress-value="1" :key="'cleanups' + 0"
+                                   :value="type.totalCount" no-animate :colors="['#426eff', '#426eff']">
+                      <template slot="icon">
+                        <fa-icon :icon="type.type.icon" class="text-sm -mt-1"/>
+                      </template>
+                    </stats-counter>
+
+                    <stats-counter :icon-src="require('@/assets/img/icons/bag-outline.svg')"
+                                   progress-value="1" :label="$t('liters')" :max="1"
+                                   :value="recyclingStats.totalVolume" :key="'volume-'+ recyclingStats.totalVolume"
+                                   no-animate :colors="['#426eff', '#426eff']"/>
+
+                    <stats-counter :icon-src="require('@/assets/img/icons/scale-outline.svg')"
+                                   progress-value="1" :label="$t('kilos')" :max="1"
+                                   :value="recyclingStats.totalWeight" :key="'weight-' + recyclingStats.totalWeight"
+                                   no-animate :colors="['#426eff', '#426eff']"/>
+
+                    <ion-button class="absolute bottom-0 left-0 ml-2" color="secondary" size="small" fill="clear"
+                                v-if="group.totalCleanups" @click="stats = 'cleanups'" shape="round">
+                      <ion-icon :src="require('ionicons5/dist/svg/chevron-back.svg')" class="visible" slot="start"/>
+                      {{ $t('cleanups') }}
+                      <ion-icon :src="require('ionicons5/dist/svg/trash-outline.svg')" class="visible text-base"
+                                slot="end"/>
+                    </ion-button>
+                  </div>
+                </transition>
               </div>
-              <div v-else class="flex justify-around w-full mt-5 px-2 pt-2 pb-4">
+
+              <div v-if="loading" class="flex justify-around w-full mt-5 px-2 pt-2 pb-4">
                 <ion-skeleton-text animated style="width: 96px; height: 96px" class="rounded-full"></ion-skeleton-text>
                 <ion-skeleton-text animated style="width: 96px; height: 96px" class="rounded-full"></ion-skeleton-text>
                 <ion-skeleton-text animated style="width: 96px; height: 96px" class="rounded-full"></ion-skeleton-text>
@@ -117,14 +162,21 @@
                 </div>
 
               </div>
-              <ion-segment mode="md" :value="segment" @ionChange="segment = $event.target.value">
-                <ion-segment-button mode="md" value="0">{{ $t('cleanups') }}</ion-segment-button>
-                <ion-segment-button mode="md" value="1">{{ $t('info') }}</ion-segment-button>
+              <ion-segment mode="md" :value="segment" @ionChange="segment = $event.target.value" scrollable>
+                <ion-segment-button mode="md" value="1" v-if="group.totalCleanups || !recyclingStats">
+                  {{ $t('cleanups') }}
+                </ion-segment-button>
+                <ion-segment-button mode="md" value="2" v-if="recyclingStats">
+                  {{ $t('recyclings') }}
+                </ion-segment-button>
+                <ion-segment-button mode="md" value="3">
+                  {{ $t('info') }}
+                </ion-segment-button>
               </ion-segment>
             </div>
             <div class="relative">
               <transition :name="`slide-${slideDirection}`">
-                <div v-if="segment === '0'" key="cleanups" class="absolute top-0 w-full group-tab-content">
+                <div v-if="segment === '1'" key="cleanups" class="absolute top-0 w-full group-tab-content">
                   <div v-if="loadingCleanups" class="flex justify-center p-3 w-full">
                     <ion-spinner class="w-12 h-12" color="primary"/>
                   </div>
@@ -144,7 +196,16 @@
                   </ion-infinite-scroll>
                 </div>
 
-                <div v-else-if="segment === '1'" key="info" class="absolute top-0 w-full  group-tab-content">
+                <div v-if="segment === '2'" key="recyclings" class="absolute top-0 w-full group-tab-content">
+                  <recycling-card v-for="recycling in recyclings" :key="recycling.id" :recycling="recycling"
+                                  title-location/>
+                  <ion-infinite-scroll @ionInfinite="nextRecyclings" :disabled="!hasMoreRecyclings"
+                                       :key="'i' + hasMoreRecyclings">
+                    <ion-infinite-scroll-content/>
+                  </ion-infinite-scroll>
+                </div>
+
+                <div v-else-if="segment === '3'" key="info" class="absolute top-0 w-full  group-tab-content">
                   <ion-card mode="ios">
                     <ion-item>
                       <ion-label class="ion-text-wrap max-w-full">
@@ -198,7 +259,7 @@ import {GroupStatus} from '@/types/GroupStatus'
 import CoverPlaceholder from '@/views/components/common/CoverPlaceholder.vue'
 import TransparentHeader from '@/views/components/common/TransparentHeader.vue'
 import {groupsModule} from '@/store/groupsModule'
-import UserCounter from '@/views/components/user/UserCounter.vue'
+import StatsCounter from '@/views/components/user/StatsCounter.vue'
 import {userModule} from '@/store/userModule'
 import GroupStatusButton from '@/views/components/groups/GroupStatusButton.vue'
 import CleanupCard from '@/views/components/common/CleanupCard.vue'
@@ -207,21 +268,39 @@ import ToastPresenter from '@/tools/ToastPresenter'
 import ErrorMessage from '@/tools/ErrorMessage'
 import {PaginatedResult} from '@/types/PaginatedResult'
 import User from '@/types/User'
+import {recyclingsProvider} from '@/providers/data/recyclings.provider'
+import Recycling from '@/types/Recycling'
+import RecyclingCard from '@/views/components/common/RecyclingCard.vue'
 
 @Component({
   name: 'group-page',
-  components: {PageTransparentHeader, CoverPlaceholder, TransparentHeader, UserCounter, GroupStatusButton, CleanupCard}
+  components: {
+    PageTransparentHeader,
+    CoverPlaceholder,
+    TransparentHeader,
+    StatsCounter,
+    GroupStatusButton,
+    CleanupCard,
+    RecyclingCard
+  }
 })
 export default class GroupPage extends Vue {
 
   id: number = null
   status: GroupStatus = null
   loadingStatus = true
-  segment = '0'
+  segment = '1'
   firstMembers: PaginatedResult<{ user: User }> = null
   slideDirection = 'left'
   loading = true
   joinRequestId?: number = null
+
+  loadingRecyclings = false
+  recyclingsPage = 1
+  recyclings: Recycling[] = []
+  hasMoreRecyclings = true
+  totalRecyclings = 0
+  stats = 'cleanups'
 
   @Watch('segment')
   segmentChanged(newValue, oldValue) {
@@ -260,17 +339,35 @@ export default class GroupPage extends Vue {
     return groupsModule.groupHasRequests[this.id]
   }
 
+  get recyclingStats() {
+    return this.group.recyclingStats
+  }
+
+  get type() {
+    return this.recyclingStats?.types[0]
+  }
+
   mounted() {
     this.id = +this.$route.params.id
     if (!this.$route.meta.isBack || !groupsModule.getCurrentGroup || groupsModule.getCurrentGroup?.id !== this.id) {
       groupsModule.resetCurrentCleanups()
       groupsModule.fetchGroup(this.id)
-          .then(() => groupsModule.fetchCurrentGroupCleanups())
+          .then(() => {
+            if (!this.group.totalCleanups && this.group.recyclingStats) {
+              this.segment = '2'
+            }
+            groupsModule.fetchCurrentGroupCleanups()
+            this.fetchRecyclings()
+          })
           .finally(() => {
             this.loading = false
           })
     } else {
       this.loading = false
+      this.fetchRecyclings()
+      if (!this.group.totalCleanups && this.group.recyclingStats) {
+        this.segment = '2'
+      }
     }
     groupsProvider.fetchGroupMembers(this.id, 0, 3)
         .then((data) => this.firstMembers = data)
@@ -335,6 +432,29 @@ export default class GroupPage extends Vue {
       }]
     })
     await alert.present()
+  }
+
+  fetchRecyclings() {
+    this.loadingRecyclings = true
+    return recyclingsProvider.findAll({page: this.recyclingsPage, groupId: this.group.id})
+        .then(({data, meta}) => {
+          this.totalRecyclings = meta.totalItems
+          if (this.recyclings?.length) {
+            this.recyclings.push(...data)
+          } else {
+            this.recyclings = data
+          }
+          if (meta?.totalItems === this.recyclings.length) {
+            this.hasMoreRecyclings = false
+          }
+        })
+        .finally(() => this.loadingRecyclings = false)
+  }
+
+  nextRecyclings(event) {
+    this.recyclingsPage++
+    this.fetchRecyclings()
+        .finally(() => event.target.complete())
   }
 
 }

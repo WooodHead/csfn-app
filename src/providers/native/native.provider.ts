@@ -1,6 +1,6 @@
 import {Device} from '@capacitor/device'
-import {SplashScreen} from '@capacitor/splash-screen'
 import {StatusBar, Style} from '@capacitor/status-bar'
+import {SplashScreen} from '@capacitor/splash-screen'
 
 class NativeProvider {
 

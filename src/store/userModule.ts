@@ -142,7 +142,7 @@ class UserModule extends VuexModule {
   @Mutation
   setCurrentUserGroups(groups: PaginatedResult<UserGroup>) {
     if (this.currentUserGroups?.length) {
-      this.currentUserGroups = _.uniqBy([...this.currentUserGroups, ...groups.data], 'id')
+      this.currentUserGroups = _.uniqBy([...this.currentUserGroups, ...groups.data], 'id' as any)
     } else {
       this.currentUserGroups = groups.data
     }

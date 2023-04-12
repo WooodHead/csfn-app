@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-end text-4xl">
     <div v-for="(digit, i) in digits" :key="i" :class="{'-mt-2': isNaN(digit)}">
-      <digit-display v-if="!isNaN(digit)" :digit="digit" class="ml-1"></digit-display>
+      <digit-display v-if="digit !== ' ' && !isNaN(digit)" :digit="digit" class="ml-1"></digit-display>
       <span v-else class="text-4xl text-white ml-1">{{ digit }}</span>
     </div>
   </div>
@@ -9,28 +9,25 @@
 <script lang=ts>
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+import {Prop} from 'vue-property-decorator'
 import DigitDisplay from '@/views/components/community/DigitDisplay.vue'
-import language from '@/tools/language'
 
 @Component({
   name: 'NumberDisplay',
-  components: { DigitDisplay }
+  components: {DigitDisplay}
 })
 export default class NumberDisplay extends Vue {
-  @Prop({ type: String })
+  @Prop({type: String})
   number: string
 
   @Prop(Boolean)
   decimals: boolean
 
   get digits() {
-    return Number(this.number).toLocaleString(language(), this.decimals ? {
+    return Number(this.number).toLocaleString(this.$i18n.locale, this.decimals ? {
       useGrouping: true,
       minimumFractionDigits: 2
     } : undefined).split('')
   }
 }
 </script>
-<style scoped>
-</style>

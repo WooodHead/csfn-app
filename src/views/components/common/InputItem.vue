@@ -3,6 +3,9 @@
     <div :class="rounded ? 'rounded-full' : ''" class="overflow-hidden ion-activatable ripple-parent"
          @click="clicked">
       <ion-item :color="outline ? 'light': '' " :lines="noLines ? 'none' : 'full'" :class="itemClass">
+        <div v-if="$scopedSlots['start']" slot="start" class="my-auto mr-0">
+          <slot name="start"/>
+        </div>
         <ion-icon v-if="icon || iconSrc" slot="start" :name="icon" :src="iconSrc" color="dark"></ion-icon>
         <ion-avatar slot="start" v-if="avatarSrc" class="w-6 h-6 my-auto">
           <img :src="avatarSrc"/>
@@ -16,7 +19,7 @@
                      @ionBlur="onBlur" @ionChange="change"
                      @ionFocus="focused" @ionInput="onInput"></ion-input>
         </slot>
-        <div v-if="$scopedSlots['end']" slot="end">
+        <div v-if="$scopedSlots['end']" slot="end" class="my-auto">
           <slot name="end"/>
         </div>
         <ion-button v-if="type === 'password' && !$scopedSlots['end']" slot="end"

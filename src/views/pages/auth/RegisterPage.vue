@@ -41,14 +41,14 @@
 <script lang="ts">
 import {Keyboard, KeyboardInfo} from '@capacitor/keyboard'
 import Vue from 'vue'
-import { Component } from 'vue-property-decorator'
+import {Component} from 'vue-property-decorator'
 import ButtonItem from '@/views/components/common/ButtonItem.vue'
 import ForestBg from '@/views/components/common/ForestBg.vue'
 import InputItem from '@/views/components/common/InputItem.vue'
 import Avatar from '@/views/components/common/Avatar.vue'
 import TransparentHeader from '@/views/components/common/TransparentHeader.vue'
 import User from '@/types/User'
-import { authModule } from '@/store/authModule'
+import {authModule} from '@/store/authModule'
 import FormError from '@/types/errors/FormError'
 import InputError from '@/views/components/common/InputError.vue'
 import UnknownError from '@/types/errors/UnknownError'
@@ -59,12 +59,12 @@ import PicturesModal from '@/views/modals/PicturesModal.vue'
 import ModalPresenter from '@/tools/ModalPresenter'
 import Cropper from '@/tools/Cropper'
 import Validator from '@/tools/Validator'
-import { CREATE } from '@/types/ValidationGroups'
-import { appModule } from '@/store/appModule'
+import {CREATE} from '@/types/ValidationGroups'
+import {appModule} from '@/store/appModule'
 
 @Component({
   name: 'register',
-  components: { UploadButton, InputError, TransparentHeader, Avatar, ButtonItem, ForestBg, InputItem }
+  components: {UploadButton, InputError, TransparentHeader, Avatar, ButtonItem, ForestBg, InputItem}
 })
 export default class RegisterPage extends Vue {
 
@@ -96,25 +96,25 @@ export default class RegisterPage extends Vue {
   }
 
   register() {
-    Validator.validate(this.userRegistration, { groups: [CREATE] })
-      .then(() => Cropper.cropSquare(this.userRegistration.picture as Blob, true))
-      .then((croppedImage) => appModule.showLoader(this.$ionic)
-        .then(() => authModule.doRegister({ ...this.userRegistration, picture: croppedImage } as User)))
-      .then(() => {
-        appModule.hideLoader()
-        this.$router.replace('/welcome')
-      })
-      .catch(error => {
-        console.error(error)
-        appModule.hideLoader()
-        if (error instanceof FormError) {
-          error.fieldErrors.forEach((fieldError) => {
-            this.$set(this.fieldErrors, fieldError.param, [ErrorMessage.getMessage(fieldError)])
-          })
-        } else if (error instanceof UnknownError) {
-          ToastPresenter.present(this.$ionic, ErrorMessage.getMessage(error))
-        }
-      })
+    Validator.validate(this.userRegistration, {groups: [CREATE]})
+        .then(() => Cropper.cropSquare(this.userRegistration.picture as Blob, true))
+        .then((croppedImage) => appModule.showLoader(this.$ionic)
+            .then(() => authModule.doRegister({...this.userRegistration, picture: croppedImage} as User)))
+        .then(({redirect}) => {
+          appModule.hideLoader()
+          this.$router.replace(redirect)
+        })
+        .catch(error => {
+          console.error(error)
+          appModule.hideLoader()
+          if (error instanceof FormError) {
+            error.fieldErrors.forEach((fieldError) => {
+              this.$set(this.fieldErrors, fieldError.param, [ErrorMessage.getMessage(fieldError)])
+            })
+          } else if (error instanceof UnknownError) {
+            ToastPresenter.present(this.$ionic, ErrorMessage.getMessage(error))
+          }
+        })
 
   }
 
@@ -126,10 +126,10 @@ export default class RegisterPage extends Vue {
     this.loadingPicture = true
     this.fieldErrors['picture'] = undefined
     Cropper.cropSquare(file)
-      .then((cropped) => {
-        this.loadingPicture = false
-        this.$set(this.userRegistration, 'picture', cropped)
-      })
+        .then((cropped) => {
+          this.loadingPicture = false
+          this.$set(this.userRegistration, 'picture', cropped)
+        })
   }
 
   openPreview(event) {
@@ -139,7 +139,7 @@ export default class RegisterPage extends Vue {
       pictures: [this.userRegistration.picture],
       selected: 0,
       removable: true
-    }).then(({ data }) => {
+    }).then(({data}) => {
       if (data?.index !== undefined) {
         this.$set(this.userRegistration, 'picture', undefined)
       }

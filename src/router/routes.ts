@@ -2,7 +2,7 @@ import HomePage from '@/views/pages/home/HomePage.vue'
 import LoginPage from '@/views/pages/auth/LoginPage.vue'
 import RegisterPage from '@/views/pages/auth/RegisterPage.vue'
 import ForgottenPasswordPage from '@/views/pages/auth/ForgottenPasswordPage.vue'
-import EditionPage from '@/views/pages/edition/EditionPage.vue'
+import EditionPage from '@/views/pages/EditionPage.vue'
 import ActivityPage from '@/views/pages/ActivityPage.vue'
 import UserPage from '@/views/pages/UserPage.vue'
 import SettingsPage from '@/views/pages/settings/SettingsPage.vue'
@@ -11,7 +11,6 @@ import GlobalImpactPage from '@/views/pages/home/community/GlobalImpactPage.vue'
 import SecuritySettingsPage from '@/views/pages/settings/SecuritySettingsPage.vue'
 import WelcomePage from '@/views/pages/auth/WelcomePage.vue'
 import ProfileSettingsPage from '@/views/pages/settings/ProfileSettingsPage.vue'
-import CleanupsMapPage from '@/views/pages/home/community/CleanupsMapPage.vue'
 import LevelsPage from '@/views/pages/home/user/LevelsPage.vue'
 import {RouteConfig} from 'vue-router'
 import {ActivityType} from '@/types/ActivityType'
@@ -25,6 +24,15 @@ import MemberRequestPage from '@/views/pages/group/MemberRequestPage.vue'
 import MembersListPage from '@/views/pages/group/MembersListPage.vue'
 import GroupReportPage from '@/views/pages/group/settings/GroupReportPage.vue'
 import SupportPage from '@/views/pages/settings/SupportPage.vue'
+import StationModelsPage from '@/views/pages/group/settings/recycling/StationModelsPage.vue'
+import StationModelFormPage from '@/views/pages/group/settings/recycling/StationModelFormPage.vue'
+import StationsPage from '@/views/pages/group/settings/recycling/StationsPage.vue'
+import StationFormPage from '@/views/pages/group/settings/recycling/StationFormPage.vue'
+import MapPage from '@/views/pages/home/community/MapPage.vue'
+import RecyclingStationPage from '@/views/pages/recycling/RecyclingStationPage.vue'
+import RecyclingEditionPage from '@/views/pages/recycling/RecyclingEditionPage.vue'
+import RecyclingPage from '@/views/pages/recycling/RecyclingPage.vue'
+import CurrentUserRecyclingsPage from '@/views/pages/home/user/CurrentUserRecyclingsPage.vue'
 
 const routes: RouteConfig[] = [
   {
@@ -54,9 +62,11 @@ const routes: RouteConfig[] = [
     component: WelcomePage
   }, {
     path: '/',
+    name: 'HomePageRoot',
     redirect: '/home/community'
   }, {
     path: '/home',
+    name: 'HomePageWrapper',
     redirect: '/home/community'
   }, {
     path: '/home/:tab',
@@ -91,6 +101,22 @@ const routes: RouteConfig[] = [
     name: 'GroupReportPage',
     component: GroupReportPage
   }, {
+    path: '/group/:id/settings/recycling-station-models',
+    name: 'StationModelsPage',
+    component: StationModelsPage
+  }, {
+    path: '/group/:groupId/settings/recycling-station-models/:id',
+    name: 'StationModelFormPage',
+    component: StationModelFormPage
+  }, {
+    path: '/group/:id/settings/recycling-stations',
+    name: 'StationsPage',
+    component: StationsPage
+  }, {
+    path: '/group/:groupId/settings/recycling-stations/:id',
+    name: 'StationFormPage',
+    component: StationFormPage
+  }, {
     path: '/group/:id/member-request',
     name: 'MemberRequestPage',
     component: MemberRequestPage
@@ -104,8 +130,8 @@ const routes: RouteConfig[] = [
     component: LevelsPage
   }, {
     path: '/map',
-    name: 'CleanupsMapPage',
-    component: CleanupsMapPage
+    name: 'MapPage',
+    component: MapPage
   }, {
     path: '/user/:id',
     name: 'UserPage',
@@ -117,6 +143,10 @@ const routes: RouteConfig[] = [
     props: {
       type: 'cleanup'
     }
+  }, {
+    path: '/current-user-recyclings',
+    name: 'CurrentUserRecyclingsPage',
+    component: CurrentUserRecyclingsPage
   }, {
     path: '/current-user-alerts',
     name: 'CurrentUserAlerts',
@@ -136,12 +166,24 @@ const routes: RouteConfig[] = [
     name: 'CleanupPage',
     component: ActivityPage
   }, {
+    path: '/recyclings/:id',
+    name: 'RecyclingPage',
+    component: RecyclingPage
+  }, {
+    path: '/recycling-stations/:id',
+    name: 'RecyclingStationPage',
+    component: RecyclingStationPage
+  }, {
     path: '/edit-cleanup',
     name: 'CleanupEditionPage',
     component: EditionPage,
     props: {
       type: ActivityType.cleanup
     }
+  }, {
+    path: '/edit-recycling',
+    name: 'RecyclingEditionPage',
+    component: RecyclingEditionPage
   }, {
     path: '/settings',
     name: 'SettingsPage',
@@ -156,12 +198,15 @@ const routes: RouteConfig[] = [
     component: SecuritySettingsPage
   }, {
     path: '/settings/support',
-    name: 'SecuritySettingsPage',
+    name: 'SupportPage',
     component: SupportPage
   }, {
     path: '/settings/profile',
     name: 'ProfileSettingsPage',
     component: ProfileSettingsPage
+  }, {
+    path: '*',
+    redirect: '/'
   }
 ]
 export default routes

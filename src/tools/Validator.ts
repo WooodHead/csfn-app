@@ -22,15 +22,16 @@ export default class Validator {
   }
 
   private static getFormError(errors: ValidationError[]): FormError {
-    return new FormError(errors.map(this.getFieldError))
+    return new FormError(errors.map(e => this.getFieldError(e)).flat())
   }
 
-  private static getFieldError(error: ValidationError): FieldError {
-    return new FieldError(error.property, Object.values(error.constraints)[0])
+  private static getFieldError(error: ValidationError): FieldError[] {
+    return [new FieldError(error.property, error.constraints && Object.values(error.constraints)[0]),
+            ...(error.children?.length ? error.children.map(e => this.getFieldError(e)).flat() : [])]
   }
 }
 
-@ValidatorConstraint({ name: 'passwordConfirmation', async: false })
+@ValidatorConstraint({name: 'passwordConfirmation', async: false})
 export class PasswordConfirmation implements ValidatorConstraintInterface {
   validate(value: any,
            validationArguments?: ValidationArguments): Promise<boolean> | boolean {

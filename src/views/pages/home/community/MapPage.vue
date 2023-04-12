@@ -24,11 +24,13 @@
 
       <div id="map_canvas" class="h-full w-full z-30"></div>
       <transition name="fade-up">
-        <div v-if="selectedCleanup"
+        <div v-if="selectedCleanup || selectedRecyclingStation"
              class="absolute bottom-0 w-full flex justify-center md:justify-start lg:w-2/3 xl:w-1/2 lg:p-4"
              style="z-index: 1000">
           <div class="w-full z-50 ">
-            <cleanup-card :cleanup="cleanup" @click="openSelectedCleanup"></cleanup-card>
+            <cleanup-card v-if="selectedCleanup" :cleanup="cleanup" @click="openSelectedCleanup"></cleanup-card>
+            <recycling-station-card v-if="selectedRecyclingStation" :station="recyclingStation"
+                                    @click="openSelectedRecyclingStation"/>
           </div>
         </div>
       </transition>
@@ -52,18 +54,22 @@ import _, {debounce} from 'lodash'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import {Watch} from 'vue-property-decorator'
+import {recyclingModule} from '@/store/recyclingModule'
+import RecyclingStation from '@/types/RecyclingStation'
+import RecyclingStationCard from '@/views/components/common/RecyclingStationCard.vue'
 
 @Component({
-  name: 'map-modal',
-  components: {SelectionList, TextItem: InputItem, CleanupCard}
+  name: 'map-page',
+  components: {RecyclingStationCard, SelectionList, TextItem: InputItem, CleanupCard}
 })
-export default class MapModal extends Vue {
+export default class MapPage extends Vue {
 
   loading = false
   searchText = ''
   searchResults: Location[] = []
   selectedResult: Location
   selectedCleanup = 0
+  selectedRecyclingStation = 0
   map: Map
 
   get cleanups() {
@@ -74,13 +80,23 @@ export default class MapModal extends Vue {
     return cleanupsModule.getCleanup
   }
 
+  get recyclingStations() {
+    return recyclingModule.stations
+  }
+
+  get recyclingStation() {
+    return recyclingModule.station
+  }
+
   mounted() {
-    const selected = cleanupsModule.getCleanup
+    cleanupsModule.setMarkers([])
+    recyclingModule.setStations([])
+    const selectedCleanup = cleanupsModule.getCleanup
+    const selectedStation = recyclingModule.station
     setTimeout(() => {
       this.map = new Map({
-        pin: 'img/pin_cleanup.png',
         element: 'map_canvas',
-        origin: selected?.location.coords || locationModule.getCoords,
+        origin: selectedCleanup?.location.coords || selectedStation?.location.coords || locationModule.getCoords,
         bounds: cleanupsModule.getOpenedMap?.bounds,
         zoom: cleanupsModule.getOpenedMap?.zoom,
         isInput: false,
@@ -88,11 +104,16 @@ export default class MapModal extends Vue {
       })
       cleanupsModule.setOpenedMap(null)
       this.fetch()
-      if (selected) {
+      if (selectedCleanup) {
         setTimeout(() => {
-          this.selectCleanup(selected)
+          this.selectCleanup(selectedCleanup)
+        }, 100)
+      } else if (selectedStation) {
+        setTimeout(() => {
+          this.selectRecyclingStation(selectedStation)
         }, 100)
       }
+
     })
   }
 
@@ -100,6 +121,7 @@ export default class MapModal extends Vue {
     (this.$refs['text-input'] as HTMLInputElement).blur()
     this.searchResults = []
     this.selectedCleanup = 0
+    this.selectedRecyclingStation = 0
     cleanupsModule.setCleanup(null)
     debounce(() => {
       this.fetch()
@@ -109,6 +131,21 @@ export default class MapModal extends Vue {
   fetch() {
     this.loading = true
     cleanupsModule.fetchMarkers(this.map.getBounds())
+    recyclingModule.fetchStations(this.map.getBounds())
+  }
+
+  @Watch('recyclingStations')
+  recyclingStationsChanged(stations: RecyclingStation[], previousStations: RecyclingStation[]) {
+    const removed: string[] = _.differenceBy(previousStations, stations, 'id').map(({id}) => 'rs' + id)
+    const added: RecyclingStation[] = _.differenceBy(stations, previousStations, 'id')
+
+    this.map.removeMarkersById(removed)
+    for (const station of added) {
+      this.map.addMarker(station.location.coords,
+          `/img/pin_${station.model.types[0]}.png`,
+          () => this.selectRecyclingStation(station),
+          'rs' + station.id)
+    }
   }
 
   @Watch('cleanups')
@@ -133,10 +170,21 @@ export default class MapModal extends Vue {
     this.selectedCleanup = cleanup.id
   }
 
+  selectRecyclingStation(station: RecyclingStation) {
+    recyclingModule.fetchStation(station.id)
+    this.selectedRecyclingStation = station.id
+  }
+
   openSelectedCleanup() {
     cleanupsModule.setOpenedMap(this.map)
     this.$router.push('/cleanup/' + this.selectedCleanup)
   }
+
+  openSelectedRecyclingStation() {
+    cleanupsModule.setOpenedMap(this.map)
+    this.$router.push('/recycling-stations/' + this.selectedRecyclingStation)
+  }
+
 
   search() {
     this.loading = true

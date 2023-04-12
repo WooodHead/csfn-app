@@ -39,8 +39,8 @@
                 <span class="text-lg lg:text-2xl text-white economica">{{ $t(`total-${measure}`) }}</span>
               </div>
               <div v-else class="flex flex-col items-end -mt-2">
-                <ion-skeleton-text animated class="h-8 w-32 rounded opacity-25 bg-white"/>
-                <ion-skeleton-text animated class="w-48 rounded opacity-25 bg-white"/>
+                <ion-skeleton-text animated class="h-8 w-64 rounded opacity-25 bg-white"/>
+                <ion-skeleton-text animated class="w-32 rounded opacity-25 bg-white"/>
               </div>
             </div>
 
@@ -56,7 +56,7 @@
           <div v-else>
 
             <div class="-mt-16 ios:-mt-16 lg:-mt-32 p-2 lg:px-24">
-              <community-map :cleanups="cleanupsMarkers" :coords="currentCords"
+              <community-map :pins="cleanupsMarkers" :coords="currentCords" pin-type="cleanup"
                              @click="$router.push('/map')"/>
             </div>
 
@@ -85,7 +85,7 @@
             <div class="mt-4 px-4 lg:px-24">
               <ion-label class="ml-2 font-bold text-xl" color="primary">{{ $t('top-users') }}</ion-label>
             </div>
-            <ion-list v-if="topUsers[area].length" class="lg:px-24 mb-20 ios:mb-32" lines="full">
+            <ion-list v-if="topUsers[area].length" class="lg:px-24 mb-20 ios:mb-32" lines="full" :key="measure">
               <ion-item v-for="(user, i) in topUsers[area]" :key="user.id"
                         :class="i === 0 ? 'user-gold' : i === 1 ? 'user-silver' : i === 2 ? 'user-bronze' : ''"
                         button
@@ -99,7 +99,9 @@
                 <ion-avatar slot="start">
                   <img :src="(user.picture && user.picture.publicUrl) || '/img/user-placeholder.png'">
                 </ion-avatar>
-                <ion-label class="font-bold my-6 lg:my-4">{{ user.username }}</ion-label>
+                <ion-label class="font-bold my-6 lg:my-4 overflow-ellipsis overflow-hidden whitespace-nowrap"
+                           style="max-width: 50%;">{{ user.username }}
+                </ion-label>
                 <count-chip :count="user['total' + capitalize(measure)]"
                             :type="measure === 'volume' ? 'liters': 'kilos'"/>
               </ion-item>
@@ -119,8 +121,6 @@
   </page-transparent-header>
 </template>
 <script lang=ts>
-import Vue from 'vue'
-import Component from 'vue-class-component'
 import CommunityMap from '@/views/components/community/CommunityMap.vue'
 import MonthsChart from '@/views/components/community/MonthsChart.vue'
 import TransparentHeader from '@/views/components/common/TransparentHeader.vue'
@@ -136,14 +136,14 @@ import TotalStats from '@/types/TotalStats'
 import MonthStats from '@/types/MonthStats'
 import TopUsers from '@/types/TopUsers'
 import {countries} from 'countries-list'
-import {Watch} from 'vue-property-decorator'
 import * as _ from 'lodash'
 import {cleanupsModule} from '@/store/cleanupsModule'
 import ModalPresenter from '@/tools/ModalPresenter'
-import CleanupsMapModal from '@/views/pages/home/community/CleanupsMapPage.vue'
+import MapPage from '@/views/pages/home/community/MapPage.vue'
 import {appModule} from '@/store/appModule'
 import HomeHeader from '@/views/components/home/HomeHeader.vue'
 import CountChip from '@/views/components/common/CountChip.vue'
+import {Component, Watch, Vue} from 'vue-property-decorator'
 
 @Component({
   name: 'community-page',
@@ -198,7 +198,7 @@ export default class CommunityPage extends Vue {
   }
 
   get cleanupsMarkers() {
-    return cleanupsModule.getMarkers
+    return cleanupsModule.getMarkers?.map(({location}) => location.coords)
   }
 
   get ready() {
@@ -245,6 +245,7 @@ export default class CommunityPage extends Vue {
 
   measureChanged(measure: string) {
     this.measure = Measure[measure]
+    this.fetchTopUsers(this.area)
   }
 
   exit() {
@@ -260,7 +261,7 @@ export default class CommunityPage extends Vue {
   }
 
   openCleanupsMap() {
-    ModalPresenter.present(this.$ionic, CleanupsMapModal, {
+    ModalPresenter.present(this.$ionic, MapPage, {
       router: this.$router,
       txt: {
         cleanupIn: this.$t('cleanup-in'),

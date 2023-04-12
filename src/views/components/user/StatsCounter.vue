@@ -9,7 +9,9 @@
          tabindex="1" @focus="focused = true" @blur="focused = false">
       <ion-ripple-effect/>
     </div>
-    <ion-icon :src="iconSrc" class="text-base -mt-1"/>
+    <slot name="icon">
+      <ion-icon :src="iconSrc" class="text-base -mt-1"/>
+    </slot>
     <div class="text-2xl">
       <span>{{ integer }}</span>
       <span class="text-xs" v-if="decimal">{{ decimal }}</span>
@@ -28,9 +30,9 @@ import millify from 'millify'
 import {localeString} from '@/tools/Utils'
 
 @Component({
-  name: 'user-counter'
+  name: 'stats-counter'
 })
-export default class UserCounter extends Vue {
+export default class StatsCounter extends Vue {
 
   @Prop(String)
   iconSrc: string
@@ -38,8 +40,8 @@ export default class UserCounter extends Vue {
   @Prop(String)
   label: string
 
-  @Prop({type: String})
-  value: string
+  @Prop({default: '0'})
+  value: number | string
 
   @Prop({type: String})
   progressValue: number
@@ -50,6 +52,9 @@ export default class UserCounter extends Vue {
   @Prop(Boolean)
   noAnimate: boolean
 
+  @Prop({type: Array, default: () => ['#9ed362', '#148f31']})
+  colors: string[]
+
   focused = false
 
   get localizedSeparator() {
@@ -57,35 +62,38 @@ export default class UserCounter extends Vue {
   }
 
   get integer() {
-    const integer = Number(this.value.split('.')[0])
+    const integer = Number(this.value.toString().split('.')[0])
     return integer < 1000 ? integer : millify(integer, {decimalSeparator: this.localizedSeparator})
   }
 
   get decimal() {
-    return this.value.includes('.') && this.value.split('.')[1] !== '00' && !isNaN(+this.integer)
-        ? this.localizedSeparator + this.value.split('.')[1] : ''
+    return this.value.toString().includes('.') && this.value.toString().split('.')[1] !== '00' && !isNaN(+this.integer)
+        ? this.localizedSeparator + this.value.toString().split('.')[1] : ''
   }
 
   progressBar: Shape = null
 
   mounted() {
-    this.progressBar = new ProgressBar.Circle(this.$refs['progress'] as HTMLElement, {
-      strokeWidth: 4,
-      easing: 'easeInOut',
-      duration: 1000,
-      trailColor: '#eee',
-      from: {color: '#9ed362'},
-      to: {color: '#148f31'},
-      step: function (state,
-                      circle,
-                      attachment) {
-        circle.path.setAttribute('stroke', state.color)
-      },
-    })
-    if (!this.noAnimate) {
-      this.progressBar.animate(Math.min(Number(this.progressValue) / this.max, 1))
-    } else {
-      this.progressBar.set(Math.min(Number(this.progressValue) / this.max, 1))
+    try {
+      this.progressBar = new ProgressBar.Circle(this.$refs['progress'] as HTMLElement, {
+        strokeWidth: 4,
+        easing: 'easeInOut',
+        duration: 1000,
+        trailColor: '#EEEEEE',
+        from: {color: this.colors[0].toUpperCase()},
+        to: {color: this.colors[1].toUpperCase()},
+        step: function (state,
+                        circle,
+                        attachment) {
+          circle.path.setAttribute('stroke', state.color)
+        },
+      })
+      if (!this.noAnimate) {
+        this.progressBar.animate(Math.min(Number(this.progressValue) / this.max, 1))
+      } else {
+        this.progressBar.set(Math.min(Number(this.progressValue) / this.max, 1))
+      }
+    } catch (e) {
     }
   }
 

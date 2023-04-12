@@ -67,10 +67,13 @@ export default class HttpTool {
 
   downloadFile(path: string, fileName: string, params?: Record<string, string>) {
     return Http.downloadFile({
-      url: process.env.VUE_APP_BACK_URL + this.baseUrl + path,
+      url: process.env.VUE_APP_BACK_URL + this.baseUrl + path + '?' + new URLSearchParams(params),
       params,
       filePath: fileName,
-      fileDirectory: 'DOWNLOADS' as Directory
+      fileDirectory: 'DOWNLOADS' as Directory,
+      webFetchExtra: {
+        credentials: 'include'
+      }
     })
   }
 
@@ -105,6 +108,9 @@ export default class HttpTool {
             name: 'server_error',
             params: {status: response.status, body: JSON.stringify(response.data)}
           })
+        }
+        if(response.status === 404) {
+          return Promise.resolve({data: null})
         }
         return Promise.reject(response)
       }

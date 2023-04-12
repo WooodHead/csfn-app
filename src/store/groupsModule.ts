@@ -163,5 +163,4 @@ class GroupsModule extends VuexModule {
 
 }
 
-export const
-  groupsModule = new GroupsModule()
+export const groupsModule = new GroupsModule()

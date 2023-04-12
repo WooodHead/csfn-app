@@ -13,8 +13,7 @@
         <ion-buttons v-if="activity && activity.id"
                      slot="end">
           <ion-button color="danger" fill="clear" shape="round" @click="showRemoveAlert">
-            <ion-icon slot="icon-only" :src="require('ionicons5/dist/svg/trash.svg')"
-                      color="error"></ion-icon>
+            {{$t('remove')}}
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -35,11 +34,10 @@
             </ion-row>
           </input-item>
 
+          <!-- DESCRIPTION -->
           <input-item :errors="errors['description']" :slotted-input="$refs['desc']"
                       @focus="resetError('description')">
-            <ion-textarea ref="desc" :value="activity.description" :placeholder="$t('description') "
-                          maxlength="1024" rows="4" @click="runAutoScroll"
-                          @ionChange="runAutoGrow() || change('description', $event.target.value)"></ion-textarea>
+            <grow-textarea v-model="activity.description" :content="$refs['content']" :placeholder="$t('write-description')"/>
           </input-item>
 
           <!-- VOLUME -->
@@ -212,10 +210,11 @@ import Group from '@/types/Group'
 import PublishAsModal from '@/views/modals/PublishAsModal.vue'
 import UserGroup from '@/types/GroupMember'
 import _ from 'lodash'
+import GrowTextarea from '@/views/components/common/GrowTextarea.vue'
 
 @Component({
   name: 'edition-page',
-  components: {InputItem, InputError, UploadButton}
+  components: {GrowTextarea, InputItem, InputError, UploadButton}
 })
 export default class EditionPage extends Vue {
 
@@ -230,8 +229,6 @@ export default class EditionPage extends Vue {
   removedPictures: number[] = []
   automaticWeight = false
   keyboardHeight = 0
-  textareaHeight = 0
-  scroll = 0
   fromGroup = null
   userHasGroups = true
   userAdminGroups: UserGroup[] = null
@@ -541,7 +538,7 @@ export default class EditionPage extends Vue {
       removable: true
     }).then(({data}) => {
       if (data) {
-        if (this.activity.id) {
+        if (this.activity.id && (this.activity.pictures[data.index] as Image).id) {
           this.removedPictures.push((this.activity.pictures[data.index] as Image).id)
         }
         this.activity.pictures.splice(data.index, 1)
@@ -550,27 +547,6 @@ export default class EditionPage extends Vue {
     })
   }
 
-  runAutoGrow() {
-    (this.$refs['desc'] as HTMLIonTextareaElement).getInputElement()
-        .then(textarea => {
-          textarea.style.height = 'auto'
-          textarea.style.height = textarea.scrollHeight + 'px';
-          (this.$refs['desc'] as HTMLIonTextareaElement).style.height = textarea.scrollHeight + 'px'
-        })
-  }
-
-  runAutoScroll() {
-    (this.$refs['desc'] as HTMLIonTextareaElement).getInputElement()
-        .then(textarea => {
-          const fontSize = Number(window.getComputedStyle(textarea, null).getPropertyValue('font-size').replace('px', ''))
-          const currentLine = textarea.value.substring(0, textarea.selectionStart).split('\n').length
-          const scroll = fontSize * currentLine - fontSize
-          if (scroll !== this.scroll) {
-            (this.$refs['content'] as HTMLIonContentElement).scrollToPoint(0, fontSize * currentLine - fontSize, 500)
-            this.scroll = scroll
-          }
-        })
-  }
 
   change(field,
          value) {

@@ -164,10 +164,10 @@ export default class GroupProfilePage extends Vue {
     appModule.showLoader(this.$ionic)
         .then(() => Validator.validate(plainToClass(Group, this.edition, {strategy: 'excludeAll'})))
         .then(() => this.newPicture ? imagesProvider.uploadImages([this.newPicture], 'update-the-group')
-            .then(([picture]) => this.edition.picture = picture) : Promise.resolve())
+            .then(([picture]) => this.edition.picture = picture) : Promise.resolve() as any)
         .then(() => this.newCover ? imagesProvider.uploadImages([this.newCover], 'update-the-group')
-            .then(([cover]) => this.edition.cover = cover) : Promise.resolve())
-        .then(() => groupsModule.updateGroup(this.edition))
+            .then(([cover]) => this.edition.cover = cover) : Promise.resolve() as any)
+        .then(() => groupsModule.updateGroup({...this.edition, category: null, recyclingStats: undefined}))
         .then(() => {
           this.fetch()
           ToastPresenter.present(this.$ionic, this.$t('group-updated'), 'success')

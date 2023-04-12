@@ -17,57 +17,61 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <ion-list-header>{{ $t('select-report-date') }}</ion-list-header>
+      <empty-text v-if="!firstDate" :text="$t('no-cleanups-yet')"/>
+      <template v-else>
 
-      <ion-list lines="full" class="-mt-2">
-        <ion-item>
-          <ion-radio :checked="selection === 'always'" @ionSelect="selection = 'always'"
-                     mode="md" slot="start"></ion-radio>
-          <ion-label>
-            <span :class="{'opacity-60': selection !== 'always'}">{{ $t('always') }}</span>
-          </ion-label>
-        </ion-item>
+        <ion-list-header>{{ $t('select-report-date') }}</ion-list-header>
 
-        <ion-item>
-          <ion-radio mode="md" :checked="selection === 'month'" @ionSelect="selection = 'month'"
-                     slot="start" class="my-auto"></ion-radio>
-          <ion-label position="stacked">
-            <span :class="{'opacity-60': selection !== 'month'}">{{ $t('specific-month') }}</span>
-          </ion-label>
-          <ion-datetime class="ml-" :disabled="selection !== 'month'" display-format="MMMM YYYY"
-                        :month-names="monthNames" :value="month" @ionChange="month = $event.target.value"
-                        :min="firstDate" :max="today"></ion-datetime>
-        </ion-item>
-
-        <div class="flex">
-          <div class="h-full p-5">
-            <ion-radio :checked="selection === 'range'" @ionSelect="selection = 'range'"
-                       mode="md" slot="start" class="my-auto"></ion-radio>
-          </div>
-          <div class="pl-3">
+        <ion-list lines="full" class="-mt-2">
+          <ion-item>
+            <ion-radio :checked="selection === 'always'" @ionSelect="selection = 'always'"
+                       mode="md" slot="start"></ion-radio>
             <ion-label>
-              <span class="text-xs" :class="{'opacity-60': selection !== 'range'}">{{ $t('dates-range') }}</span>
+              <span :class="{'opacity-60': selection !== 'always'}">{{ $t('always') }}</span>
             </ion-label>
-            <div class="flex w-full items-center">
-              <ion-datetime placeholder="From" :disabled="selection !== 'range'" class=" px-0"
-                            @ionFocus.prevent="() => null"
-                            display-format="DD MMMM YYYY" :value="start" :month-names="monthNames"
-                            :min="firstDate" :max="today" @ionChange="start = $event.target.value"></ion-datetime>
-              <span class="mx-4">-</span>
-              <ion-datetime placeholder="To" :disabled="selection !== 'range'" class=" px-0"
-                            display-format="DD MMMM YYYY" :value="end" :month-names="monthNames"
-                            :min="firstDate" :max="today" @ionChange="end = $event.target.value"></ion-datetime>
+          </ion-item>
+
+          <ion-item>
+            <ion-radio mode="md" :checked="selection === 'month'" @ionSelect="selection = 'month'"
+                       slot="start" class="my-auto"></ion-radio>
+            <ion-label position="stacked">
+              <span :class="{'opacity-60': selection !== 'month'}">{{ $t('specific-month') }}</span>
+            </ion-label>
+            <ion-datetime class="ml-" :disabled="selection !== 'month'" display-format="MMMM YYYY"
+                          :month-names="monthNames" :value="month" @ionChange="month = $event.target.value"
+                          :min="firstDate" :max="today"></ion-datetime>
+          </ion-item>
+
+          <div class="flex">
+            <div class="h-full p-5">
+              <ion-radio :checked="selection === 'range'" @ionSelect="selection = 'range'"
+                         mode="md" slot="start" class="my-auto"></ion-radio>
+            </div>
+            <div class="pl-3">
+              <ion-label>
+                <span class="text-xs" :class="{'opacity-60': selection !== 'range'}">{{ $t('dates-range') }}</span>
+              </ion-label>
+              <div class="flex w-full items-center">
+                <ion-datetime placeholder="From" :disabled="selection !== 'range'" class=" px-0"
+                              @ionFocus.prevent="() => null"
+                              display-format="DD MMMM YYYY" :value="start" :month-names="monthNames"
+                              :min="firstDate" :max="today" @ionChange="start = $event.target.value"></ion-datetime>
+                <span class="mx-4">-</span>
+                <ion-datetime placeholder="To" :disabled="selection !== 'range'" class=" px-0"
+                              display-format="DD MMMM YYYY" :value="end" :month-names="monthNames"
+                              :min="firstDate" :max="today" @ionChange="end = $event.target.value"></ion-datetime>
+              </div>
             </div>
           </div>
-        </div>
-        <hr style="height: 1px">
-      </ion-list>
+          <hr style="height: 1px">
+        </ion-list>
 
-      <div class="w-full justify-center flex mt-4">
-        <ion-button shape="round" @click="download">
-          {{ $t('download') }}
-        </ion-button>
-      </div>
+        <div class="w-full justify-center flex mt-4">
+          <ion-button shape="round" @click="download">
+            {{ $t('download') }}
+          </ion-button>
+        </div>
+      </template>
     </ion-content>
   </ion-page>
 </template>
@@ -79,9 +83,11 @@ import ToastPresenter from '@/tools/ToastPresenter'
 import ErrorMessage from '@/tools/ErrorMessage'
 import {appModule} from '@/store/appModule'
 import {FileOpener} from '@capacitor-community/file-opener'
+import EmptyText from '@/views/components/common/EmptyText.vue'
 
 @Component({
-  name: 'GroupReportPage'
+  name: 'GroupReportPage',
+  components: {EmptyText}
 })
 export default class GroupReportPage extends Vue {
 

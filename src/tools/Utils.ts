@@ -2,7 +2,8 @@ import Address from '@/types/Address'
 import Coords from '@/types/Coords'
 import CoordsBound from '@/types/CoordsBound'
 import distance from '@turf/distance'
-import language from '@/tools/language'
+import FullAddress from '@/types/FullAddress'
+import {i18n} from '@/i18n'
 import GeocoderAddressComponent = google.maps.GeocoderAddressComponent
 import GeocoderResult = google.maps.GeocoderResult
 
@@ -77,15 +78,27 @@ export function geocoderToAddress(result: GeocoderResult): Address {
   }
 }
 
+export function geocoderToFullAddress(result: GeocoderResult): FullAddress {
+  const address = geocoderToAddress(result)
+
+  return {
+    street: (findAddressComponentByType(result.address_components, 'street_address') || findAddressComponentByType(result.address_components, 'route'))?.long_name
+      + ' ' + findAddressComponentByType(result.address_components, 'street_number')?.long_name,
+    postalCode: findAddressComponentByType(result.address_components, 'postal_code').long_name,
+    ...address
+  }
+}
+
 export function findAddressComponentByType(addressComponents: GeocoderAddressComponent[], type: string) {
   return addressComponents.filter(({types}) => types.includes(type))[0]
 }
 
 export function localeString(value: number) {
-  return Intl.NumberFormat(language(), {useGrouping: true}).format(value)
+  return Intl.NumberFormat(i18n.locale, {useGrouping: true}).format(value)
 }
 
 export const monthNames = {
-  en: ['January', 'February', 'March', 'May', 'April', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-  es: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  es: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+  fr: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
 }

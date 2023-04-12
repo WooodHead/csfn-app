@@ -23,8 +23,7 @@
       <ion-list class="space-y-2 mt-2">
         <ion-item v-for="(question, i) in questions" :key="question.id" mode="md" lines="none" color="lighter"
                   class="mx-2 rounded-lg">
-          <ion-textarea :value="question.question" :placeholder="$t('write-question')"
-                        @ionChange="question.question = $event.target.value"/>
+          <grow-textarea :placeholder="$t('write-question')" v-model="question.question"/>
           <ion-button slot="end" shape="round" color="danger" fill="clear" @click="remove(i)">
             <ion-icon name="close" slot="icon-only" size="large" class="mr-0"/>
           </ion-button>
@@ -54,10 +53,11 @@ import {GroupQuestion} from '@/types/GroupQuestions'
 import ToastPresenter from '@/tools/ToastPresenter'
 import EmptyText from '@/views/components/common/EmptyText.vue'
 import {Keyboard, KeyboardInfo} from '@capacitor/keyboard'
+import GrowTextarea from '@/views/components/common/GrowTextarea.vue'
 
 @Component({
   name: 'GroupQuestionsPage',
-  components: {EmptyText}
+  components: {GrowTextarea, EmptyText}
 })
 export default class GroupQuestionsPage extends Vue {
 

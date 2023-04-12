@@ -13,7 +13,7 @@
                    @ionScroll="$refs['page'].scrolled($event)">
         <home-header :num="2">
           <div class="h-toolbar-top sm:ios:mb-2"></div>
-          <div class="absolute bottom-0 mb-20 z-10 w-full left-0 px-2">
+          <div class="absolute bottom-0 mb-20 z-10 w-full left-0 px-2 lg:px-24">
             <ion-card class="rounded-full ion-activatable" mode="ios" @click="$router.push('/search-group')">
               <ion-item>
                 <ion-icon name="search" slot="start"/>
@@ -24,23 +24,26 @@
           </div>
         </home-header>
 
-        <div v-if="loading" class="flex justify-center p-3 w-full absolute">
-          <ion-spinner class="w-12 h-12" color="primary"/>
+        <div class="lg:px-24">
+          <div v-if="loading" class="flex justify-center p-3 w-full absolute">
+            <ion-spinner class="w-12 h-12" color="primary"/>
+          </div>
+
+          <div class="-mt-14">
+            <group-card v-for="{group, status} in groups" :key="group.id" :group="group" :status="status"
+                        @click="$router.push('/group/' + group.id)" :requests="groupRequests[group.id]"/>
+          </div>
+
+          <EmptyText :text="$t('no-groups')" v-if="!loading && !groups.length && !suggestions.length"/>
+
+          <div class="pt-6 text-left relative" v-if="suggestions && suggestions.length"
+               :class="{'-mt-14': !groups.length}">
+            <ion-label class="font-bold text-xl text-left ml-6" color="primary">{{ $t('suggestions') }}</ion-label>
+            <group-card v-for="group in suggestions" :key="group.id" :group="group"
+                        @click="openGroup(group)"/>
+          </div>
         </div>
 
-        <div class="-mt-14">
-          <group-card v-for="{group, status} in groups" :key="group.id" :group="group" :status="status"
-                      @click="$router.push('/group/' + group.id)" :requests="groupRequests[group.id]"/>
-        </div>
-
-        <EmptyText :text="$t('no-groups')" v-if="!loading && !groups.length && !suggestions.length"/>
-
-        <div class="pt-6 text-left relative" v-if="suggestions.length"
-             :class="{'-mt-14': !groups.length}">
-          <ion-label class="font-bold text-xl text-left ml-6" color="primary">{{ $t('suggestions') }}</ion-label>
-          <group-card v-for="group in suggestions" :key="group.id" :group="group"
-                      @click="openGroup(group)"/>
-        </div>
 
         <ion-infinite-scroll @ionInfinite="next" :disabled="!hasMoreGroups && !hasMoreGroupSuggestions">
           <ion-infinite-scroll-content/>

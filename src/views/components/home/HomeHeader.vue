@@ -12,9 +12,7 @@
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+import { Prop, Vue, Component } from 'vue-property-decorator'
 import HomeHeaderButton from '@/views/components/home/HomeHeaderButton.vue'
 import Wave from '@/views/components/common/Wave.vue'
 

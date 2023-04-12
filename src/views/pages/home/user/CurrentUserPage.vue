@@ -34,23 +34,23 @@
         <div class="lg:px-24">
 
           <div class="flex justify-around w-full py-2 my-3">
-            <user-counter :key="'cleanups-' + user.totalCleanups"
-                          :icon-src="require('ionicons5/dist/svg/trash-outline.svg')" :label="$t('cleanups')"
-                          :max="max(userLevel, previousLevel, 'cleanups')"
-                          :progress-value=" progress(user.totalCleanups, previousLevel, 'cleanups')"
-                          :value="user.totalCleanups.toString()"/>
+            <stats-counter :key="'cleanups-' + user.totalCleanups"
+                           :icon-src="require('ionicons5/dist/svg/trash-outline.svg')" :label="$t('cleanups')"
+                           :max="max(userLevel, previousLevel, 'cleanups')"
+                           :progress-value=" progress(user.totalCleanups, previousLevel, 'cleanups')"
+                           :value="user.totalCleanups.toString()"/>
 
-            <user-counter :key="'volume-' + user.totalVolume"
-                          :icon-src="require('@/assets/img/icons/bag-outline.svg')"
-                          :progress-value="progress(user.totalVolume,previousLevel,'liters')"
-                          :label="$t('liters')" :max="max(userLevel, previousLevel, 'liters')"
-                          :value="user.totalVolume.toString()"/>
+            <stats-counter :key="'volume-' + user.totalVolume"
+                           :icon-src="require('@/assets/img/icons/bag-outline.svg')"
+                           :progress-value="progress(user.totalVolume,previousLevel,'liters')"
+                           :label="$t('liters')" :max="max(userLevel, previousLevel, 'liters')"
+                           :value="user.totalVolume.toString()"/>
 
-            <user-counter :key="'weight-' + user.totalWeight"
-                          :icon-src="require('@/assets/img/icons/scale-outline.svg')"
-                          :progress-value="progress(user.totalWeight, previousLevel,'kilos')"
-                          :label="$t('kilos')" :max="max(userLevel, previousLevel, 'kilos')"
-                          :value="user.totalWeight.toString()"/>
+            <stats-counter :key="'weight-' + user.totalWeight"
+                           :icon-src="require('@/assets/img/icons/scale-outline.svg')"
+                           :progress-value="progress(user.totalWeight, previousLevel,'kilos')"
+                           :label="$t('kilos')" :max="max(userLevel, previousLevel, 'kilos')"
+                           :value="user.totalWeight.toString()"/>
           </div>
 
           <ion-card v-if="user.totalCleanups" mode="ios">
@@ -60,7 +60,7 @@
                   :stats="userStats"/>
             </div>
           </ion-card>
-          <ion-card v-else>
+          <ion-card v-else mode="ios" class="mt-0">
             <div class="p-4">
               <p class="font-bold text-lg text-gray-800">{{ $t('user-no-cleanups') }}</p>
               <p class="text-base mb-4">{{ $t('no-cleanups') }}</p>
@@ -74,6 +74,10 @@
             <ion-item button detail="true" @click="$router.push('/current-user-cleanups')">
               <ion-icon slot="start" :src="require('ionicons5/dist/svg/trash-outline.svg')"/>
               <ion-label class="my-4">{{ $t('cleanups') }}</ion-label>
+            </ion-item>
+            <ion-item button detail="true" @click="$router.push('/current-user-recyclings')" v-if="user.recyclingStats && user.recyclingStats.totalVolume">
+              <fa-icon icon="fa-solid fa-recycle" slot="start" class="fa-thinner text-dark text-lg mr-5"/>
+              <ion-label class="my-4">{{ $t('recyclings') }}</ion-label>
             </ion-item>
             <ion-item button detail="true" @click="$router.push('/current-user-alerts')">
               <ion-icon slot="start" :src="require('ionicons5/dist/svg/alert-circle-outline.svg')"/>
@@ -103,7 +107,7 @@ import {UserLevel} from '@/types/UserLevel'
 import Wave from '@/views/components/common/Wave.vue'
 import CommunityMap from '@/views/components/community/CommunityMap.vue'
 import PageTransparentHeader from '@/views/components/common/PageTransparentHeader.vue'
-import UserCounter from '@/views/components/user/UserCounter.vue'
+import StatsCounter from '@/views/components/user/StatsCounter.vue'
 import UserStats from '@/views/components/user/UserStats.vue'
 import UserProfileStats from '@/types/UserProfileStats'
 import levels from '@/assets/levels'
@@ -114,7 +118,7 @@ import HomeHeader from '@/views/components/home/HomeHeader.vue'
   components: {
     HomeHeader,
     UserStats,
-    UserCounter,
+    StatsCounter,
     PageTransparentHeader,
     CommunityMap,
     Wave,

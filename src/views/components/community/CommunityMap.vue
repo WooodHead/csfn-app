@@ -7,10 +7,9 @@
 <script lang=ts>
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import Cleanup from '@/types/Cleanup'
+import {Prop} from 'vue-property-decorator'
 import Coords from '@/types/Coords'
-import { remToPixel } from '@/tools/Utils'
+import {remToPixel} from '@/tools/Utils'
 
 @Component({
   name: 'community-map'
@@ -19,25 +18,31 @@ export default class CommunityMap extends Vue {
   KEY = process.env.VUE_APP_GOOGLE_API_KEY
 
   @Prop(Array)
-  cleanups: Cleanup[]
+  pins: Coords[]
 
   @Prop(Object)
   coords: Coords
 
+  @Prop(String)
+  pinType: string
+
+  @Prop({type: Number, required: false})
+  height: number
+
   width = 0
 
-  get height() {
-    return Math.ceil(this.width * 5 / 6)
-  }
-
-  get cleanupMarkers() {
-    return this.cleanups.length && encodeURI('icon:https://storage.googleapis.com/csfn-public-assets/pin_cleanup.png|' + this.cleanups.map(({ location }) => `${location.coords.lat},${location.coords.lng}`).join('|'))
+  get markers() {
+    return this.pins?.length && encodeURI('icon:https://storage.googleapis.com/csfn-public-assets/pin_' + this.pinType + '.png|'
+        + this.pins.map(({lat, lng}) => `${lat},${lng}`).join('|'))
   }
 
   get src() {
     return 'https://maps.googleapis.com/maps/api/staticmap' +
-      `?size=${this.width}x${this.height}&key=${this.KEY}` +
-      `&${this.cleanupMarkers ? 'markers=' + this.cleanupMarkers : 'zoom=11&center=' + this.coords.lat + ',' + this.coords.lng}`
+        `?size=${this.width}x${this.height || Math.ceil(this.width * 5 / 6)}&key=${this.KEY}` +
+        '&style=feature:poi|element:labels.icon|visibility:off' +
+        '&style=feature:road|element:labels.icon|visibility:off' +
+        `&markers=${this.markers}` +
+        (this.coords ? `&visible=${this.coords.lat},${this.coords.lng}` : '')
   }
 
   mounted() {

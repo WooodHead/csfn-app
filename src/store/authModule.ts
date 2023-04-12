@@ -11,6 +11,7 @@ import User from '@/types/User'
 import {LOGIN, RESET_PASSWORD, UPDATE_EMAIL, UPDATE_PASSWORD} from '@/types/ValidationGroups'
 import {FirebaseAnalytics} from '@capacitor-community/firebase-analytics'
 import {Action, Module, Mutation, VuexModule} from 'vuex-class-modules'
+import {LoggedResult} from '@/types/LoggedResult'
 
 const SESSION = 'CSFN_SESSION'
 
@@ -18,6 +19,7 @@ const SESSION = 'CSFN_SESSION'
 class AuthModule extends VuexModule {
 
   logged = false
+  loggedRedirect: string = null
 
   constructor() {
     super({store, name: 'auth'})
@@ -32,62 +34,68 @@ class AuthModule extends VuexModule {
     this.logged = logged
   }
 
+  @Mutation
+  setLoggedRedirect(path: string): void {
+    this.loggedRedirect = path
+  }
+
   @Action
-  initialize(): Promise<void> {
+  initialize(): Promise<LoggedResult | void> {
     return this.checkIsLogged()
       .catch(() => this.loggedOut())
   }
 
   @Action
-  checkIsLogged() {
+  checkIsLogged(): Promise<LoggedResult> {
     return authProvider.fetchCurrentUser()
-      .then((user) => this.loggedIn(user))
-      .then(() => {
+      .then((user) => this.loggedIn({user}))
+      .then(({user, redirect}) => {
         this.setLogged(true)
+        return {user, redirect}
       })
   }
 
   @Action
-  doRegister(user: User): Promise<void> {
+  doRegister(user: User): Promise<LoggedResult> {
     return locationModule.getLocationByIp()
       .then((location) => authProvider.doRegister(location.address.countryCode, user))
       .then((registered) => imagesProvider.uploadImages([user.picture as File], 'register')
         .then((images) => userProvider.updateUser(registered.id, {picture: {id: images[0].id}})))
-      .then((logged) => {
+      .then((user) => {
         FirebaseAnalytics.logEvent({name: 'sign_up', params: {method: 'credentials'}})
-        return this.loggedIn(logged)
+        return this.loggedIn({user, redirect: '/welcome'})
       })
   }
 
   @Action
-  doCredentialsLogin(userLogin: User): Promise<User> {
+  doCredentialsLogin(userLogin: User): Promise<LoggedResult> {
     return Validator.validate(userLogin, {groups: [LOGIN]})
       .then(() => authProvider.doLogin(userLogin))
       .then((user) => {
         FirebaseAnalytics.logEvent({name: 'login', params: {method: 'credentials'}})
-        return this.loggedIn(user)
+        return this.loggedIn({user, redirect: '/home'})
       })
   }
 
   @Action
-  doFacebookLogin(token: string): Promise<User> {
+  doFacebookLogin(token: string): Promise<LoggedResult> {
     return locationModule.getLocationByIp()
       .then((location) => authProvider.doFacebookLogin(location.address.countryCode, token))
-      .then((user) => this.loggedIn(user))
+      .then((user) => this.loggedIn({user, redirect: user.isNew ? '/welcome' : '/home'}))
   }
 
   @Action
-  doGoogleLogin(token: string): Promise<User> {
+  doGoogleLogin(token: string): Promise<LoggedResult> {
     return Promise.all([locationModule.getLocationByIp(), nativeProvider.isIOS()])
       .then(([location, ios]) => authProvider.doGoogleLogin(location.address.countryCode, token, ios))
-      .then((user) => this.loggedIn(user))
+      .then((user) => this.loggedIn({user, redirect: user.isNew ? '/welcome' : '/home'}))
   }
 
   @Action
-  doAppleLogin({token, name}: { token: string, name: string }): Promise<User> {
+  doAppleLogin({token, name}: { token: string, name: string }): Promise<LoggedResult> {
     return locationModule.getLocationByIp()
       .then((location) => authProvider.doAppleLogin(location.address.countryCode, token, name))
-      .then((user) => this.loggedIn(user))
+      .then((user) => this.loggedIn({user, redirect: user.isNew ? '/welcome' : '/home'}))
   }
 
   @Action
@@ -136,11 +144,13 @@ class AuthModule extends VuexModule {
   }
 
   @Action
-  loggedIn(user) {
+  loggedIn({user, redirect}: { user: User, redirect?: string }): Promise<LoggedResult> {
     userModule.setCurrentUser(user)
     this.setLogged(true)
     locationModule.initialize()
-    return Promise.resolve(user)
+    let toRedirect = this.loggedRedirect || redirect
+    this.setLoggedRedirect(null)
+    return Promise.resolve({user, redirect: toRedirect})
   }
 
   @Action

@@ -11,15 +11,13 @@
     </ion-header>
 
     <ion-content class="flex items-center" color="black">
-      <ion-slides v-if="pictures && pictures.length > 1" ref="slider" :options="{initialSlide: selected}"
+      <ion-slides ref="slider" :options="{initialSlide: selected}"
                   class="h-full w-full bg-black" pager="true">
         <ion-slide v-for="(picture, i) of pictures" :key="i" class="bg-black">
           <img :src="pictureUrl(picture)" alt="Cleanup picture" class="picture">
         </ion-slide>
       </ion-slides>
-      <div v-else class="h-full w-full flex justify-center items-center">
-        <img :src="pictureUrl(pictures[0])" alt="Cleanup picture" class="w-full">
-      </div>
+
     </ion-content>
 
     <ion-footer mode="ios">
@@ -37,8 +35,8 @@
 import {Style} from '@capacitor/status-bar'
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Prop, Ref } from 'vue-property-decorator'
-import { nativeProvider } from '@/providers/native/native.provider'
+import {Prop, Ref} from 'vue-property-decorator'
+import {nativeProvider} from '@/providers/native/native.provider'
 
 @Component({
   name: 'image-preview'
@@ -63,6 +61,10 @@ export default class PicturesModal extends Vue {
   }
 
   mounted() {
+    if (this.pictures?.length < 2) {
+      this.slider.lockSwipeToPrev(true)
+      this.slider.lockSwipeToNext(true)
+    }
     this.prevBarStyle = nativeProvider.getStatusBarStyle()
     nativeProvider.setStatusBarStyle(Style.Dark)
     if (this.pictures.length > 1) {
@@ -79,11 +81,11 @@ export default class PicturesModal extends Vue {
 
   remove() {
     (this.slider ? this.slider.getActiveIndex() : Promise.resolve(0))
-      .then((index) => {
-        this.$ionic.modalController.dismiss({
-          index
+        .then((index) => {
+          this.$ionic.modalController.dismiss({
+            index
+          })
         })
-      })
   }
 
   close() {

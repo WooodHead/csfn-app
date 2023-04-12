@@ -3,6 +3,8 @@ import Image from '@/types/Image'
 import {IsNotEmpty} from 'class-validator'
 import {Expose} from 'class-transformer'
 import {GroupCategory} from '@/types/GroupCategory'
+import {GroupCapability} from '@/types/GroupCapability'
+import {RecyclingStats} from '@/types/RecyclingStats'
 
 export default class Group {
 
@@ -19,6 +21,8 @@ export default class Group {
   @Expose()
   @IsNotEmpty({message: 'required-error'})
   description: string
+
+  capabilities: GroupCapability[]
 
   @Expose()
   picture: Image
@@ -47,6 +51,8 @@ export default class Group {
   totalWeight?: number
 
   totalVolume?: number
+
+  recyclingStats?: RecyclingStats
 
   creation?: Date
 

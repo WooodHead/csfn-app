@@ -1,4 +1,4 @@
-import {geocoderToAddress} from '@/tools/Utils'
+import {geocoderToAddress, geocoderToFullAddress} from '@/tools/Utils'
 import Address from '@/types/Address'
 import Coords from '@/types/Coords'
 import UnknownError from '@/types/errors/UnknownError'
@@ -6,10 +6,10 @@ import Location from '@/types/Location'
 
 class PlacesProvider {
 
-  getAddress(coords: Coords): Promise<Address> {
+  getAddress(coords: Coords, full = false): Promise<Address> {
     return new google.maps.Geocoder().geocode({
       location: coords
-    }).then(({results}) => geocoderToAddress(results[0]))
+    }).then(({results}) => full ? geocoderToFullAddress(results[0]) : geocoderToAddress(results[0]))
       .catch((err) => {
         console.error(err)
         return Promise.reject(new UnknownError('obtain-location'))
@@ -19,13 +19,13 @@ class PlacesProvider {
   searchPlace(input: string,
               country: string): Promise<Location[]> {
     return new google.maps.places.AutocompleteService().getPlacePredictions({input, types: ['political']})
-      .then(({predictions}) => new Promise<Location[]>((resolve, reject) =>
+      .then(({predictions}) => Promise.all(predictions.map(prediction => new Promise<Location>((resolve, reject) =>
         new google.maps.places.PlacesService(document.getElementById('empty') as HTMLDivElement)
-          .getDetails({placeId: predictions[0].place_id}, ({geometry}, status) => {
+          .getDetails({placeId: prediction.place_id}, ({geometry}, status) => {
             if (status === 'OK') {
-              resolve([{
+              resolve({
                 address: {
-                  city: predictions[0].description,
+                  city: prediction.description,
                   state: '',
                   country: '',
                   countryCode: ''
@@ -34,11 +34,11 @@ class PlacesProvider {
                   lat: geometry.location.lat(),
                   lng: geometry.location.lng()
                 }
-              }])
+              })
             } else {
               reject()
             }
-          })))
+          })))))
       .catch((error) => {
         console.log(error)
         return Promise.reject(new UnknownError('search-place'))
