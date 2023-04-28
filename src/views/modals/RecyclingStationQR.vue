@@ -20,7 +20,7 @@
     </ion-header>
     <ion-content>
       <div class="flex h-full w-full items-center justify-center p-4">
-        <div class="w-full" id="qr-code" ref="qrCode"> </div>
+        <div class="w-full" id="qr-code" ref="qrCode"></div>
       </div>
     </ion-content>
   </ion-page>
@@ -29,6 +29,9 @@
 
 import {Component, Prop, Vue} from 'vue-property-decorator'
 import QRCodeStyling from 'qr-code-styling'
+import {Directory, Filesystem} from '@capacitor/filesystem'
+import {FileOpener} from '@capacitor-community/file-opener'
+import {blobToBase64} from 'base64-blob'
 
 @Component({
   name: 'recycling-station-qr',
@@ -63,15 +66,23 @@ export default class RecyclingStationQR extends Vue {
           'cornersDotOptions': {'type': null, 'color': '#59b14a'},
         }
     )
-    this.qrCode.append(this.$refs["qrCode"]);
+    this.qrCode.append(this.$refs['qrCode'])
   }
 
   dismiss(updated: boolean) {
     this.ionic.modalController.dismiss(updated)
   }
 
-  download() {
-    this.qrCode.download({ extension: 'png', name: this.name.replace(/\s/g, '_') + '_QR'})
+  async download() {
+    const data = await blobToBase64(await this.qrCode.getRawData('png'))
+    const path = 'Download/' + this.name.replace(/\s/g, '_') + '_QR.png'
+    const result = await Filesystem.writeFile({
+      path,
+      data,
+      directory: Directory.ExternalStorage
+    })
+
+    await FileOpener.open({filePath: result.uri})
   }
 
 }
